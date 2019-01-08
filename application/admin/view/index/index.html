@@ -1,0 +1,88 @@
+{include file='/common/header' /}
+<div class="layui-layout-admin">
+    <!--头部-->
+    <div class="layui-header">
+        <div class="layui-logo">在线考试后台管理系统</div>
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item">
+                <a href="javascript:;">其他系统</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:;">邮件管理</a></dd>
+                    <dd><a href="javascript:;">消息管理</a></dd>
+                    <dd><a href="javascript:;">授权管理</a></dd>
+                </dl>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href=""><img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img">{$Request.session.admin_name} </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="{:url('/admin/login/unlogin')}">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+
+    <!--左侧-->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="left-nav">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">权限管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="#" class="location" data-url="{:url('/admin/jurisdiction/func_list')}">功能列表</a></dd>
+                    </dl>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">角色列表</a></dd>
+                    </dl>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">管理员列表</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">用户管理</a>
+                    <dl class="layui-nav-child location">
+                        <dd><a href="#" class="location" data-url="{:url('/admin/user/user_view')}">用户列表</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">Tool 管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="#" class="location" data-url="{:url('/admin/tool/index')}">码农 Tool</a></dd>
+                        <dd><a href="#" class="location" data-url="{:url('/admin/tool/index')}">My Tool</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">栏位管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="#" class="location" data-url="{:url('admin/navigation/navigation')}">导航栏</a></dd>
+                    </dl>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">左右侧广告位</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">产品</a></li>
+                <li class="layui-nav-item"><a href="">大数据</a></li>
+            </ul>
+        </div>
+    </div>
+    <!--中间主体-->
+    <div class="layui-body" id="container">
+        <iframe id="container-iframe" src="" style="height:100%;width: 100%;" frameborder="0"></iframe>
+    </div>
+</div>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    layui.use('element', function(){
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+        //监听导航点击
+        element.on('nav(left-nav)', function(elem){
+            if (elem.hasClass('location')) {
+                var url = elem.data('url');
+                console.log(url);
+                $('#container-iframe').attr('src', url);
+            }
+        });
+        element.init();
+    });
+</script>

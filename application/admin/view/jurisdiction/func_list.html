@@ -1,0 +1,129 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">管线管理</a>
+        <a href="">功能列表</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <button class="layui-btn layui-btn-sm" onclick="addFunc();">添加功能</button>
+    <table class="layui-table">
+        <colgroup>
+            <col width="150">
+            <col width="200">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>编号</th>
+            <th>名称</th>
+            <th>路径</th>
+            <th>简介</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>贤心</td>
+            <td>2016-11-29</td>
+            <td>人生就像是一场修行</td>
+        </tr>
+        <tr>
+            <td>许闲心</td>
+            <td>2016-11-28</td>
+            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--添加功能模板-->
+<form action="#" method="post" class="layui-form pop-up-style" id="add-func-form" hidden>
+    <div class="layui-form-item">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-block">
+            <input type="radio" name="type" value="0" title="父级" checked="">
+            <input type="radio" name="type" value="1" title="子级">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="禁用" checked="">
+            <input type="radio" name="status" value="1" title="正常">
+        </div>
+    </div>
+    <div class="layui-form-item" hidden>
+        <label class="layui-form-label">父级菜单</label>
+        <div class="layui-input-block" style="width: 11.8rem;">
+            <select name="pid" lay-filter="aihao">
+                <option value="0" selected=""></option>
+                <option value="0">写作</option>
+                <option value="1">阅读</option>
+                <option value="2">游戏</option>
+                <option value="3">音乐</option>
+                <option value="4">旅行</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">功能名称</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="func_name" name="func_name" class="layui-input" placeholder="请输入功能名称"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">功能地址</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="func_url" name="func_url" class="layui-input" placeholder="请输入功能名称"/>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">功能简介</label>
+        <div class="layui-input-block input-normal">
+            <textarea placeholder="请输入功能简介" name="func_introduction" id="func_introdution" class="layui-textarea"></textarea>
+        </div>
+    </div>
+</form>
+<script>
+    layui.use(['table','element'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        element.init();
+    });
+
+    // 添加功能
+    function addFunc() {
+        layerOpen('添加功能','#add-func-form',addFuncForm,['添加', '取消'],['400px;', 'auto']);
+    }
+    function addFuncForm(data) {
+        var funcName = $("#func_name").val();
+        var funcUrl = $("#func_url").val();
+        var funcIntrodution = $("#func_introdution").val();
+        if (funcName.length == 0) {
+            tipMsg(400,'功能名称不能为空',0);
+            return false;
+        }
+        if (funcUrl.length == 0) {
+            tipMsg(400,'功能地址不能为空',0);
+            return false;
+        }
+        if (funcIntrodution.length == 0) {
+            tipMsg(400,'功能简介不能为空',0);
+            return false;
+        }
+        // 请求添加功能
+        curlAjax("{:url('jurisdiction/add_func')}",data,'commonResult');
+    }
+
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+</script>
