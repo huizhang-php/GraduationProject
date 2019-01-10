@@ -20,4 +20,12 @@ class FuncModel extends Model {
     public function addFunc($data) {
         return $this->save($data);
     }
+
+    public function getFunc() {
+        return $this->select();
+    }
+
+    public function upFunc($condition,$data) {
+        return $this->where($condition)->update($data);
+    }
 }

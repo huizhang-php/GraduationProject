@@ -31,16 +31,40 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>贤心</td>
-            <td>2016-11-29</td>
-            <td>人生就像是一场修行</td>
-        </tr>
-        <tr>
-            <td>许闲心</td>
-            <td>2016-11-28</td>
-            <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-        </tr>
+        {foreach $oneFunc as $key=>$value }
+            <tr>
+                <td>{$value.data.id}</td>
+                <td>{$value.data.func_name}</td>
+                <td>{$value.data.func_url}</td>
+                <td>{$value.data.func_introduction}</td>
+                <td class="layui-form">
+                    <input type="checkbox" {if $value.data.status eq 1}checked="" {/if}
+                        lay-skin="switch" value="{$value.data.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
+                </td>
+                <td>
+                    <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                </td>
+            </tr>
+            {if isset($value.twoData)}
+                {foreach $value.twoData as $twoKey=>$twoValue }
+                    <tr>
+                        <td>-->{$twoValue.id}</td>
+                        <td>{$twoValue.func_name}</td>
+                        <td>{$twoValue.func_url}</td>
+                        <td>{$twoValue.func_introduction}</td>
+                        <td class="layui-form">
+                            <input type="checkbox" {if $twoValue.status eq 1}checked="" {/if}
+                            lay-skin="switch" value="{$twoValue.id}" lay-filter="status_on_off" lay-text="正常|禁用">
+                        </td>
+                        <td>
+                            <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                            <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                        </td>
+                    </tr>
+                {/foreach}
+            {/if}
+        {/foreach}
         </tbody>
     </table>
 </div>
@@ -49,8 +73,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">类型</label>
         <div class="layui-input-block">
-            <input type="radio" name="type" value="0" title="父级" checked="">
-            <input type="radio" name="type" value="1" title="子级">
+            <input type="radio" name="type" lay-filter="one_func_radio" value="0" title="父级" checked="">
+            <input type="radio" lay-filter="two_func_radio" name="type" value="1" title="子级">
         </div>
     </div>
     <div class="layui-form-item">
@@ -60,16 +84,13 @@
             <input type="radio" name="status" value="1" title="正常">
         </div>
     </div>
-    <div class="layui-form-item" hidden>
+    <div class="layui-form-item" id="one_func_select" hidden>
         <label class="layui-form-label">父级菜单</label>
         <div class="layui-input-block" style="width: 11.8rem;">
             <select name="pid" lay-filter="aihao">
-                <option value="0" selected=""></option>
-                <option value="0">写作</option>
-                <option value="1">阅读</option>
-                <option value="2">游戏</option>
-                <option value="3">音乐</option>
-                <option value="4">旅行</option>
+                {foreach $oneFunc as $key => $value}
+                    <option value="{$value.data.id}">{$value.data.func_name}</option>
+                {/foreach}
             </select>
         </div>
     </div>
@@ -93,10 +114,31 @@
     </div>
 </form>
 <script>
-    layui.use(['table','element'], function() {
+    layui.use(['table','element','form'], function() {
         var table = layui.table;
         var element = layui.element;
+        var form = layui.form;
         element.init();
+        form.on('radio(two_func_radio)',function (data) {
+            if (this.checked) {
+                $('#one_func_select').show();
+            }
+        });
+        form.on('radio(one_func_radio)',function (data) {
+            if (this.checked) {
+                $('#one_func_select').hide();
+            }
+        });
+        //监听指定开关
+        form.on('switch(status_on_off)', function(data){
+            var status = 0;
+            if (this.checked){
+                status = 1;
+            }
+            var data = {id_type:this.value,status:status};
+            curlAjax("{:url('admin/jurisdiction/up_status')}",data,"commonResult");
+        });
+        form.render();
     });
 
     // 添加功能
