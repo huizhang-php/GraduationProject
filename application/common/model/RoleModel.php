@@ -19,4 +19,13 @@ class RoleModel extends Model {
     public function getList() {
         return $this->select();
     }
+
+    public function up($condition, $data)
+    {
+        return $this->where($condition)->update($data);
+    }
+
+    public function del($condition) {
+        return $this->where($condition)->delete();
+    }
 }

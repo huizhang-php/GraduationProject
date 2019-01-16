@@ -36,13 +36,16 @@
                 <td>{$value.role_introduction}</td>
                 <td class="layui-form">
                     <input type="checkbox" {if $value.status eq 1}checked="" {/if}
-                    lay-skin="switch" value="{$value.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
+                    lay-skin="switch" value="{$value.id}" lay-filter="status_on_off" lay-text="正常|禁用">
                 </td>
                 <td>{$value.staff}</td>
                 <td>{$value.end_staff}</td>
                 <td>{$value.ctime}</td>
                 <td>{$value.utime}</td>
-                <td>123</td>
+                <td>
+                    <button id="up_role" onclick="up({$value.id},'{$value.role_name}','{$value.role_introduction}','{$value.jurisdiction_id}');" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    <button id="del_role" onclick="del({$value.id})" class="layui-btn layui-btn-sm layui-btn-danger"><i class="layui-icon"></i></button>
+                </td>
             </tr>
         {/foreach}
         </tbody>
@@ -87,11 +90,43 @@
     </div>
 </form>
 
+<!--修改功能模板-->
+<form action="#" method="post" class="layui-form pop-up-style" id="up-role-form" hidden>
+    <div class="layui-form-item" style="padding-top: 10px;">
+        <label class="layui-form-label menu-label">角色名称</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="role_name" name="role_name" class="layui-input" placeholder="请输入角色名称"/>
+        </div>
+    </div>
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label">分配功能:</label>
+        <div class="layui-input-block">
+            {foreach $func_list as $key => $value}
+            <div>
+                <input type="checkbox" lay-filter="isAllChecked" value="{$value.data.id}" lay-skin="primary" title="全选({$value.data.func_name})">
+            </div>
+            {if isset($value.twoData)}
+            {foreach $value.twoData as $twoKey=>$twoValue }
+            <input type="checkbox" class="edit_two_func_{$twoValue.id}" name="edit_two_func[{$value.data.id}][]" value="{$twoValue.id}" lay-skin="primary" title="{$twoValue.func_name}">
+            {/foreach}
+            {/if}
+            {/foreach}
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">角色简介</label>
+        <div class="layui-input-block input-normal">
+            <textarea placeholder="请输入功能简介" name="role_introduction" id="role_introdution" class="layui-textarea"></textarea>
+        </div>
+    </div>
+</form>
+
 <script>
+    var form;
     layui.use(['table','element','form'], function() {
         var table = layui.table;
         var element = layui.element;
-        var form = layui.form;
+        form = layui.form;
         element.init();
         form.render();
         form.on('radio(two_func_radio)',function (data) {
@@ -119,21 +154,26 @@
             if (this.checked){
                 status = 1;
             }
-            var data = {id_type:this.value,status:status};
-            curlAjax("{:url('admin/jurisdiction/up_status')}",data,"commonResult");
+            var data = {id:this.value,status:status};
+            curlAjax("{:url('admin/role/up_status')}",data,"commonResult");
         });
     });
 
-    function upFunc(id,pid,func_name,func_url,func_introduction) {
-        $('#edit_id').val(id);
-        $('#edit_func_name').val(func_name);
-        $('#edit_func_url').val(func_url);
-        $('#edit_func_introduction').val(func_introduction);
-        if (pid > 0) {
-            $("#edit_one_func").val(pid);
-            $("#edit_one_func_div").show();
+    function up(id,role_name,role_introduction,jurisdiction_id) {
+        var editJurId = JSON.parse(jurisdiction_id);
+        if (editJurId != null) {
+            jQuery.each(editJurId, function (key,val) {
+                jQuery.each(val,function (k,v) {
+                    $('.edit_two_func_'+v).prop('checked',true);
+                    console.log('.edit_two_func_'+v);
+                    form.render();
+                });
+            });
         }
-        layerOpen('添加功能','#up-func-form',editFuncForm,['添加', '取消'],['400px;', '500px']);
+        $('#edit_id').val(id);
+        $('#edit_role_name').val(role_name);
+        $('#edit_role_introduction').val(role_introduction);
+        layerOpen('修改角色信息','#up-role-form',editRoleForm,['修改', '取消'],['400px;', 'auto']);
     }
 
     // 添加功能
@@ -142,25 +182,20 @@
     }
 
     function editRoleForm(data) {
-        var editFuncName = $("#edit_func_name").val();
-        var editFuncUrl = $("#edit_func_url").val();
-        var editFuncIntroduction = $("#edit_func_introduction").val();
+        var editRoleName = $("#edit_role_name").val();
+        var editRoleIntroduction = $("#edit_role_introduction").val();
         var editId = $("#edit_id").val();
-        var editPid = $("#edit_one_func").val();
-        if (editFuncName.length == 0) {
-            tipMsg(400,'功能名称不能为空',0);
+        console.log(data);
+        if (editRoleName.length == 0) {
+            tipMsg(400,'角色名称不能为空',0);
             return false;
         }
-        if (editFuncUrl.length == 0) {
+        if (editRoleIntroduction.length == 0) {
             tipMsg(400,'功能地址不能为空',0);
             return false;
         }
-        if (editFuncIntroduction.length == 0) {
-            tipMsg(400,'功能简介不能为空',0);
-            return false;
-        }
-        var data = {id:editId,func_name:editFuncName,func_url:editFuncUrl,func_introduction:editFuncIntroduction,pid:editPid};
-        curlAjax("{:url('jurisdiction/up')}",data,'commonResult');
+        var data = {id:editId,role_name:editRoleName,role_introduction:editRoleIntroduction};
+        curlAjax("{:url('role/up')}",data,'commonResult');
     }
 
     function addRoleForm(data) {
@@ -179,22 +214,11 @@
     }
 
     // 删除功能
-    function delFunc(id,pid) {
-        console.log(id);
-        console.log(pid);
+    function del(id) {
         layer.confirm('确定要删除吗？', {
             btn: ['确定','取消'] //按钮
         }, function(){
-            // 判断功能类型
-            if (pid == 0) {
-                // 判断是否有二级功能
-                var res = curlAjax("{:url('admin/jurisdiction/is_hava_two_func')}",{id:id},null,'POST',false);
-                console.log(res);
-                if (res.code != 200) {
-                    tipMsg(res.code,res.msg);
-                }
-            }
-            curlAjax("{:url('admin/jurisdiction/del')}",{id:id},"commonResult");
+            curlAjax("{:url('admin/role/del')}",{id:id},"commonResult");
         }, function(){
         });
     }

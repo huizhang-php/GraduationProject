@@ -46,7 +46,7 @@
                 <td>{$value.data.utime}</td>
                 <td>
                     <button id="up_func" onclick="upFunc({$value.data.id},{$value.data.pid},'{$value.data.func_name}','{$value.data.func_url}','{$value.data.func_introduction}')" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-                    <button id="del_func" onclick="delFunc({$value.data.id},{$value.data.pid});" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    <button id="del_func" onclick="delFunc({$value.data.id},{$value.data.pid});" class="layui-btn layui-btn-sm layui-btn-danger"><i class="layui-icon"></i></button>
                 </td>
             </tr>
             {if isset($value.twoData)}
@@ -66,7 +66,7 @@
                         <td>{$twoValue.utime}</td>
                         <td>
                             <button id="up_func" onclick="upFunc({$twoValue.id},{$twoValue.pid},'{$twoValue.func_name}','{$twoValue.func_url}','{$twoValue.func_introduction}')" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-                            <button id="del_func" onclick="delFunc({$twoValue.id},{$twoValue.pid});" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                            <button id="del_func" onclick="delFunc({$twoValue.id},{$twoValue.pid});" class="layui-btn layui-btn-sm layui-btn-danger"><i class="layui-icon"></i></button>
                         </td>
                     </tr>
                 {/foreach}
@@ -193,7 +193,7 @@
             $("#edit_one_func").val(pid);
             $("#edit_one_func_div").show();
         }
-        layerOpen('添加功能','#up-func-form',editFuncForm,['添加', '取消'],['400px;', 'auto']);
+        layerOpen('修改功能','#up-func-form',editFuncForm,['修改', '取消'],['400px;', 'auto']);
     }
 
     // 添加功能

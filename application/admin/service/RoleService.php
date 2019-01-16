@@ -57,10 +57,29 @@ class RoleService implements ServiceInter {
     public function del($params, &$result)
     {
         // TODO: Implement del() method.
+        $roleModel = new RoleModel();
+        $res = $roleModel->del($params);
+        if ($res) {
+            $result = '删除成功';
+            return true;
+        } else {
+            $result = '删除失败';
+            return false;
+        }
     }
 
     public function up_status($params, &$result)
     {
         // TODO: Implement up_status() method.
+        $data['status'] = $params['status'];
+        $data['end_staff'] = session('admin_name');
+        $condition['id'] = $params['id'];
+        $roleModel = new RoleModel();
+        if ($roleModel->up($condition, $data)) {
+            $result = '状态修改成功';
+            return true;
+        }
+        $result = '状态修改失败';
+        return false;
     }
 }

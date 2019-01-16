@@ -16,9 +16,8 @@ class RoleController extends BaseController implements ControllerInter {
     public function list()
     {
         // TODO: Implement list() method.
-        $jurisdictionService = new JurisdictionService();
         // 功能列表
-        $funcList = $jurisdictionService->funcList();
+        $funcList = JurisdictionService::getObj()->funcList();
         // 角色列表
         $roleList = RoleService::instance()->getList();
         $this->assign([
@@ -46,10 +45,20 @@ class RoleController extends BaseController implements ControllerInter {
     public function del()
     {
         // TODO: Implement del() method.
+        $res = RoleService::instance()->del($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 
     public function up_status()
     {
         // TODO: Implement up_status() method.
+        $res = RoleService::instance()->up_status($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 }
