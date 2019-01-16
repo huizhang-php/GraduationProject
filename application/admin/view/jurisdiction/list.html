@@ -15,11 +15,6 @@
 <div class="bodyer" style="width: 95%;padding-left: 2.5%;">
     <button class="layui-btn layui-btn-sm" onclick="addFunc();">添加功能</button>
     <table class="layui-table">
-        <colgroup>
-            <col width="150">
-            <col width="200">
-            <col>
-        </colgroup>
         <thead>
         <tr>
             <th>编号</th>
@@ -27,6 +22,10 @@
             <th>路径</th>
             <th>简介</th>
             <th>状态</th>
+            <th>创建人</th>
+            <th>最后操作人</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -41,9 +40,13 @@
                     <input type="checkbox" {if $value.data.status eq 1}checked="" {/if}
                         lay-skin="switch" value="{$value.data.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
                 </td>
+                <td>{$value.data.staff}</td>
+                <td>{$value.data.end_staff}</td>
+                <td>{$value.data.ctime}</td>
+                <td>{$value.data.utime}</td>
                 <td>
-                    <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-                    <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    <button id="up_func" onclick="upFunc({$value.data.id},{$value.data.pid},'{$value.data.func_name}','{$value.data.func_url}','{$value.data.func_introduction}')" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    <button id="del_func" onclick="delFunc({$value.data.id},{$value.data.pid});" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
                 </td>
             </tr>
             {if isset($value.twoData)}
@@ -57,9 +60,13 @@
                             <input type="checkbox" {if $twoValue.status eq 1}checked="" {/if}
                             lay-skin="switch" value="{$twoValue.id}" lay-filter="status_on_off" lay-text="正常|禁用">
                         </td>
+                        <td>{$twoValue.staff}</td>
+                        <td>{$twoValue.end_staff}</td>
+                        <td>{$twoValue.ctime}</td>
+                        <td>{$twoValue.utime}</td>
                         <td>
-                            <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-                            <button class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                            <button id="up_func" onclick="upFunc({$twoValue.id},{$twoValue.pid},'{$twoValue.func_name}','{$twoValue.func_url}','{$twoValue.func_introduction}')" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                            <button id="del_func" onclick="delFunc({$twoValue.id},{$twoValue.pid});" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
                         </td>
                     </tr>
                 {/foreach}
@@ -113,11 +120,47 @@
         </div>
     </div>
 </form>
+
+<!--修改功能模板-->
+<form action="#" method="post" class="layui-form pop-up-style" id="up-func-form" hidden>
+    <input type="hidden" name="id" id="edit_id" value="" />
+    <div class="layui-form-item" id="edit_one_func_div" hidden>
+        <label class="layui-form-label">父级菜单</label>
+        <div class="layui-input-block" style="width: 11.8rem;">
+            <select id="edit_one_func" name="edit_pid" lay-filter="aihao">
+                {foreach $oneFunc as $key => $value}
+                    <option value="{$value.data.id}">{$value.data.func_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">功能名称</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="edit_func_name" name="func_name" class="layui-input" placeholder="请输入功能名称"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">功能地址</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="edit_func_url" name="func_url" class="layui-input" placeholder="请输入功能名称"/>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">功能简介</label>
+        <div class="layui-input-block input-normal">
+            <textarea placeholder="请输入功能简介" name="edit_func_introduction" id="edit_func_introduction" class="layui-textarea"></textarea>
+        </div>
+    </div>
+</form>
+
+
 <script>
+    var form;
     layui.use(['table','element','form'], function() {
         var table = layui.table;
         var element = layui.element;
-        var form = layui.form;
+        form = layui.form;
         element.init();
         form.on('radio(two_func_radio)',function (data) {
             if (this.checked) {
@@ -141,10 +184,45 @@
         form.render();
     });
 
+    function upFunc(id,pid,func_name,func_url,func_introduction) {
+        $('#edit_id').val(id);
+        $('#edit_func_name').val(func_name);
+        $('#edit_func_url').val(func_url);
+        $('#edit_func_introduction').val(func_introduction);
+        if (pid > 0) {
+            $("#edit_one_func").val(pid);
+            $("#edit_one_func_div").show();
+        }
+        layerOpen('添加功能','#up-func-form',editFuncForm,['添加', '取消'],['400px;', 'auto']);
+    }
+
     // 添加功能
     function addFunc() {
         layerOpen('添加功能','#add-func-form',addFuncForm,['添加', '取消'],['400px;', 'auto']);
     }
+
+    function editFuncForm(data) {
+        var editFuncName = $("#edit_func_name").val();
+        var editFuncUrl = $("#edit_func_url").val();
+        var editFuncIntroduction = $("#edit_func_introduction").val();
+        var editId = $("#edit_id").val();
+        var editPid = $("#edit_one_func").val();
+        if (editFuncName.length == 0) {
+            tipMsg(400,'功能名称不能为空',0);
+            return false;
+        }
+        if (editFuncUrl.length == 0) {
+            tipMsg(400,'功能地址不能为空',0);
+            return false;
+        }
+        if (editFuncIntroduction.length == 0) {
+            tipMsg(400,'功能简介不能为空',0);
+            return false;
+        }
+        var data = {id:editId,func_name:editFuncName,func_url:editFuncUrl,func_introduction:editFuncIntroduction,pid:editPid};
+        curlAjax("{:url('jurisdiction/up')}",data,'commonResult');
+    }
+
     function addFuncForm(data) {
         var funcName = $("#func_name").val();
         var funcUrl = $("#func_url").val();
@@ -162,7 +240,28 @@
             return false;
         }
         // 请求添加功能
-        curlAjax("{:url('jurisdiction/add_func')}",data,'commonResult');
+        curlAjax("{:url('jurisdiction/add')}",data,'commonResult');
+    }
+
+    // 删除功能
+    function delFunc(id,pid) {
+        console.log(id);
+        console.log(pid);
+        layer.confirm('确定要删除吗？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            // 判断功能类型
+            if (pid == 0) {
+                // 判断是否有二级功能
+                var res = curlAjax("{:url('admin/jurisdiction/is_hava_two_func')}",{id:id},null,'POST',false);
+                console.log(res);
+                if (res.code != 200) {
+                    tipMsg(res.code,res.msg);
+                }
+            }
+            curlAjax("{:url('admin/jurisdiction/del')}",{id:id},"commonResult");
+        }, function(){
+        });
     }
 
     function commonResult(data) {

@@ -10,10 +10,10 @@ use think\facade\Request;
 
 trait MyRequest {
 
-    protected $params = array();
+    public $params = array();
 
     public function getParams() {
-        return Request::post();
+        $this->params = Request::post();
     }
 
 }

@@ -6,30 +6,24 @@
  * Description:
  */
 namespace app\admin\controller;
-use app\common\base\MyRequest;
-use app\common\base\MyResponse;
-use think\Controller;
-use app\admin\service\JurisdictionService;
-class JurisdictionController extends Controller {
-    use MyRequest;
-    use MyResponse;
 
-    public function func_list() {
+use app\common\base\BaseController;
+use app\admin\service\JurisdictionService;
+use app\common\base\ControllerInter;
+
+class JurisdictionController extends BaseController implements ControllerInter {
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/1/11 下午5:24
+     * @return \think\response\View
+     * Description: 功能列表
+     */
+    public function list() {
+        // TODO: Implement list() method.
         $jurisdictionService = new JurisdictionService();
         $funcList = $jurisdictionService->funcList();
-        $oneFunc = [];
-        $twoFunc = [];
-        foreach ($funcList as $key => $value) {
-            if ($value['pid'] > 0) {
-                $twoFunc[] = $value;
-            } else {
-                $oneFunc[$value['id']]['data'] = $value;
-            }
-        }
-        foreach ($twoFunc as $key => $value) {
-            $oneFunc[$value['pid']]['twoData'][] = $value;
-        }
-        $this->assign(['oneFunc'  => $oneFunc]);
+        $this->assign(['oneFunc'  => $funcList]);
         return view();
     }
 
@@ -38,24 +32,73 @@ class JurisdictionController extends Controller {
      * CreateTime: 2019/1/8 下午10:45
      * Description: 添加功能
      */
-    public function add_func() {
+    public function add() {
+        // TODO: Implement add() method.
         $jurisdictionService = new JurisdictionService();
-        $params = $this->getParams();
-        $res = $jurisdictionService->addFunc($params,$result);
+        $res = $jurisdictionService->addFunc($this->params,$result);
         if ($res) {
             $this->returnAjax(200,$result);
         }
         $this->returnAjax(400,$result);
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/1/11 下午5:24
+     * Description: 修改状态
+     */
     public function up_status() {
+        // TODO: Implement up_status() method.
         $jurisdictionService = new JurisdictionService();
-        $params = $this->getParams();
-        $res = $jurisdictionService->upStatus($params, $result);
+        $res = $jurisdictionService->upStatus($this->params, $result);
         if ($res) {
             $this->returnAjax(200,$result);
         }
         $this->returnAjax(400,$result);
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/1/11 下午5:24
+     * Description: 判断是否有二级功能
+     */
+    public function is_hava_two_func() {
+        $jurisdictionService = new JurisdictionService();
+        $res = $jurisdictionService->isHaveTwoFunc($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200, $result);
+        }
+        $this->returnAjax(400, $result);
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/1/11 下午5:24
+     * Description: 删除功能
+     */
+    public function del() {
+        // TODO: Implement del() method.
+        $jurisdictionService = new JurisdictionService();
+        $res = $jurisdictionService->delFunc($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200, $result);
+        }
+        $this->returnAjax(400, $result);
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/1/11 下午5:25
+     * Description: 更新功能
+     */
+    public function up() {
+        // TODO: Implement up() method.
+        $jurisdictionService = new JurisdictionService();
+        $res = $jurisdictionService->upFunc($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200, $result);
+        }
+        $this->returnAjax(400, $result);
     }
 
 }

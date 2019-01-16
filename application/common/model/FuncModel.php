@@ -28,4 +28,8 @@ class FuncModel extends Model {
     public function upFunc($condition,$data) {
         return $this->where($condition)->update($data);
     }
+
+    public function delFunc($condition) {
+        return $this->where($condition)->delete();
+    }
 }
