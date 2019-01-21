@@ -92,10 +92,11 @@
 
 <!--修改功能模板-->
 <form action="#" method="post" class="layui-form pop-up-style" id="up-role-form" hidden>
+    <input type="hidden" id="edit_id" name="id" value="">
     <div class="layui-form-item" style="padding-top: 10px;">
         <label class="layui-form-label menu-label">角色名称</label>
         <div class="layui-input-inline menu-input-div input-normal">
-            <input type="text" lay-verify="required" required id="role_name" name="role_name" class="layui-input" placeholder="请输入角色名称"/>
+            <input type="text" lay-verify="required" required id="edit_role_name" name="role_name" class="layui-input" placeholder="请输入角色名称"/>
         </div>
     </div>
     <div class="layui-form-item" pane="">
@@ -103,11 +104,11 @@
         <div class="layui-input-block">
             {foreach $func_list as $key => $value}
             <div>
-                <input type="checkbox" lay-filter="isAllChecked" value="{$value.data.id}" lay-skin="primary" title="全选({$value.data.func_name})">
+                <input type="checkbox" lay-filter="isAllUpChecked" value="{$value.data.id}" lay-skin="primary" title="全选({$value.data.func_name})">
             </div>
             {if isset($value.twoData)}
             {foreach $value.twoData as $twoKey=>$twoValue }
-            <input type="checkbox" class="edit_two_func_{$twoValue.id}" name="edit_two_func[{$value.data.id}][]" value="{$twoValue.id}" lay-skin="primary" title="{$twoValue.func_name}">
+                <input type="checkbox" class="edit_two_func_{$twoValue.id} edit_two_func" name="jurisdiction_id[{$value.data.id}][]" value="{$twoValue.id}" lay-skin="primary" title="{$twoValue.func_name}">
             {/foreach}
             {/if}
             {/foreach}
@@ -116,7 +117,7 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">角色简介</label>
         <div class="layui-input-block input-normal">
-            <textarea placeholder="请输入功能简介" name="role_introduction" id="role_introdution" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入功能简介" name="role_introduction" id="edit_role_introduction" class="layui-textarea"></textarea>
         </div>
     </div>
 </form>
@@ -148,6 +149,15 @@
             }
             form.render();
         });
+        form.on('checkbox(isAllUpChecked)', function(obj){
+            var id = obj.value;
+            if (this.checked) {
+                $('.edit_two_func_'+id).prop('checked',true);
+            } else {
+                $('.edit_two_func_'+id).removeAttr('checked');
+            }
+            form.render();
+        });
         //监听指定开关
         form.on('switch(status_on_off)', function(data){
             var status = 0;
@@ -165,7 +175,6 @@
             jQuery.each(editJurId, function (key,val) {
                 jQuery.each(val,function (k,v) {
                     $('.edit_two_func_'+v).prop('checked',true);
-                    console.log('.edit_two_func_'+v);
                     form.render();
                 });
             });
@@ -184,8 +193,6 @@
     function editRoleForm(data) {
         var editRoleName = $("#edit_role_name").val();
         var editRoleIntroduction = $("#edit_role_introduction").val();
-        var editId = $("#edit_id").val();
-        console.log(data);
         if (editRoleName.length == 0) {
             tipMsg(400,'角色名称不能为空',0);
             return false;
@@ -194,8 +201,22 @@
             tipMsg(400,'功能地址不能为空',0);
             return false;
         }
-        var data = {id:editId,role_name:editRoleName,role_introduction:editRoleIntroduction};
-        curlAjax("{:url('role/up')}",data,'commonResult');
+        curlAjax("{:url('role/up')}",$('#up-role-form').serialize(),'commonResult');
+    }
+
+    function unserialize(url){
+        if(url.indexOf("?") > -1) {
+            url = url.substring(1);
+        }
+        var parts = url.split("&");
+        var json = {};
+        parts.forEach(function(item){
+            if(item.indexOf("=") > -1){
+                var itemArray = item.split("=");
+                json[itemArray[0]] = itemArray[1];
+            }
+        });
+        return json;
     }
 
     function addRoleForm(data) {

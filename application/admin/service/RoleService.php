@@ -52,6 +52,19 @@ class RoleService implements ServiceInter {
     public function up($params, &$result)
     {
         // TODO: Implement up() method.
+        $roleModel = new RoleModel();
+        $condition['id'] = $params['id'];
+        $params['jurisdiction_id'] = json_encode($params['jurisdiction_id']);
+        unset($params['id']);
+        $data = $params;
+        $res = $roleModel->up($condition, $data);
+        if ($res) {
+            $result = '修改成功';
+            return true;
+        } else {
+            $result = '修改失败';
+            return false;
+        }
     }
 
     public function del($params, &$result)

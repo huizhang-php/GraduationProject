@@ -40,6 +40,11 @@ class RoleController extends BaseController implements ControllerInter {
     public function up()
     {
         // TODO: Implement up() method.
+        $res = RoleService::instance()->up($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 
     public function del()

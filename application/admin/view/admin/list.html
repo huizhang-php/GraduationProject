@@ -1,0 +1,143 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">权限管理</a>
+        <a href="">管理员列表</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <button class="layui-btn layui-btn-sm" onclick="add();">添加管理员</button>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>角色</th>
+            <th>真实姓名</th>
+            <th>手机号</th>
+            <th>邮箱</th>
+            <th>状态</th>
+            <th>创建人</th>
+            <th>最后修改人</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+            {foreach $adminList as $key=>$value }
+                <tr>
+                    <td>{$value.id}</td>
+                    <td>{$value.admin_name}</td>
+                    <td>{$value.role_id}</td>
+                    <td>{$value.name}</td>
+                    <td>{$value.phone}</td>
+                    <td>{$value.email}</td>
+                    <td class="layui-form">
+                        <input type="checkbox" {if $value.status eq 1}checked="" {/if}
+                        lay-skin="switch" value="{$value.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
+                    </td>
+                    <td>{$value.staff}</td>
+                    <td>{$value.end_staff}</td>
+                    <td>{$value.ctime}</td>
+                    <td>{$value.utime}</td>
+                    <td>
+                        <button class="layui-btn layui-btn-sm">重置密码</button>
+                        <button id="up_func" onclick="" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                        <button id="del_func" onclick="" class="layui-btn layui-btn-sm layui-btn-danger"><i class="layui-icon"></i></button>
+                    </td>
+                </tr>
+            {/foreach}
+        </tbody>
+    </table>
+</div>
+<!--添加模板-->
+<form action="#" method="post" class="layui-form pop-up-style" id="add-form" hidden>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="禁用" checked="">
+            <input type="radio" name="status" value="1" title="正常">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色</label>
+        <div class="layui-input-block" style="width: 11.8rem;">
+            <select name="role_id" lay-filter="aihao">
+                {foreach $roleList as $key => $value}
+                    <option value="{$value.id}">{$value.role_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">账号</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="admin_name" name="admin_name" class="layui-input" placeholder="请输入账号"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">姓名</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="name" name="name" class="layui-input" placeholder="请输入姓名"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">手机号</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="phone" name="phone" class="layui-input" placeholder="请输入手机号"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label menu-label">邮箱</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="email" name="email" class="layui-input" placeholder="请输入邮箱"/>
+        </div>
+    </div>
+</form>
+<script>
+    var form;
+    layui.use(['table','element','form'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        element.init();
+        form.render();
+    });
+    // 添加功能
+    function add() {
+        layerOpen('添加功能','#add-form',addForm,['添加', '取消'],['400px;', 'auto']);
+    }
+
+    function addForm(data) {
+        if (data.admin_name == '') {
+            tipMsg(400,'账号不能为空',0);
+            return false;
+        }
+        if (data.name == '') {
+            tipMsg(400,'姓名不能为空',0);
+            return false;
+        }
+        if (data.phone == '') {
+            tipMsg(400,'手机号不能为空',0);
+            return false;
+        }
+        if (data.email == '') {
+            tipMsg(400,'邮箱不能为空',0);
+            return false;
+        }
+        curlAjax("{:url('admin/add')}",data,'commonResult');
+    }
+
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+
+</script>

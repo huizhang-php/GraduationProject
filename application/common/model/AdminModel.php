@@ -14,4 +14,12 @@ class AdminModel extends Model {
     public function findAdmin($condition) {
         return $this->where($condition)->find();
     }
+
+    public function add($data) {
+        return $this->save($data);
+    }
+
+    public function getList() {
+        return $this->select();
+    }
 }
