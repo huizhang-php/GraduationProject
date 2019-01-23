@@ -104,6 +104,7 @@
         //监听提交
         form.on('submit(login-btn)', function(data){
             var params = data.field;
+            console.log(params);
             curlAjax("{:url('admin/login/login')}",params,"commonResult");
             return false;
         });

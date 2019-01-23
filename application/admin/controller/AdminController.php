@@ -39,15 +39,49 @@ class AdminController extends BaseController implements ControllerInter {
     public function up()
     {
         // TODO: Implement up() method.
+        $res = AdminService::instance()->up($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/1/23 下午11:38
+     * Description: 重置密码
+     */
+    public function reset_password() {
+        $res = AdminService::instance()->resetPassword($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/1/23 下午11:36
+     * @throws \Exception
+     * Description: 删除管理员
+     */
     public function del()
     {
         // TODO: Implement del() method.
+        $res = AdminService::instance()->del($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 
     public function up_status()
     {
         // TODO: Implement up_status() method.
+        $res = AdminService::instance()->up_status($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 }

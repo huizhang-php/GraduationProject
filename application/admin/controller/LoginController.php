@@ -8,10 +8,10 @@
 namespace app\admin\controller;
 use app\common\base\MyRequest;
 use app\common\base\MyResponse;
-use think\Controller;
 use think\facade\Request;
 use app\admin\service\LoginService;
-class LoginController extends Controller {
+use app\common\base\BaseController;
+class LoginController extends BaseController {
 
     use MyRequest;
     use MyResponse;
@@ -25,11 +25,10 @@ class LoginController extends Controller {
      */
     public function login() {
         if (Request::isPost()) {
-            $params = $this->getParams();
-            if(!captcha_check($params['captcha'])){
+            if(!captcha_check($this->params['captcha'])){
                 $this->returnAjax(400,'验证码错误');
             };
-            $loginResult = LoginService::getObj()->LoginService($params);
+            $loginResult = LoginService::getObj()->LoginService($this->params);
             if ($loginResult) {
                 $this->returnAjax(200,'登录成功');
             } else {
