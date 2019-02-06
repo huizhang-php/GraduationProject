@@ -204,21 +204,6 @@
         curlAjax("{:url('role/up')}",$('#up-role-form').serialize(),'commonResult');
     }
 
-    function unserialize(url){
-        if(url.indexOf("?") > -1) {
-            url = url.substring(1);
-        }
-        var parts = url.split("&");
-        var json = {};
-        parts.forEach(function(item){
-            if(item.indexOf("=") > -1){
-                var itemArray = item.split("=");
-                json[itemArray[0]] = itemArray[1];
-            }
-        });
-        return json;
-    }
-
     function addRoleForm(data) {
         var roleName = $("#role_name").val();
         var roleIntrodution = $("#role_introdution").val();
