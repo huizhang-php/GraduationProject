@@ -1,63 +1,61 @@
 <?php
 /**
  * User: yuzhao
- * CreateTime: 2019/1/11 下午5:34
+ * CreateTime: 2019/2/6 下午7:25
  * Description:
  */
 
 namespace app\admin\service;
 use app\common\base\ServiceInter;
+use app\common\model\ExamPaperModel;
 use app\common\tool\TimeTool;
-use app\common\model\RoleModel;
 
-class RoleService implements ServiceInter {
-
+class ExamPaperService implements ServiceInter
+{
     public static function instance()
     {
         // TODO: Implement instance() method.
-        return new RoleService();
+        return new ExamPaperService();
     }
 
     public function getList($params=[])
     {
         // TODO: Implement getList() method.
-        $roleModel = new RoleModel();
-        return $roleModel->getList();
+        return ExamPaperModel::instance()->getList($params);
     }
 
     public function add($params=[], &$result)
     {
         // TODO: Implement add() method.
-        $roleModel = new RoleModel();
-        $time = TimeTool::getTime();
+        // 查看专题名称是否重复
+        $res = ExamPaperModel::instance()->getList(['name'=>$params['name']]);
+        if (!empty($res->toArray())) {
+            $result = '试卷名称重复';
+            return false;
+        }
         $data = [
-            'jurisdiction_id' => json_encode($params['two_func'], JSON_UNESCAPED_UNICODE),
-            'status'    => $params['status'],
-            'role_name' => $params['role_name'],
-            'role_introduction' => $params['role_introduction'],
+            'name' => $params['name'],
+            'introduction' => $params['introduction'],
             'staff' => session('admin_name'),
             'end_staff' => session('admin_name'),
-            'ctime' => $time,
-            'utime' => $time
         ];
-        $res = $roleModel->save($data);
+        $res = ExamPaperModel::instance()->add($data);
         if ($res) {
-            $result = '添加角色成功';
+            $result = '添加试卷成功';
             return true;
         }
-        $result = '添加角色失败';
+        $result = '添加试卷失败';
         return false;
     }
 
     public function up($params=[], &$result)
     {
         // TODO: Implement up() method.
-        $roleModel = new RoleModel();
         $condition['id'] = $params['id'];
-        $params['jurisdiction_id'] = json_encode($params['jurisdiction_id']);
         unset($params['id']);
-        $data = $params;
-        $res = $roleModel->up($condition, $data);
+        $params['end_staff'] = session('admin_name');
+        $params['utime'] = TimeTool::getTime();
+        $res = ExamPaperModel::instance()->up($condition, $params);
         if ($res) {
             $result = '修改成功';
             return true;
@@ -70,29 +68,31 @@ class RoleService implements ServiceInter {
     public function del($params=[], &$result)
     {
         // TODO: Implement del() method.
-        $roleModel = new RoleModel();
-        $res = $roleModel->del($params);
-        if ($res) {
-            $result = '删除成功';
-            return true;
-        } else {
-            $result = '删除失败';
-            return false;
-        }
     }
 
     public function up_status($params=[], &$result)
     {
         // TODO: Implement up_status() method.
+        // 查看是否出题
+        $condition['id'] = $params['id'];
+        $res = ExamPaperModel::instance()->getList($condition);
+        if (empty($res->toArray())) {
+            $result = '状态修改失败';
+            return false;
+        }
+        if ($res[0]['exam_paper_id'] == 0) {
+            $result = '还没有出题';
+            return false;
+        }
         $data['status'] = $params['status'];
         $data['end_staff'] = session('admin_name');
-        $condition['id'] = $params['id'];
-        $roleModel = new RoleModel();
-        if ($roleModel->up($condition, $data)) {
+        $data['utime'] = TimeTool::getTime();
+        if (ExamPaperModel::instance()->up(['id'=>$params['id']], $data)) {
             $result = '状态修改成功';
             return true;
         }
         $result = '状态修改失败';
         return false;
     }
+
 }

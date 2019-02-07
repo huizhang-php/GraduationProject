@@ -14,6 +14,7 @@ trait MyRequest {
 
     public function getParams() {
         $this->params = Request::post();
+        $this->params = array_merge($this->params, Request::get());
     }
 
 }

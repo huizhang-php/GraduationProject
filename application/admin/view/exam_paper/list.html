@@ -1,0 +1,154 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">考试相关</a>
+        <a href="">考试专题</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <button class="layui-btn layui-btn-sm" onclick="add();">添加试卷</button>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>简介</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th>创建人</th>
+            <th>最后操作人</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $list as $key => $value}
+        <tr>
+            <td>{$value.id}</td>
+            <td>{$value.name}</td>
+            <td>{$value.introduction}</td>
+            <td class="layui-form">
+                <input type="checkbox" {if $value.status eq 1}checked="" {/if}
+                lay-skin="switch" value="{$value.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
+            </td>
+            <td>{$value.ctime}</td>
+            <td>{$value.utime}</td>
+            <td>{$value.staff}</td>
+            <td>{$value.end_staff}</td>
+            <td>
+                <a href="{:url('/admin/exam_paper/issue',['id'=>$value.id])}" class="layui-btn layui-btn-xs layui-btn-normal">出题</a>
+                <button onclick="up('{$value.id}','{$value.name}','{$value.introduction}')" class="layui-btn layui-btn-xs">修改信息</button>
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+</div>
+
+<!--添加模板-->
+<form action="#" method="post" class="layui-form pop-up-style" id="add-form" hidden>
+
+    <div class="layui-form-item" style="padding-top: 10px;">
+        <label class="layui-form-label menu-label">试卷名称</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="name" name="name" class="layui-input" placeholder="请输入试卷名称"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">试卷简介</label>
+        <div class="layui-input-block input-normal">
+            <textarea placeholder="请输入试卷简介" name="introduction" id="introduction" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+</form>
+
+<!--修改模板-->
+<form action="#" method="post" class="layui-form pop-up-style" id="up-form" hidden>
+
+    <input id="edit_id" type="hidden" value="" name="id">
+    <div class="layui-form-item" style="padding-top: 10px;">
+        <label class="layui-form-label menu-label">试卷名称</label>
+        <div class="layui-input-inline menu-input-div input-normal">
+            <input type="text" lay-verify="required" required id="edit_name" name="name" class="layui-input" placeholder="请输入试卷名称"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">试卷简介</label>
+        <div class="layui-input-block input-normal">
+            <textarea placeholder="请输入试卷简介" name="introduction" id="edit_introduction" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+</form>
+
+<script>
+    var form;
+    layui.use(['table','element','form'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        element.init();
+        //监听指定开关
+        form.on('switch(status_on_off)', function(data){
+            var status = 0;
+            if (this.checked){
+                status = 1;
+            }
+            var data = {id:this.value,status:status};
+            curlAjax("{:url('admin/exam_paper/up_status')}",data,"commonResult");
+        });
+        form.render();
+    });
+
+    function add() {
+        layerOpen('添加试卷','#add-form',addForm,['添加', '取消'],['400px;', 'auto']);
+    }
+
+    function addForm(data) {
+        if (data.name == '') {
+            tipMsg(400,'试卷名称不能为空',0);
+            return false;
+        }
+        if (data.introduction == '') {
+            tipMsg(400,'试卷简介不能为空',0);
+            return false;
+        }
+        curlAjax("{:url('exam_paper/add')}",data,'commonResult');
+    }
+
+    // 修改
+    function up(id,name,introduction) {
+        $('#edit_id').val(id);
+        $('#edit_name').val(name);
+        $('#edit_introduction').val(introduction);
+        layerOpen('修改专题信息','#up-form',editForm,['修改', '取消'],['400px;', 'auto']);
+    }
+
+    function editForm(data) {
+        if (data.name == '') {
+            tipMsg(400,'试卷名称不能为空',0);
+            return false;
+        }
+        if (data.introduction == '') {
+            tipMsg(400,'试卷简介不能为空',0);
+            return false;
+        }
+        curlAjax("{:url('exam_paper/up')}",data,'commonResult');
+    }
+
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+
+</script>
+

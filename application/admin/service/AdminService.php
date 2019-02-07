@@ -27,14 +27,14 @@ class AdminService implements ServiceInter {
      * @throws \think\exception\DbException
      * Description: 获取列表
      */
-    public function getList()
+    public function getList($params=[])
     {
         // TODO: Implement getList() method.
         $adminModel = new AdminModel();
         return $adminModel->getList();
     }
 
-    public function add($params, &$result)
+    public function add($params=[], &$result)
     {
         // TODO: Implement add() method.
         $adminModel = new AdminModel();
@@ -67,7 +67,7 @@ class AdminService implements ServiceInter {
      * Description: 更新
      * @return bool
      */
-    public function up($params, &$result)
+    public function up($params=[], &$result)
     {
         // TODO: Implement up() method.
         $adminModel = new AdminModel();
@@ -101,7 +101,7 @@ class AdminService implements ServiceInter {
      * @throws \Exception
      * Description: 删除管理员
      */
-    public function del($params, &$result)
+    public function del($params=[], &$result)
     {
         // TODO: Implement del() method.
         $adminModel = new AdminModel();
@@ -115,7 +115,7 @@ class AdminService implements ServiceInter {
         }
     }
 
-    public function up_status($params, &$result)
+    public function up_status($params=[], &$result)
     {
         // TODO: Implement up_status() method.
         $data['status'] = $params['status'];

@@ -1,0 +1,78 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">考试相关</a>
+        <a href="">考试专题</a>
+        <a href="">出题</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+<div style="width: 100%;">
+    <div style="width: 60%;float: left;">
+       <div class="layui-form-item">
+           <label class="layui-form-label">试卷标题</label>
+           <div class="layui-input-block" style="width: 300px;">
+               <input disabled type="text" value="{$exam_paper_base_info.name}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+           </div>
+       </div>
+       <div class="layui-form-item layui-form-text">
+           <label class="layui-form-label">试卷简介</label>
+           <div class="layui-input-block input-normal"  style="width: 500px;">
+               <textarea disabled placeholder="请输入专题简介" class="layui-textarea">{$exam_paper_base_info.introduction}</textarea>
+           </div>
+       </div>
+       <form class="layui-form" action="">
+
+       </form>
+    </div>
+    <div style="width: 35%;float: right;padding-right: 4%;border-left: 3px solid green;border-bottom: 3px solid green;min-height: 350px;">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">数量</label>
+                <div class="layui-input-block" style="width: 100px;">
+                    <input type="text" name="number" lay-verify="required|number" value="5" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">类型</label>
+                <div class="layui-input-block">
+                    <input type="radio" value="0" name="type" title="单选" checked="">
+                    <input type="radio" value="1" name="type" title="判断">
+                    <input type="radio" value="2" name="type" title="填空">
+                    <input type="radio" value="3" name="type" title="问答">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分数</label>
+                <div class="layui-input-block" style="width: 150px;">
+                    <input type="text" name="score" lay-verify="required|number" value="" lay-verify="title" autocomplete="off" placeholder="分数(单个小题)" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">标题</label>
+                <div class="layui-input-block input-normal"  style="width: 300px;">
+                    <textarea placeholder="请输入标题" name="title" class="layui-textarea">单选题。</textarea>
+                </div>
+            </div>
+            <button lay-submit="" style="float: right;" lay-filter="add-topic" class="layui-btn layui-btn-sm">添加</button>
+        </form>
+    </div>
+</div>
+<script>
+    var form;
+    layui.use(['table','element','form'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        form.on('submit(add-topic)', function(data){
+            var params = data.field;
+            console.log(params);
+            return false;
+        });
+        element.init();
+    });
+</script>

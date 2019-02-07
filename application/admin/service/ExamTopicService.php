@@ -18,7 +18,7 @@ class ExamTopicService implements ServiceInter {
         return new ExamTopicService();
     }
 
-    public function add($params, &$result)
+    public function add($params=[], &$result)
     {
         // TODO: Implement add() method.
         // 查看专题名称是否重复
@@ -42,13 +42,13 @@ class ExamTopicService implements ServiceInter {
         return false;
     }
 
-    public function getList()
+    public function getList($params=[])
     {
         // TODO: Implement getList() method.
         return ExamTopicModel::instance()->getList([]);
     }
 
-    public function up($params, &$result)
+    public function up($params=[], &$result)
     {
         // TODO: Implement up() method.
         $condition['id'] = $params['id'];
@@ -65,18 +65,18 @@ class ExamTopicService implements ServiceInter {
         }
     }
 
-    public function del($params, &$result)
+    public function del($params=[], &$result)
     {
         // TODO: Implement del() method.
     }
 
-    public function up_status($params, &$result)
+    public function up_status($params=[], &$result)
     {
         // TODO: Implement up_status() method.
         // 查看试卷是否准备就绪
         $condition['id'] = $params['id'];
         $res = ExamTopicModel::instance()->getList($condition);
-        if (empty($res)) {
+        if (empty($res->toArray())) {
             $result = '状态修改失败';
             return false;
         }
