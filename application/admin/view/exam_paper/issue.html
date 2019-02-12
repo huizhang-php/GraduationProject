@@ -25,7 +25,7 @@
                <textarea disabled placeholder="请输入专题简介" class="layui-textarea">{$exam_paper_base_info.introduction}</textarea>
            </div>
        </div>
-       <form class="layui-form" action="">
+       <form class="layui-form exam_list" style="margin-left: 20px;" action="">
 
        </form>
     </div>
@@ -34,45 +34,194 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">数量</label>
                 <div class="layui-input-block" style="width: 100px;">
-                    <input type="text" name="number" lay-verify="required|number" value="5" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+                    <input type="text" id="number" name="number" lay-verify="required|number" value="{$exam_type_base_conf[0]['number']}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">类型</label>
                 <div class="layui-input-block">
-                    <input type="radio" value="0" name="type" title="单选" checked="">
-                    <input type="radio" value="1" name="type" title="判断">
-                    <input type="radio" value="2" name="type" title="填空">
-                    <input type="radio" value="3" name="type" title="问答">
+                    {foreach $exam_type_base_conf as $key => $value}
+                        <input type="radio" lay-filter="type"  value="{$key}" name="type" title="{$value.name}" {if $value.is_checked eq 1}checked{/if}>
+                    {/foreach}
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">分数</label>
                 <div class="layui-input-block" style="width: 150px;">
-                    <input type="text" name="score" lay-verify="required|number" value="" lay-verify="title" autocomplete="off" placeholder="分数(单个小题)" class="layui-input">
+                    <input type="text" id="score" name="score" lay-verify="required|number" value="{$exam_type_base_conf[0]['score']}" lay-verify="title" autocomplete="off" placeholder="分数(单个小题)" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">标题</label>
                 <div class="layui-input-block input-normal"  style="width: 300px;">
-                    <textarea placeholder="请输入标题" name="title" class="layui-textarea">单选题。</textarea>
+                    <textarea placeholder="请输入标题" id="title" name="title" class="layui-textarea">{$exam_type_base_conf[0]['title']}</textarea>
                 </div>
             </div>
             <button lay-submit="" style="float: right;" lay-filter="add-topic" class="layui-btn layui-btn-sm">添加</button>
         </form>
     </div>
 </div>
+
+<div class="exam_list_temp" hidden>
+
+</div>
+
+<div class="type0-temp" hidden>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">第<span class="exam_number"></span>题</label>
+        <div class="layui-input-block input-normal"  style="width: 500px;">
+            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">A</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">B</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">C</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">D</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">分数</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">正确答案</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+</div>
+
+<div class="type1-temp" hidden>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">第<span class="exam_number"></span>题</label>
+        <div class="layui-input-block input-normal"  style="width: 500px;">
+            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">分数</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">正确答案</label>
+        <div class="layui-input-block input-normal"  style="width: 500px;">
+            <textarea placeholder="请输入正确答案" class="layui-textarea"></textarea>
+        </div>
+    </div>
+</div>
+
+<div class="type2-temp" hidden>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">第<span class="exam_number"></span>题</label>
+        <div class="layui-input-block input-normal"  style="width: 500px;">
+            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">分数</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">正确答案</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="close" lay-skin="switch" lay-text="√|✘">
+        </div>
+    </div>
+</div>
+
+<div class="type3-temp" hidden>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">第<span class="exam_number"></span>题</label>
+        <div class="layui-input-block input-normal"  style="width: 500px;">
+            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">分数</label>
+        <div class="layui-input-block" style="width: 100px;">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">正确答案</label>
+        <div class="layui-input-block input-normal"  style="width: 500px;">
+            <textarea placeholder="请输入正确答案" class="layui-textarea"></textarea>
+        </div>
+    </div>
+</div>
+
 <script>
+
     var form;
+    var examTypeBaseConf;
+
     layui.use(['table','element','form'], function() {
         var table = layui.table;
         var element = layui.element;
         form = layui.form;
         form.on('submit(add-topic)', function(data){
             var params = data.field;
-            console.log(params);
+            // 将添加的题目入库
+            $('.exam_list').append('<h3 class="big-title">'+($('.big-title').length + 1) + '、' + params.title+'</h3>');
+            for ($i=0;$i<params.number;$i++) {
+                switch (parseInt(params.type)) {
+                    case 0:
+                        $(".type0-temp .exam_number").html($i+1);
+                        $('.exam_list_temp').append($('.type0-temp').html());
+                    break;
+                    case 1:
+                        $(".type1-temp .exam_number").html($i+1);
+                        $('.exam_list_temp').append($('.type1-temp').html());
+                    case 2:
+                        $(".type2-temp .exam_number").html($i+1);
+                        $('.exam_list_temp').append($('.type2-temp').html());
+                    break;
+                    case 3:
+                        $(".type3-temp .exam_number").html($i+1);
+                        $('.exam_list_temp').append($('.type3-temp').html());
+                    break;
+                }
+            }
+            $('.exam_list').append($('.exam_list_temp').html());
+            form.render();
             return false;
         });
         element.init();
+        form.on('radio(type)', function (data) {
+            var typeInfo = examTypeBaseConf[data.value];
+            $('#number').val(typeInfo.number);
+            $('#score').val(typeInfo.score);
+            $('#title').val(typeInfo.title);
+        });
+        $(function () {
+            curlAjax("{:url('exam_paper/get_exam_type_base_conf')}",{},'getConfig');
+        });
     });
+    function getConfig(data) {
+        examTypeBaseConf = data.data;
+    }
 </script>
