@@ -63,7 +63,7 @@
 </div>
 
 <div class="exam_list_temp" hidden>
-
+    <div class="exam_list_temp_div"></div>
 </div>
 
 <div class="type0-temp" hidden>
@@ -186,23 +186,23 @@
         form.on('submit(add-topic)', function(data){
             var params = data.field;
             // 将添加的题目入库
-            $('.exam_list').append('<h3 class="big-title">'+($('.big-title').length + 1) + '、' + params.title+'</h3>');
+            $('.exam_list').append('<a onclick="hideShow(this);" href="#"><h3 class="big-title">'+($('.big-title').length + 1) + '、' + params.title+'</h3></a>');
             for ($i=0;$i<params.number;$i++) {
                 switch (parseInt(params.type)) {
                     case 0:
                         $(".type0-temp .exam_number").html($i+1);
-                        $('.exam_list_temp').append($('.type0-temp').html());
+                        $('.exam_list_temp_div').append($('.type0-temp').html());
                     break;
                     case 1:
                         $(".type1-temp .exam_number").html($i+1);
-                        $('.exam_list_temp').append($('.type1-temp').html());
+                        $('.exam_list_temp_div').append($('.type1-temp').html());
                     case 2:
                         $(".type2-temp .exam_number").html($i+1);
-                        $('.exam_list_temp').append($('.type2-temp').html());
+                        $('.exam_list_temp_div').append($('.type2-temp').html());
                     break;
                     case 3:
                         $(".type3-temp .exam_number").html($i+1);
-                        $('.exam_list_temp').append($('.type3-temp').html());
+                        $('.exam_list_temp_div').append($('.type3-temp').html());
                     break;
                 }
             }
@@ -223,5 +223,12 @@
     });
     function getConfig(data) {
         examTypeBaseConf = data.data;
+    }
+    function hideShow(myself) {
+        if ($(myself).next().is(':hidden')) {
+            $(myself).next().show();
+        } else {
+            $(myself).next().hide();
+        }
     }
 </script>
