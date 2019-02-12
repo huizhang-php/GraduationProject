@@ -26,7 +26,9 @@
            </div>
        </div>
        <form class="layui-form exam_list" style="margin-left: 20px;" action="">
-
+           <div hidden>
+               <button lay-submit="" lay-filter="save_exam" class="layui-btn layui-btn-sm save_exam">save</button>
+           </div>
        </form>
     </div>
     <div style="width: 35%;float: right;padding-right: 4%;border-left: 3px solid green;border-bottom: 3px solid green;min-height: 350px;">
@@ -70,7 +72,7 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">第<span class="exam_number"></span>题</label>
         <div class="layui-input-block input-normal"  style="width: 500px;">
-            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+            <textarea lay-verify="required" placeholder="请输入题目" class="layui-textarea"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
@@ -182,7 +184,19 @@
     layui.use(['table','element','form'], function() {
         var table = layui.table;
         var element = layui.element;
+        var util = layui.util;
         form = layui.form;
+        //固定块
+        util.fixbar({
+            bar1: '&#x1005;'
+            ,css: {right: 50, bottom: 100}
+            ,bgcolor: 'green'
+            ,click: function(type){
+                if(type === 'bar1'){
+                    $('.save_exam').click();
+                }
+            }
+        });
         form.on('submit(add-topic)', function(data){
             var params = data.field;
             // 将添加的题目入库
@@ -216,6 +230,10 @@
             $('#number').val(typeInfo.number);
             $('#score').val(typeInfo.score);
             $('#title').val(typeInfo.title);
+        });
+        form.on('submit(save_exam)', function (data) {
+            var params = data.field;
+            console.log(params);
         });
         $(function () {
             curlAjax("{:url('exam_paper/get_exam_type_base_conf')}",{},'getConfig');
