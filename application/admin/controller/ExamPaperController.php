@@ -70,4 +70,12 @@ class ExamPaperController extends BaseController implements ControllerInter {
     public function get_exam_type_base_conf() {
         $this->returnAjax(200, 'success', SelfConfig::getConfig('Exam.exam_type_base_conf'));
     }
+
+    public function save_test_paper() {
+        $res = ExamPaperService::instance()->saveTestPaper($this->params, $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
+    }
 }

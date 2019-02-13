@@ -95,4 +95,8 @@ class ExamPaperService implements ServiceInter
         return false;
     }
 
+    public function saveTestPaper($params=[], &$result) {
+        var_dump($params);die;
+    }
+
 }

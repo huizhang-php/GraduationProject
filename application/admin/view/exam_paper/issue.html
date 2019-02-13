@@ -26,6 +26,7 @@
            </div>
        </div>
        <form class="layui-form exam_list" style="margin-left: 20px;" action="">
+           <input type="hidden" name="exam_paper_id" value="{$exam_paper_base_info.id}">
            <div hidden>
                <button lay-submit="" lay-filter="save_exam" class="layui-btn layui-btn-sm save_exam">save</button>
            </div>
@@ -72,43 +73,43 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">第<span class="exam_number"></span>题</label>
         <div class="layui-input-block input-normal"  style="width: 500px;">
-            <textarea lay-verify="required" placeholder="请输入题目" class="layui-textarea"></textarea>
+            <textarea lay-verify="required" placeholder="请输入题目" class="layui-textarea type0-title"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">A</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-a">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">B</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-b">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">C</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-c">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">D</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-d">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分数</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-score">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">正确答案</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-right-key">
         </div>
     </div>
 </div>
@@ -117,19 +118,19 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">第<span class="exam_number"></span>题</label>
         <div class="layui-input-block input-normal"  style="width: 500px;">
-            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入题目" class="layui-textarea type1-title"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分数</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type1-score">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">正确答案</label>
         <div class="layui-input-block input-normal"  style="width: 500px;">
-            <textarea placeholder="请输入正确答案" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入正确答案" class="layui-textarea type1-right-key"></textarea>
         </div>
     </div>
 </div>
@@ -138,19 +139,19 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">第<span class="exam_number"></span>题</label>
         <div class="layui-input-block input-normal"  style="width: 500px;">
-            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入题目" class="layui-textarea type2-title"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分数</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type2-score">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">正确答案</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="close" lay-skin="switch" lay-text="√|✘">
+            <input type="checkbox" name="close" class="type2-right-key" lay-skin="switch" lay-text="√|✘">
         </div>
     </div>
 </div>
@@ -159,19 +160,19 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">第<span class="exam_number"></span>题</label>
         <div class="layui-input-block input-normal"  style="width: 500px;">
-            <textarea placeholder="请输入题目" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入题目" class="layui-textarea type3-title"></textarea>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">分数</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type3-score">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">正确答案</label>
         <div class="layui-input-block input-normal"  style="width: 500px;">
-            <textarea placeholder="请输入正确答案" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入正确答案" class="layui-textarea type3-right-key"></textarea>
         </div>
     </div>
 </div>
@@ -199,28 +200,49 @@
         });
         form.on('submit(add-topic)', function(data){
             var params = data.field;
+            var bigTitleNums = $('.big-title').length;
             // 将添加的题目入库
-            $('.exam_list').append('<a onclick="hideShow(this);" href="#"><h3 class="big-title">'+($('.big-title').length + 1) + '、' + params.title+'</h3></a>');
+            $('.exam_list').append('<input type="hidden" name="big_title[]" value="' + params.title + '">');
+            $('.exam_list').append('<a onclick="hideShow(this);" href="#"><h3 class="big-title">'+ (bigTitleNums + 1) + '、' + params.title+'</h3></a>');
             for ($i=0;$i<params.number;$i++) {
                 switch (parseInt(params.type)) {
                     case 0:
                         $(".type0-temp .exam_number").html($i+1);
+                        $('.type0-temp .type0-title').attr('name','title[0][' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-a').attr('name','a[0][' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-b').attr('name','b[0][' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-c').attr('name','c[0][' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-d').attr('name','d[0][' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-score').attr('name','score[0][' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-right-key').attr('name','right_key[0][' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type0-temp').html());
                     break;
                     case 1:
                         $(".type1-temp .exam_number").html($i+1);
+                        $('.type1-temp .type1-title').attr('name','title[1][' + bigTitleNums + '][]');
+                        $('.type1-temp .type1-score').attr('name','score[1][' + bigTitleNums + '][]');
+                        $('.type1-temp .type1-right-key').attr('name','right_key[1][' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type1-temp').html());
+                    break;
                     case 2:
                         $(".type2-temp .exam_number").html($i+1);
+                        $('.type2-temp .type2-title').attr('name','title[2][' + bigTitleNums + '][]');
+                        $('.type2-temp .type2-score').attr('name','score[2][' + bigTitleNums + '][]');
+                        $('.type2-temp .type2-right-key').attr('name','right_key[2][' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type2-temp').html());
                     break;
                     case 3:
                         $(".type3-temp .exam_number").html($i+1);
+                        $('.type3-temp .type3-title').attr('name','title[3][' + bigTitleNums + '][]');
+                        $('.type3-temp .type3-score').attr('name','score[3][' + bigTitleNums + '][]');
+                        $('.type3-temp .type3-right-key').attr('name','right_key[3][' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type3-temp').html());
                     break;
                 }
             }
             $('.exam_list').append($('.exam_list_temp').html());
+            $('.exam_list .exam_list_temp_div').removeClass('exam_list_temp_div');
+            $('.exam_list_temp_div').html('');
             form.render();
             return false;
         });
@@ -234,6 +256,8 @@
         form.on('submit(save_exam)', function (data) {
             var params = data.field;
             console.log(params);
+            curlAjax("{:url('exam_paper/save_test_paper')}",params,'commonResult');
+            return false;
         });
         $(function () {
             curlAjax("{:url('exam_paper/get_exam_type_base_conf')}",{},'getConfig');
@@ -248,5 +272,8 @@
         } else {
             $(myself).next().hide();
         }
+    }
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
     }
 </script>
