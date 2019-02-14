@@ -8,6 +8,8 @@
 namespace app\admin\service;
 use app\common\base\ServiceInter;
 use app\common\model\ExamPaperModel;
+use app\common\model\TestPaperContentModel;
+use app\common\tool\ConsoleTool;
 use app\common\tool\TimeTool;
 
 class ExamPaperService implements ServiceInter
@@ -96,7 +98,51 @@ class ExamPaperService implements ServiceInter
     }
 
     public function saveTestPaper($params=[], &$result) {
-        var_dump($params);die;
+        ConsoleTool::console($params);
+        $bigTitles = $params['big_title'];
+        $addBigTitleData = [];
+        foreach ($bigTitles as $key => $bigTitle) {
+            $bigTitleInfo = explode(',', $bigTitle);
+            $addBigTitleData[] = [
+                'big_title' => $bigTitleInfo[0],
+                'first_n'   => $key +1,
+                'type'  => $bigTitleInfo[1]
+            ];
+        }
+        if (!TestPaperContentModel::instance()->adds($addBigTitleData)) {
+            $result = '批量插入大标题失败';
+            return false;
+        }
+        $examPaperId = $params['exam_paper_id'];
+        $data = [];
+        unset($params['big_title'], $params['exam_paper_id']);
+        foreach ($params as $key => $value) {
+            foreach ($value as $key1 => $value1) {
+                foreach ($value1 as $key3 => $value3) {
+                    switch ($key) {
+                        case 'title':
+                            $data[$key3] = [
+                                'exam_paper_id' => $examPaperId,
+                                'first_n' => $key1
+                            ];
+                            $data[$key3]['title'] = $value3;
+                            break;
+                        case 'score':
+                            $data[$key3]['score'] = $value3;
+                            break;
+                        case 'right_key':
+                            $data[$key3]['right_key'] = $value3;
+                            break;
+                    }
+                }
+            }
+        }
+        if (!TestPaperContentModel::instance()->adds($data)) {
+            $result = '批量插入小题失败';
+            return false;
+        }
+        $result = '保存成功';
+        return true;
     }
 
 }

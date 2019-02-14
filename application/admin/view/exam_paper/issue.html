@@ -200,42 +200,42 @@
         });
         form.on('submit(add-topic)', function(data){
             var params = data.field;
-            var bigTitleNums = $('.big-title').length;
+            var bigTitleNums = $('.big-title').length+1;
             // 将添加的题目入库
-            $('.exam_list').append('<input type="hidden" name="big_title[]" value="' + params.title + '">');
-            $('.exam_list').append('<a onclick="hideShow(this);" href="#"><h3 class="big-title">'+ (bigTitleNums + 1) + '、' + params.title+'</h3></a>');
+            $('.exam_list').append('<input type="hidden" name="big_title[]" value="' + params.title + ',' + params.type + '">');
+            $('.exam_list').append('<a onclick="hideShow(this);" href="#"><h3 class="big-title">'+ (bigTitleNums) + '、' + params.title+'</h3></a>');
             for ($i=0;$i<params.number;$i++) {
                 switch (parseInt(params.type)) {
                     case 0:
                         $(".type0-temp .exam_number").html($i+1);
-                        $('.type0-temp .type0-title').attr('name','title[0][' + bigTitleNums + '][]');
-                        $('.type0-temp .type0-a').attr('name','a[0][' + bigTitleNums + '][]');
-                        $('.type0-temp .type0-b').attr('name','b[0][' + bigTitleNums + '][]');
-                        $('.type0-temp .type0-c').attr('name','c[0][' + bigTitleNums + '][]');
-                        $('.type0-temp .type0-d').attr('name','d[0][' + bigTitleNums + '][]');
-                        $('.type0-temp .type0-score').attr('name','score[0][' + bigTitleNums + '][]');
-                        $('.type0-temp .type0-right-key').attr('name','right_key[0][' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-title').attr('name','title[' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-a').attr('name','a[' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-b').attr('name','b[' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-c').attr('name','c[' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-d').attr('name','d[' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-score').attr('name','score[' + bigTitleNums + '][]');
+                        $('.type0-temp .type0-right-key').attr('name','right_key[' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type0-temp').html());
                     break;
                     case 1:
                         $(".type1-temp .exam_number").html($i+1);
-                        $('.type1-temp .type1-title').attr('name','title[1][' + bigTitleNums + '][]');
-                        $('.type1-temp .type1-score').attr('name','score[1][' + bigTitleNums + '][]');
-                        $('.type1-temp .type1-right-key').attr('name','right_key[1][' + bigTitleNums + '][]');
+                        $('.type1-temp .type1-title').attr('name','title[' + bigTitleNums + '][]');
+                        $('.type1-temp .type1-score').attr('name','score[' + bigTitleNums + '][]');
+                        $('.type1-temp .type1-right-key').attr('name','right_key[' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type1-temp').html());
                     break;
                     case 2:
                         $(".type2-temp .exam_number").html($i+1);
-                        $('.type2-temp .type2-title').attr('name','title[2][' + bigTitleNums + '][]');
-                        $('.type2-temp .type2-score').attr('name','score[2][' + bigTitleNums + '][]');
-                        $('.type2-temp .type2-right-key').attr('name','right_key[2][' + bigTitleNums + '][]');
+                        $('.type2-temp .type2-title').attr('name','title[' + bigTitleNums + '][]');
+                        $('.type2-temp .type2-score').attr('name','score[' + bigTitleNums + '][]');
+                        $('.type2-temp .type2-right-key').attr('name','right_key[' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type2-temp').html());
                     break;
                     case 3:
                         $(".type3-temp .exam_number").html($i+1);
-                        $('.type3-temp .type3-title').attr('name','title[3][' + bigTitleNums + '][]');
-                        $('.type3-temp .type3-score').attr('name','score[3][' + bigTitleNums + '][]');
-                        $('.type3-temp .type3-right-key').attr('name','right_key[3][' + bigTitleNums + '][]');
+                        $('.type3-temp .type3-title').attr('name','title[' + bigTitleNums + '][]');
+                        $('.type3-temp .type3-score').attr('name','score[' + bigTitleNums + '][]');
+                        $('.type3-temp .type3-right-key').attr('name','right_key[' + bigTitleNums + '][]');
                         $('.exam_list_temp_div').append($('.type3-temp').html());
                     break;
                 }
