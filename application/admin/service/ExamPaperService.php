@@ -98,46 +98,73 @@ class ExamPaperService implements ServiceInter
     }
 
     public function saveTestPaper($params=[], &$result) {
-        ConsoleTool::console($params);
         $bigTitles = $params['big_title'];
         $addBigTitleData = [];
+        $examPaperId = $params['exam_paper_id'];
+        unset($params['big_title'], $params['exam_paper_id']);
+        // 将大标题拼装入库
         foreach ($bigTitles as $key => $bigTitle) {
             $bigTitleInfo = explode(',', $bigTitle);
             $addBigTitleData[] = [
                 'big_title' => $bigTitleInfo[0],
                 'first_n'   => $key +1,
-                'type'  => $bigTitleInfo[1]
+                'type'  => $bigTitleInfo[1],
+                'exam_paper_id' => $examPaperId
             ];
         }
         if (!TestPaperContentModel::instance()->adds($addBigTitleData)) {
             $result = '批量插入大标题失败';
             return false;
         }
-        $examPaperId = $params['exam_paper_id'];
         $data = [];
-        unset($params['big_title'], $params['exam_paper_id']);
+        $newData = [];
+        // 处理入库数据
         foreach ($params as $key => $value) {
             foreach ($value as $key1 => $value1) {
-                foreach ($value1 as $key3 => $value3) {
+                $topicInfo = explode(',', $key1);
+                if (!isset($data[$topicInfo[0]][$topicInfo[1]])) {
+                    $data[$topicInfo[0]][$topicInfo[1]] = [
+                        'exam_paper_id' => $examPaperId,
+                        'first_n' => $topicInfo[$topicInfo[1]]
+                    ];
+                }
+                foreach ($value1 as $key2 => $value2) {
                     switch ($key) {
                         case 'title':
-                            $data[$key3] = [
-                                'exam_paper_id' => $examPaperId,
-                                'first_n' => $key1
-                            ];
-                            $data[$key3]['title'] = $value3;
+                            $data[$topicInfo[0]][$topicInfo[1]]['title'] = $value2;
                             break;
                         case 'score':
-                            $data[$key3]['score'] = $value3;
+                            $data[$topicInfo[0]][$topicInfo[1]]['score'] = $value2;
                             break;
                         case 'right_key':
-                            $data[$key3]['right_key'] = $value3;
+                            $data[$topicInfo[0]][$topicInfo[1]]['right_key'] = $value2;
+                            break;
+                        case 'a':
+                            $data[$topicInfo[0]][$topicInfo[1]]['option']['a'] = $value2;
+                            break;
+                        case 'b':
+                            $data[$topicInfo[0]][$topicInfo[1]]['option']['b'] = $value2;
+                            break;
+                        case 'c':
+                            $data[$topicInfo[0]][$topicInfo[1]]['option']['c'] = $value2;
+                            break;
+                        case 'd':
+                            $data[$topicInfo[0]][$topicInfo[1]]['option']['d'] = $value2;
                             break;
                     }
                 }
             }
         }
-        if (!TestPaperContentModel::instance()->adds($data)) {
+        // 将option转为json
+        foreach ($data as $key => $value) {
+            foreach ($value as $key1 => $value1) {
+                if (isset($value1['option'])) {
+                    $value[$key1]['option'] = json_encode($value1['option'], JSON_UNESCAPED_UNICODE);
+                }
+            }
+            $newData = array_merge($newData, $value);
+        }
+        if (!TestPaperContentModel::instance()->adds($newData)) {
             $result = '批量插入小题失败';
             return false;
         }
