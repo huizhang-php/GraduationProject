@@ -27,6 +27,126 @@
        </div>
        <form class="layui-form exam_list" style="margin-left: 20px;" action="">
            <input type="hidden" name="exam_paper_id" value="{$exam_paper_base_info.id}">
+           {foreach $test_paper_info as $key => $value}
+                <a onclick="hideShow(this);" href="#"><h3 class="big-title">{$key}、{$value.big_title}</h3></a>
+                {foreach $value['info'] as $key1 => $value1}
+                    {switch $value.type}
+                        {case 0}
+                            <div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">第<span class="exam_number">{$key1+1}</span>题</label>
+                                    <div class="layui-input-block input-normal"  style="width: 500px;">
+                                        <textarea lay-verify="required" placeholder="请输入题目" class="layui-textarea type0-title">{$value1.title}</textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">A</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" lay-verify="required" value="{$value1.option.a}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-a">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">B</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" lay-verify="required" value="{$value1.option.b}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-b">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">C</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" lay-verify="required" value="{$value1.option.c}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-c">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">D</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" lay-verify="required" value="{$value1.option.d}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-d">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">分数</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" lay-verify="required" value="{$value1.score}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-score">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">正确答案</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" lay-verify="required" value="{$value1.right_key}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type0-right-key">
+                                    </div>
+                                </div>
+                            </div>
+
+                        {/case}
+                        {case 1}
+                            <div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">第<span class="exam_number">{$key1+1}</span>题</label>
+                                    <div class="layui-input-block input-normal"  style="width: 500px;">
+                                        <textarea placeholder="请输入题目" class="layui-textarea type1-title">{$value1.title}</textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">分数</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" lay-verify="required" value="{$value1.score}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type1-score">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">正确答案</label>
+                                    <div class="layui-input-block input-normal"  style="width: 500px;">
+                                        <textarea placeholder="请输入正确答案" class="layui-textarea type1-right-key">{$value1.right_key}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        {/case}
+                        {case 2}
+                            <div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">第<span class="exam_number">{$key1+1}</span>题</label>
+                                    <div class="layui-input-block input-normal"  style="width: 500px;">
+                                        <textarea placeholder="请输入题目" class="layui-textarea type2-title">{$value1.title}</textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">分数</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" id="number" lay-verify="required" value="{$value1.score}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type2-score">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">正确答案</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" class="type2-right-key" {if $value1.right_key == 'on'}checked{/if} lay-skin="switch" lay-text="√|✘">
+                                    </div>
+                                </div>
+                            </div>
+                        {/case}
+                        {case 3}
+                            <div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">第<span class="exam_number">{$key1+1}</span>题</label>
+                                    <div class="layui-input-block input-normal"  style="width: 500px;">
+                                        <textarea placeholder="请输入题目" class="layui-textarea type3-title">{$value1.title}</textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">分数</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" id="number" lay-verify="required" value="{$value1.score}" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type3-score">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">正确答案</label>
+                                    <div class="layui-input-block input-normal"  style="width: 500px;">
+                                        <textarea placeholder="请输入正确答案" class="layui-textarea type3-right-key">{$value1.right_key}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        {/case}
+                    {/switch}
+                {/foreach}
+           {/foreach}
            <div hidden>
                <button lay-submit="" lay-filter="save_exam" class="layui-btn layui-btn-sm save_exam">save</button>
            </div>
@@ -124,7 +244,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">分数</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type1-score">
+            <input type="text" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type1-score">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
@@ -145,7 +265,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">分数</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type2-score">
+            <input type="text" id="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type2-score">
         </div>
     </div>
     <div class="layui-form-item">
@@ -166,7 +286,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">分数</label>
         <div class="layui-input-block" style="width: 100px;">
-            <input type="text" id="number" name="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type3-score">
+            <input type="text" id="number" lay-verify="required" value="" lay-verify="title" autocomplete="off" placeholder="" class="layui-input type3-score">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">

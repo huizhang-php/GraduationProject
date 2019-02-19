@@ -19,4 +19,8 @@ class TestPaperContentModel extends Model {
     public function adds($data) {
         return $this->saveAll($data);
     }
+
+    public function getList($condition) {
+        return $this->where($condition)->select();
+    }
 }

@@ -102,12 +102,16 @@ class ExamPaperService implements ServiceInter
         $addBigTitleData = [];
         $examPaperId = $params['exam_paper_id'];
         unset($params['big_title'], $params['exam_paper_id']);
+        // 统计有多少个大题
+        $total = TestPaperContentModel::instance()->getList(['exam_paper_id'=>$examPaperId,
+            'score' => 0]);
+        $total = count($total);
         // 将大标题拼装入库
         foreach ($bigTitles as $key => $bigTitle) {
             $bigTitleInfo = explode(',', $bigTitle);
             $addBigTitleData[] = [
                 'big_title' => $bigTitleInfo[0],
-                'first_n'   => $key +1,
+                'first_n'   => $key + $total + 1,
                 'type'  => $bigTitleInfo[1],
                 'exam_paper_id' => $examPaperId
             ];
@@ -125,7 +129,7 @@ class ExamPaperService implements ServiceInter
                 if (!isset($data[$topicInfo[0]][$topicInfo[1]])) {
                     $data[$topicInfo[0]][$topicInfo[1]] = [
                         'exam_paper_id' => $examPaperId,
-                        'first_n' => $topicInfo[$topicInfo[1]]
+                        'first_n' => $topicInfo[$topicInfo[1]] + $total
                     ];
                 }
                 foreach ($value1 as $key2 => $value2) {
@@ -170,6 +174,24 @@ class ExamPaperService implements ServiceInter
         }
         $result = '保存成功';
         return true;
+    }
+
+    public function getTestPaperInfo($id) {
+        $bigTitleList = [];
+        $bigTitleInfo = TestPaperContentModel::instance()->getList(" exam_paper_id={$id} and score=0 ")->toArray();
+        foreach ($bigTitleInfo as $key => $value) {
+            $bigTitleList[$value['first_n']] = $value;
+            $bigTitleList[$value['first_n']]['info'] = [];
+        }
+        $smallInfo = TestPaperContentModel::instance()->getList([
+            'exam_paper_id'=>$id,
+            'type' => -1
+        ])->toArray();
+        foreach ($smallInfo as $key => $value) {
+            $value['option'] = json_decode($value['option'],true);
+            $bigTitleList[$value['first_n']]['info'][] = $value;
+        }
+        return $bigTitleList;
     }
 
 }
