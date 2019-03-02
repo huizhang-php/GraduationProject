@@ -194,4 +194,20 @@ class ExamPaperService implements ServiceInter
         return $bigTitleList;
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/2 下午8:18
+     * @param $fileInfo 文件信息
+     * Description: 处理题库导入
+     */
+    public function uploadFile($fileInfo) {
+//        // 读取
+//        $objReader =\PHPExcel_IOFactory::createReader('Excel2007');
+//        $res = [];
+//        // 大标题, 小题，类型，选项，正确答案，分数，题库id
+//        foreach ($res as $key => $value) {
+//
+//        }
+    }
+
 }

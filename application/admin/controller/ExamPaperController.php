@@ -108,4 +108,18 @@ class ExamPaperController extends BaseController implements ControllerInter {
         }
         $this->returnAjax(400,$result);
     }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/2 下午7:47
+     * Description: 导入题库
+     */
+    public function upload_file() {
+        $res = $this->getFile('exam_paper');
+        if ($res==false) {
+            $this->returnAjax(400, '上传文件失败');
+        }
+        // 目前只支持单文件
+        ExamPaperService::instance()->uploadFile($res[0]);
+    }
 }

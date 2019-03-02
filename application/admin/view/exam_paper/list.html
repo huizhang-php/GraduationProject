@@ -4,7 +4,7 @@
 <div style="padding: 1rem 0rem 0.5rem 1rem;">
     <span class="layui-breadcrumb" lay-separator="—">
         <a href="">考试相关</a>
-        <a href="">考试专题</a>
+        <a href="">题库</a>
     </span>
 </div>
 
@@ -43,6 +43,7 @@
             <td>{$value.staff}</td>
             <td>{$value.end_staff}</td>
             <td>
+                <button href="#" lay-data="{data:{id:{$value.id}}}" type="button" class="layui-btn layui-btn-xs layui-btn-warm" id="upload_file"><i class="layui-icon"></i>导入</button>
                 <a href="{:url('/admin/exam_paper/issue',['id'=>$value.id])}" class="layui-btn layui-btn-xs layui-btn-normal">出题</a>
                 <button onclick="up('{$value.id}','{$value.name}','{$value.introduction}')" class="layui-btn layui-btn-xs">修改信息</button>
             </td>
@@ -93,10 +94,11 @@
 
 <script>
     var form;
-    layui.use(['table','element','form'], function() {
+    layui.use(['table','element','form','upload'], function() {
         var table = layui.table;
         var element = layui.element;
         form = layui.form;
+        var upload = layui.upload;
         element.init();
         //监听指定开关
         form.on('switch(status_on_off)', function(data){
@@ -108,6 +110,16 @@
             curlAjax("{:url('admin/exam_paper/up_status')}",data,"commonResult");
         });
         form.render();
+        //指定允许上传的文件类型
+        upload.render({
+            elem: '#upload_file'
+            ,accept: 'file' //普通文件
+            ,exts: 'xlsx'
+            ,url: "{:url('admin/exam_paper/upload_file')}"
+            ,done: function(res){
+                console.log(res)
+            }
+        });
     });
 
     function add() {
