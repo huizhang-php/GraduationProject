@@ -10,6 +10,7 @@ use app\admin\service\ExamPaperService;
 use app\common\base\BaseController;
 use app\common\base\ControllerInter;
 use app\common\config\SelfConfig;
+use app\common\tool\ShellTool;
 
 class ExamPaperController extends BaseController implements ControllerInter {
 
@@ -115,7 +116,6 @@ class ExamPaperController extends BaseController implements ControllerInter {
      * Description: 导入题库
      */
     public function upload_file() {
-
         $res = $this->getFile('exam_paper');
         if ($res==false) {
             $this->returnAjax(400, '上传文件失败');

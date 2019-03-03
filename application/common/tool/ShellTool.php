@@ -13,7 +13,14 @@ class ShellTool {
      * CreateTime: 2019/3/3 下午6:32
      * Description:
      */
-    public static function synShell() {
-        
+    public static function synPhp($apiUrl,$params = []) {
+        $php = 'php ';
+        $apiUrl = dirname(dirname(dirname(dirname(__FILE__)))) . '/public/index.php ' . $apiUrl . ' ';
+        $params = implode(' ', $params);
+        $res = popen($php . $apiUrl . $params . " >/dev/null 2>&1 &", 'r'); // >/dev/null /dev/null 被称为位桶(bit bucket)或者黑洞(black hole)。空设备通常被用于丢弃不需要的输出流，或作为用于输入流的空文件。
+        if ($res) {
+            return true;
+        }
+        return false;
     }
 }

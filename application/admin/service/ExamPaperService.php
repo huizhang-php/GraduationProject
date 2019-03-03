@@ -7,9 +7,11 @@
 
 namespace app\admin\service;
 use app\common\base\ServiceInter;
+use app\common\config\SelfConfig;
 use app\common\model\ExamPaperModel;
 use app\common\model\TestPaperContentModel;
 use app\common\tool\ExcelTool;
+use app\common\tool\ShellTool;
 use app\common\tool\TimeTool;
 class ExamPaperService implements ServiceInter
 {
@@ -203,7 +205,5 @@ class ExamPaperService implements ServiceInter
      */
     public function uploadFile($fileInfo)
     {
-        $excelData = ExcelTool::getExcelContent($fileInfo['complete_path']);
-        var_dump($excelData);die;
     }
 }
