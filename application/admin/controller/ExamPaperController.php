@@ -115,6 +115,7 @@ class ExamPaperController extends BaseController implements ControllerInter {
      * Description: 导入题库
      */
     public function upload_file() {
+
         $res = $this->getFile('exam_paper');
         if ($res==false) {
             $this->returnAjax(400, '上传文件失败');

@@ -6,6 +6,7 @@
  * Description:
  */
 namespace app\common\base;
+use app\common\config\SelfConfig;
 use think\facade\Request;
 use think\File;
 
@@ -48,16 +49,17 @@ trait MyRequest {
         } else {
             $res = Request::file();
         }
+        $uploadFilePath = SelfConfig::getConfig('Project.file_path');
         $returnInfo = [];
         /** @var $value File*/
         foreach ($res as $value) {
-            // 移动到框架应用根目录/uploads/ 目录下
-            $info = $value->move( '../public/static/file/'.$filePath);
+            $info = $value->move( $uploadFilePath.$filePath);
             if ($info) {
                 $returnInfo[] = [
                     'save_name' => $info->getSaveName(),
                     'ext' => $info->getExtension(),
                     'file_name' => $info->getFilename(),
+                    'complete_path' => $uploadFilePath.$filePath.'/'.$info->getSaveName()
                 ];
             } else {
                 return false;

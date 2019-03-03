@@ -9,9 +9,8 @@ namespace app\admin\service;
 use app\common\base\ServiceInter;
 use app\common\model\ExamPaperModel;
 use app\common\model\TestPaperContentModel;
-use app\common\tool\ConsoleTool;
+use app\common\tool\ExcelTool;
 use app\common\tool\TimeTool;
-
 class ExamPaperService implements ServiceInter
 {
     public static function instance()
@@ -199,15 +198,12 @@ class ExamPaperService implements ServiceInter
      * CreateTime: 2019/3/2 下午8:18
      * @param $fileInfo 文件信息
      * Description: 处理题库导入
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    public function uploadFile($fileInfo) {
-//        // 读取
-//        $objReader =\PHPExcel_IOFactory::createReader('Excel2007');
-//        $res = [];
-//        // 大标题, 小题，类型，选项，正确答案，分数，题库id
-//        foreach ($res as $key => $value) {
-//
-//        }
+    public function uploadFile($fileInfo)
+    {
+        $excelData = ExcelTool::getExcelContent($fileInfo['complete_path']);
+        var_dump($excelData);die;
     }
-
 }
