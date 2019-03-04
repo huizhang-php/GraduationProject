@@ -121,6 +121,10 @@ class ExamPaperController extends BaseController implements ControllerInter {
             $this->returnAjax(400, '上传文件失败');
         }
         // 目前只支持单文件
-        ExamPaperService::instance()->uploadFile($res[0]);
+        $res = ExamPaperService::instance()->uploadFile($res[0], $this->params['id'], $result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 }

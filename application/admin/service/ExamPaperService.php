@@ -200,10 +200,22 @@ class ExamPaperService implements ServiceInter
      * CreateTime: 2019/3/2 下午8:18
      * @param $fileInfo 文件信息
      * Description: 处理题库导入
-     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @param $id
      */
-    public function uploadFile($fileInfo)
+    public function uploadFile($fileInfo, $id, &$result)
     {
+        // 投入异步php
+        $res = ShellTool::synPhp(SelfConfig::getConfig('SynphpApi.syn_upload_question_bank'), [$fileInfo['complete_path'],$id]);
+        if (!$res) {
+            $result = '投入异步PHP失败';
+            return false;
+        }
+        // 修改题库状态
+        $res = ExamPaperModel::instance()->up(['id'=>$id], ['status'=>SelfConfig::getConfig('Exam.question_bank_status')['being_imported']]);
+        if ($res) {
+            $result = '正在导入请耐心等待';
+            return true;
+        }
+        return false;
     }
 }

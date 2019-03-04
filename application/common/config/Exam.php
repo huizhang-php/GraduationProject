@@ -36,5 +36,11 @@ return [
             'number'    => 1,
             'is_checked' => 0
         ],
+    ],
+    // 题库状态
+    'question_bank_status' => [
+        'normal' => 1, // 正常
+        'disable' => 2, // 禁用
+        'being_imported' => 3 // 正在导入
     ]
 ];

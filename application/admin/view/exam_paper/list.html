@@ -35,7 +35,7 @@
             <td>{$value.name}</td>
             <td>{$value.introduction}</td>
             <td class="layui-form">
-                <input type="checkbox" {if $value.status eq 1}checked="" {/if}
+                <input type="checkbox" {if $value.status neq 2}checked="" {/if}
                 lay-skin="switch" value="{$value.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
             </td>
             <td>{$value.ctime}</td>
@@ -43,8 +43,12 @@
             <td>{$value.staff}</td>
             <td>{$value.end_staff}</td>
             <td>
-                <button href="#" lay-data="{data:{id:{$value.id}}}" type="button" class="layui-btn layui-btn-xs layui-btn-warm" id="upload_file"><i class="layui-icon"></i>导入</button>
-                <a href="{:url('/admin/exam_paper/issue',['id'=>$value.id])}" class="layui-btn layui-btn-xs layui-btn-normal">出题</a>
+                {if $value.status==1}
+                    <button href="#" lay-data="{data:{id:{$value.id}}}" type="button" class="layui-btn layui-btn-xs layui-btn-warm" id="upload_file"><i class="layui-icon"></i>导入</button>
+                {elseif $value.status == 3}
+                    正在导入...
+                {/if}
+                <!--<a href="{:url('/admin/exam_paper/issue',['id'=>$value.id])}" class="layui-btn layui-btn-xs layui-btn-normal">出题</a>-->
                 <button onclick="up('{$value.id}','{$value.name}','{$value.introduction}')" class="layui-btn layui-btn-xs">修改信息</button>
             </td>
         </tr>
@@ -117,7 +121,9 @@
             ,exts: 'xlsx'
             ,url: "{:url('admin/exam_paper/upload_file')}"
             ,done: function(res){
-                console.log(res)
+                if (res.code == 200) {
+                    location.reload();
+                }
             }
         });
     });
