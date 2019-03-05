@@ -13,7 +13,7 @@
 
 <!-- 主体内容 -->
 <div class="bodyer" style="width: 95%;padding-left: 2.5%;">
-    <button class="layui-btn layui-btn-sm" onclick="add();">添加试卷</button>
+    <button class="layui-btn layui-btn-sm" onclick="add();">添加题库</button>
     <table class="layui-table">
         <thead>
         <tr>
@@ -43,11 +43,7 @@
             <td>{$value.staff}</td>
             <td>{$value.end_staff}</td>
             <td>
-                {if $value.status==1}
-                    <button href="#" lay-data="{data:{id:{$value.id}}}" type="button" class="layui-btn layui-btn-xs layui-btn-warm" id="upload_file"><i class="layui-icon"></i>导入</button>
-                {elseif $value.status == 3}
-                    正在导入...
-                {/if}
+                <a href="{:url('/admin/exam_paper/question_bank_list',array('id'=>$value.id))}" class="layui-btn layui-btn-xs layui-btn-normal">查看</a>
                 <!--<a href="{:url('/admin/exam_paper/issue',['id'=>$value.id])}" class="layui-btn layui-btn-xs layui-btn-normal">出题</a>-->
                 <button onclick="up('{$value.id}','{$value.name}','{$value.introduction}')" class="layui-btn layui-btn-xs">修改信息</button>
             </td>
@@ -61,16 +57,16 @@
 <form action="#" method="post" class="layui-form pop-up-style" id="add-form" hidden>
 
     <div class="layui-form-item" style="padding-top: 10px;">
-        <label class="layui-form-label menu-label">试卷名称</label>
+        <label class="layui-form-label menu-label">题库名称</label>
         <div class="layui-input-inline menu-input-div input-normal">
-            <input type="text" lay-verify="required" required id="name" name="name" class="layui-input" placeholder="请输入试卷名称"/>
+            <input type="text" lay-verify="required" required id="name" name="name" class="layui-input" placeholder="请输入题库名称"/>
         </div>
     </div>
 
     <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">试卷简介</label>
+        <label class="layui-form-label">题库简介</label>
         <div class="layui-input-block input-normal">
-            <textarea placeholder="请输入试卷简介" name="introduction" id="introduction" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入题库简介" name="introduction" id="introduction" class="layui-textarea"></textarea>
         </div>
     </div>
 
@@ -81,16 +77,16 @@
 
     <input id="edit_id" type="hidden" value="" name="id">
     <div class="layui-form-item" style="padding-top: 10px;">
-        <label class="layui-form-label menu-label">试卷名称</label>
+        <label class="layui-form-label menu-label">题库名称</label>
         <div class="layui-input-inline menu-input-div input-normal">
-            <input type="text" lay-verify="required" required id="edit_name" name="name" class="layui-input" placeholder="请输入试卷名称"/>
+            <input type="text" lay-verify="required" required id="edit_name" name="name" class="layui-input" placeholder="请输入题库名称"/>
         </div>
     </div>
 
     <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">试卷简介</label>
+        <label class="layui-form-label">题库简介</label>
         <div class="layui-input-block input-normal">
-            <textarea placeholder="请输入试卷简介" name="introduction" id="edit_introduction" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入题库简介" name="introduction" id="edit_introduction" class="layui-textarea"></textarea>
         </div>
     </div>
 
@@ -129,16 +125,16 @@
     });
 
     function add() {
-        layerOpen('添加试卷','#add-form',addForm,['添加', '取消'],['400px;', 'auto']);
+        layerOpen('添加题库','#add-form',addForm,['添加', '取消'],['400px;', 'auto']);
     }
 
     function addForm(data) {
         if (data.name == '') {
-            tipMsg(400,'试卷名称不能为空',0);
+            tipMsg(400,'题库名称不能为空',0);
             return false;
         }
         if (data.introduction == '') {
-            tipMsg(400,'试卷简介不能为空',0);
+            tipMsg(400,'题库简介不能为空',0);
             return false;
         }
         curlAjax("{:url('exam_paper/add')}",data,'commonResult');
@@ -154,11 +150,11 @@
 
     function editForm(data) {
         if (data.name == '') {
-            tipMsg(400,'试卷名称不能为空',0);
+            tipMsg(400,'题库名称不能为空',0);
             return false;
         }
         if (data.introduction == '') {
-            tipMsg(400,'试卷简介不能为空',0);
+            tipMsg(400,'题库简介不能为空',0);
             return false;
         }
         curlAjax("{:url('exam_paper/up')}",data,'commonResult');

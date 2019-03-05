@@ -1,0 +1,76 @@
+{include file='/common/header' /}
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">考试相关</a>
+        <a href="">题列表</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <button href="#" lay-data="{data:{id:{$id}}}" type="button" class="layui-btn layui-btn-xs layui-btn-warm" id="upload_file"><i class="layui-icon"></i>导入题库</button>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>题目</th>
+            <th>选项</th>
+            <th>正确答案</th>
+            <th>类型</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $question_bank_list as $key => $value}
+        <tr>
+            <td>{$value.id}</td>
+            <td>{$value.title}</td>
+            <td>{$value.option}</td>
+            <td>{$value.right_key}</td>
+            <td>
+                {if $value.type eq 0}
+                    单选题
+                {elseif $value.type eq 1}
+                    填空题
+                {elseif $value.type eq 2}
+                    判断题
+                {elseif $value.type eq 3}
+                    问答题
+                {else/}
+                    <span style="color: red;">未知</span>
+                {/if}
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+</div>
+{$question_bank_list|raw}
+
+<script>
+    var form;
+    layui.use(['table','element','form','upload'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        var upload = layui.upload;
+        element.init();
+        //指定允许上传的文件类型
+        upload.render({
+            elem: '#upload_file'
+            ,accept: 'file' //普通文件
+            ,exts: 'xlsx'
+            ,url: "{:url('admin/exam_paper/upload_file')}"
+            ,done: function(res){
+                commonResult(res);
+            }
+        });
+    });
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+</script>
+

@@ -16,11 +16,29 @@ class TestPaperContentModel extends Model {
         return new TestPaperContentModel();
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/5 下午10:05
+     * @param $data
+     * @return \think\Collection
+     * @throws \Exception
+     * Description:
+     */
     public function adds($data) {
         return $this->saveAll($data);
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/5 下午10:05
+     * @param $condition
+     * @return \think\Paginator
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function getList($condition) {
-        return $this->where($condition)->select();
+        return $this->where($condition)->paginate(20,false,['query' => [
+            'id' => $condition['exam_paper_id']
+        ]]);
     }
 }

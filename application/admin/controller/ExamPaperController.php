@@ -127,4 +127,20 @@ class ExamPaperController extends BaseController implements ControllerInter {
         }
         $this->returnAjax(400,$result);
     }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/5 下午7:05
+     * Description: 展示题库详细信息
+     * @throws \think\exception\DbException
+     */
+    public function question_bank_list() {
+        $res = ExamPaperService::instance()->getQuestionBankList($this->params['id']);
+        $this->assign([
+            'question_bank_list'=>$res,
+            'id'    => $this->params['id']
+        ]);
+        return $this->fetch();
+    }
+
 }

@@ -83,10 +83,6 @@ class ExamPaperService implements ServiceInter
             $result = '状态修改失败';
             return false;
         }
-        if ($res[0]['exam_paper_id'] == 0) {
-            $result = '还没有出题';
-            return false;
-        }
         $data['status'] = $params['status'];
         $data['end_staff'] = session('admin_name');
         $data['utime'] = TimeTool::getTime();
@@ -217,5 +213,17 @@ class ExamPaperService implements ServiceInter
             return true;
         }
         return false;
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/5 下午7:14
+     * @param $id
+     * Description: 获取某题库列表
+     * @throws \think\exception\DbException
+     */
+    public function getQuestionBankList($id) {
+        $res = TestPaperContentModel::instance()->getList(['exam_paper_id'=>$id]);
+        return $res;
     }
 }
