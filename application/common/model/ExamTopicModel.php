@@ -6,9 +6,9 @@
  */
 namespace app\common\model;
 
-use think\Model;
+use app\common\base\BaseModel;
 
-class ExamTopicModel extends Model {
+class ExamTopicModel extends BaseModel {
 
     protected $table='exam_topic';
 
@@ -35,7 +35,7 @@ class ExamTopicModel extends Model {
      * Description:
      */
     public function getList($condition) {
-        return $this->where($condition)->paginate(20);
+        return $this->getCond($condition, $this->table)->paginate(20);
     }
 
     public function up($condition, $data) {

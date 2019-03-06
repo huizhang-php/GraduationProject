@@ -7,6 +7,7 @@
 
 namespace app\admin\service;
 use app\common\base\ServiceInter;
+use app\common\model\ExamPaperModel;
 use app\common\model\ExamTopicModel;
 use app\common\tool\TimeTool;
 
@@ -43,7 +44,7 @@ class ExamTopicService implements ServiceInter {
             'introduction' => $params['introduction'],
             'staff' => session('admin_name'),
             'end_staff' => session('admin_name'),
-            'question_bank_config' => json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE),
+            'question_bank_config' => str_replace("'",'',json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE)),
             'test_paper_type' => $params['test_paper_type'],
             'test_start_time' => $params['test_start_time'],
             'test_time_length' => $params['test_time_length'],
@@ -74,13 +75,38 @@ class ExamTopicService implements ServiceInter {
         return ExamTopicModel::instance()->getList($params);
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 下午5:02
+     * @param array $params
+     * @param $result
+     * @return bool
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function up($params=[], &$result)
     {
         // TODO: Implement up() method.
         $condition['id'] = $params['id'];
-        $params['introduction'] = json_encode($params['introduction']);
-        unset($params['id']);
-        $data = $params;
+        $res = ExamTopicModel::instance()->getList(['name'=>$params['name'],'id'=>['<>',$params['id']]]);
+        $res = $res->toArray()['data'];
+        if (!empty($res)) {
+            $result = '专题名称重复';
+            return false;
+        }
+        $data = [
+            'name' => $params['name'],
+            'introduction' => $params['introduction'],
+            'end_staff' => session('admin_name'),
+            'question_bank_config' => json_encode($params['question_bank']),
+            'test_paper_type' => $params['test_paper_type'],
+            'test_start_time' => $params['test_start_time'],
+            'test_time_length' => $params['test_time_length'],
+            'question_bank_id' => $params['question_bank_id'],
+            'utime' => TimeTool::getTime()
+        ];
         $res = ExamTopicModel::instance()->up($condition, $data);
         if ($res) {
             $result = '修改成功';

@@ -77,6 +77,61 @@ class ExamTopicController extends BaseController implements ControllerInter {
         $this->returnAjax(400,$result);
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 下午4:49
+     * @return \think\response\View
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
+    public function up_view() {
+        // 获取配置文件
+        $total = 0;
+        $newExamType = array();
+        $examType = SelfConfig::getConfig('Exam.exam_type_base_conf');
+        // 获取专题信息
+        $examTopicInfo = ExamTopicService::instance()->getList(['id'=>$this->params['id']]);
+        $examTopicInfo = $examTopicInfo->toArray()['data'][0];
+        $questionBankConfig = json_decode($examTopicInfo['question_bank_config'], true);
+        if (empty($questionBankConfig)) {
+            $questionBankConfig = $examType;
+        }
+        foreach ($questionBankConfig as $key => $value) {
+            if (!isset($value['score'])) {
+                $value['score'] = 1;
+            }
+            if (!isset($value['number'])) {
+                $value['number'] = 0;
+            }
+            $total += $value['score'] * $value['number'];
+            $newExamType[] = [
+                'score' => $value['score'],
+                'number' => $value['number'],
+                'name'  => $examType[$key]['name']
+            ];
+        }
+        // 获取题库
+        $questionBankList = ExamPaperService::instance()->getList(['is_all'=>true]);
+        $this->assign([
+            'exam_type' => $newExamType,
+            'total' => $total,
+            'question_bank_list' => $questionBankList,
+            'exam_topic_info' => $examTopicInfo,
+            'id' => $this->params['id']
+        ]);
+        return $this->fetch();
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 下午5:03
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function up()
     {
         // TODO: Implement up() method.

@@ -57,7 +57,7 @@
                     <td>{$value.staff}</td>
                     <td>{$value.end_staff}</td>
                     <td>
-                        <button onclick="up('{$value.id}','{$value.name}','{$value.introduction}')" class="layui-btn layui-btn-xs">修改信息</button>
+                        <a href="{:url('exam_topic/up_view',array('id'=>$value.id))}" class="layui-btn layui-btn-xs">修改信息</a>
                     </td>
                 </tr>
             {/foreach}
@@ -83,42 +83,6 @@
         });
         form.render();
     });
-
-    function add() {
-        layerOpen('添加考试专题','#add-form',addForm,['添加', '取消'],['400px;', 'auto']);
-    }
-
-    function addForm(data) {
-        if (data.name == '') {
-            tipMsg(400,'专题名称不能为空',0);
-            return false;
-        }
-        if (data.introduction == '') {
-            tipMsg(400,'专题简介不能为空',0);
-            return false;
-        }
-        curlAjax("{:url('exam_topic/add')}",data,'commonResult');
-    }
-
-    // 修改
-    function up(id,name,introduction) {
-        $('#edit_id').val(id);
-        $('#edit_name').val(name);
-        $('#edit_introduction').val(introduction);
-        layerOpen('修改专题信息','#up-form',editForm,['修改', '取消'],['400px;', 'auto']);
-    }
-
-    function editForm(data) {
-        if (data.name == '') {
-            tipMsg(400,'专题名称不能为空',0);
-            return false;
-        }
-        if (data.introduction == '') {
-            tipMsg(400,'专题简介不能为空',0);
-            return false;
-        }
-        curlAjax("{:url('exam_topic/up')}",data,'commonResult');
-    }
 
     function commonResult(data) {
         tipMsg(data.code,data.msg);
