@@ -13,12 +13,16 @@
 
 <!-- 主体内容 -->
 <div class="bodyer" style="width: 95%;padding-left: 2.5%;">
-    <button class="layui-btn layui-btn-sm" onclick="add();">添加考试专题</button>
+    <a href="{:url('exam_topic/add_view')}" class="layui-btn layui-btn-sm">添加考试专题</a>
     <table class="layui-table">
         <thead>
         <tr>
             <th>ID</th>
             <th>名称</th>
+            <th>开考时间</th>
+            <th>考试时长</th>
+            <th>试卷类型</th>
+            <th>题库名称</th>
             <th>简介</th>
             <th>状态</th>
             <th>创建时间</th>
@@ -33,6 +37,16 @@
                 <tr>
                     <td>{$value.id}</td>
                     <td>{$value.name}</td>
+                    <td>{$value.test_start_time}</td>
+                    <td>{$value.test_time_length}分钟</td>
+                    <td>
+                        {if $value.test_paper_type eq 0}
+                            统一试卷
+                        {else /}
+                            随机组卷
+                        {/if}
+                    </td>
+                    <td>{$value.examtopicquestionbank.name}</td>
                     <td>{$value.introduction}</td>
                     <td class="layui-form">
                         <input type="checkbox" {if $value.status eq 1}checked="" {/if}
@@ -43,50 +57,14 @@
                     <td>{$value.staff}</td>
                     <td>{$value.end_staff}</td>
                     <td>
-                        <button class="layui-btn layui-btn-xs">分配试卷</button>
                         <button onclick="up('{$value.id}','{$value.name}','{$value.introduction}')" class="layui-btn layui-btn-xs">修改信息</button>
                     </td>
                 </tr>
             {/foreach}
         </tbody>
     </table>
+    {$list|raw}
 </div>
-<!--添加模板-->
-<form action="#" method="post" class="layui-form pop-up-style" id="add-form" hidden>
-    <div class="layui-form-item" style="padding-top: 10px;">
-        <label class="layui-form-label menu-label">专题名称</label>
-        <div class="layui-input-inline menu-input-div input-normal">
-            <input type="text" lay-verify="required" required id="name" name="name" class="layui-input" placeholder="请输入专题名称"/>
-        </div>
-    </div>
-
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">专题简介</label>
-        <div class="layui-input-block input-normal">
-            <textarea placeholder="请输入专题简介" name="introduction" id="introduction" class="layui-textarea"></textarea>
-        </div>
-    </div>
-
-</form>
-<!--修改模板-->
-<form action="#" method="post" class="layui-form pop-up-style" id="up-form" hidden>
-
-    <input id="edit_id" type="hidden" value="" name="id">
-    <div class="layui-form-item" style="padding-top: 10px;">
-        <label class="layui-form-label menu-label">专题名称</label>
-        <div class="layui-input-inline menu-input-div input-normal">
-            <input type="text" lay-verify="required" required id="edit_name" name="name" class="layui-input" placeholder="请输入专题名称"/>
-        </div>
-    </div>
-
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">专题简介</label>
-        <div class="layui-input-block input-normal">
-            <textarea placeholder="请输入专题简介" name="introduction" id="edit_introduction" class="layui-textarea"></textarea>
-        </div>
-    </div>
-
-</form>
 <script>
     var form;
     layui.use(['table','element','form'], function() {

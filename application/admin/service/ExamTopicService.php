@@ -18,12 +18,23 @@ class ExamTopicService implements ServiceInter {
         return new ExamTopicService();
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 上午12:04
+     * @param array $params
+     * @param $result
+     * @return bool
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function add($params=[], &$result)
     {
         // TODO: Implement add() method.
         // 查看专题名称是否重复
         $res = ExamTopicModel::instance()->getList(['name'=>$params['name']]);
-        if (!empty($res)) {
+        if (!empty($res->toArray()['data'])) {
             $result = '专题名称重复';
             return false;
         }
@@ -32,6 +43,11 @@ class ExamTopicService implements ServiceInter {
             'introduction' => $params['introduction'],
             'staff' => session('admin_name'),
             'end_staff' => session('admin_name'),
+            'question_bank_config' => json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE),
+            'test_paper_type' => $params['test_paper_type'],
+            'test_start_time' => $params['test_start_time'],
+            'test_time_length' => $params['test_time_length'],
+            'question_bank_id' => $params['question_bank_id']
         ];
         $res = ExamTopicModel::instance()->save($data);
         if ($res) {
@@ -42,10 +58,20 @@ class ExamTopicService implements ServiceInter {
         return false;
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 上午12:45
+     * @param array $params
+     * @return array|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function getList($params=[])
     {
         // TODO: Implement getList() method.
-        return ExamTopicModel::instance()->getList([]);
+        return ExamTopicModel::instance()->getList($params);
     }
 
     public function up($params=[], &$result)
@@ -75,15 +101,6 @@ class ExamTopicService implements ServiceInter {
         // TODO: Implement up_status() method.
         // 查看试卷是否准备就绪
         $condition['id'] = $params['id'];
-        $res = ExamTopicModel::instance()->getList($condition);
-        if (empty($res->toArray())) {
-            $result = '状态修改失败';
-            return false;
-        }
-        if ($res[0]['test_paper_status'] == 0) {
-            $result = '还没有添加试卷';
-            return false;
-        }
         $data['status'] = $params['status'];
         $data['end_staff'] = session('admin_name');
         $data['utime'] = TimeTool::getTime();

@@ -9,7 +9,7 @@ return [
     // 试题类型基础配置
     'exam_type_base_conf' => [
         0 => [
-            'name'  => '单选',
+            'name'  => '单选题',
             'score' => 3,
             'title' => '单选题。',
             'number'    => 1,

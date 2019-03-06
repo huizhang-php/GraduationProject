@@ -17,8 +17,21 @@ class ExamPaperModel extends Model {
         return new ExamPaperModel();
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 上午12:46
+     * @param array $condition
+     * @return array|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function getList($condition=[]) {
-        return $this->where($condition)->select();
+        if (isset($condition['is_all']) && isset($condition['is_all']) == true) {
+            return $this->select();
+        }
+        return $this->where($condition)->paginate(20);
     }
 
     public function add($data) {

@@ -21,18 +21,39 @@ class ExamPaperService implements ServiceInter
         return new ExamPaperService();
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 上午12:46
+     * @param array $params
+     * @return array|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function getList($params=[])
     {
         // TODO: Implement getList() method.
         return ExamPaperModel::instance()->getList($params);
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 上午12:47
+     * @param array $params
+     * @param $result
+     * @return bool
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function add($params=[], &$result)
     {
         // TODO: Implement add() method.
         // 查看专题名称是否重复
         $res = ExamPaperModel::instance()->getList(['name'=>$params['name']]);
-        if (!empty($res->toArray())) {
+        if (!empty($res->toArray()['data'])) {
             $result = '试卷名称重复';
             return false;
         }

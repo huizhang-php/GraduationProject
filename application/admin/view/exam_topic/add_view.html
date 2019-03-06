@@ -1,0 +1,151 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">考试相关</a>
+        <a href="">添加考试专题</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <!--添加模板-->
+    <form action="#" method="post" class="layui-form pop-up-style" id="add-form">
+
+        <div class="layui-inline">
+            <label class="layui-form-label">开考时间</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" lay-verify="required" id="test-start-time" name="test_start_time" placeholder=" - ">
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="padding-top: 10px;">
+            <label class="layui-form-label menu-label">考试时长</label>
+            <div class="layui-input-inline menu-input-div input-normal">
+                <input type="text" lay-verify="required|number" required name="test_time_length" value="120" class="layui-input" placeholder="考试时长(分钟)"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="padding-top: 10px;">
+            <label class="layui-form-label menu-label">专题名称</label>
+            <div class="layui-input-inline menu-input-div input-normal">
+                <input type="text" lay-verify="required" required id="name" name="name" class="layui-input" placeholder="请输入专题名称"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择题库</label>
+            <div class="layui-input-block" style="width: 11.8rem;">
+                <select name="question_bank_id" lay-filter="aihao">
+                    {foreach $question_bank_list as $key => $value}
+                        <option value="{$value.id}">{$value.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">专题简介</label>
+            <div class="layui-input-block input-normal">
+                <textarea placeholder="请输入专题简介" lay-verify="required" name="introduction" id="introduction" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">试卷类型</label>
+            <div class="layui-input-block">
+                <input type="radio" name="test_paper_type" value="0" title="统一试卷" checked="">
+                <input type="radio" name="test_paper_type" value="1" title="随机组卷">
+            </div>
+        </div>
+
+        {foreach $exam_type as $key => $value}
+            <div class="layui-form-item" style="padding-top: 10px; display: inline-block;">
+                <label class="layui-form-label menu-label">{$key+1}、{$value.name}</label>
+                <div class="layui-input-inline menu-input-div input-normal">
+                    <input type="text" lay-verify="required|number" required data-key="{$key}" data-type="number" value="{$value.number}" name="question_bank[{$key}]['number']" class="layui-input number-{$key} input-change" placeholder=""/>
+                </div>
+            </div>
+            <div class="layui-form-item" style="padding-top: 10px;display: inline-block;">
+                <label class="layui-form-label menu-label">分数</label>
+                <div class="layui-input-inline menu-input-div input-normal">
+                    <input type="text" lay-verify="required|number" required data-key="{$key}" data-type="score" value="{$value.score}" name="question_bank[{$key}]['score']" class="layui-input score-{$key} input-change" placeholder=""/>
+                </div>
+            </div>
+            <div class="layui-form-item" style="padding-top: 10px;display: inline-block;">
+                <label class="layui-form-label menu-label">总分：<span class="class-total-{$key}">{$value.score*$value.number}</span></label>
+            </div>
+            {if $key eq 3}
+                <div class="layui-form-item" style="padding-top: 10px;display: inline-block;">
+                    <label class="layui-form-label menu-label" style="width: 100px;">试卷总分：<span class="total">{$total}</span></label>
+                </div>
+            {/if}
+            <br>
+        {/foreach}
+        <button style="margin-left: 55%;" class="layui-btn" lay-submit="" lay-filter="save">提交</button>
+    </form>
+</div>
+<script>
+    var form;
+    layui.use(['table','element','form','laydate'], function() {
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var element = layui.element;
+        form = layui.form;
+        element.init();
+        laydate.render({
+            elem: '#test-start-time'
+            ,type: 'datetime'
+        });
+        form.render();
+        //监听提交
+        form.on('submit(save)', function(data){
+            console.log(data);
+            curlAjax("{:url('exam_topic/add')}",data.field,'commonResult');
+            return false;
+        });
+    });
+
+    $(function () {
+        inputChange()
+    });
+
+    function inputChange() {
+        $(".input-change").on("input",function(e){
+            var inputValue = e.delegateTarget.value;
+            var type = $(this).data('type');
+            var key = $(this).data('key');
+            var classTotal = $('.class-total-'+key).html();
+            var total = parseInt($('.total').html());
+            switch (type){
+                case 'number':
+                    var patrn = /^\+?[1-9][0-9]*$/;　　//判断是否为正整数
+                    if (!patrn.test(inputValue)) {
+                        if (inputValue != '') {
+                            $(this).val(0);
+                        }
+                        inputValue = 0;
+                    }
+                    var other = $('.score-'+key).val();
+                    break;
+                case 'score':
+                    var patrn = /^\+?[1-9][0-9]*$/;　　//判断是否为正整数
+                    if (!patrn.test(inputValue)) {
+                        $(this).val(1);
+                        inputValue = 1;
+                    }
+                    var other = $('.number-'+key).val();
+                    break;
+            }
+            var newClassTotal = inputValue*other;
+            $('.class-total-'+key).html(newClassTotal);
+            $('.total').html(newClassTotal-classTotal+total);
+        });
+    }
+    function commonResult(data) {
+        tipMsg(data.code,data.msg,0,false,"{:url('/admin/exam_topic/list')}");
+    }
+</script>
+

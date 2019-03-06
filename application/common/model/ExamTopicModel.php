@@ -12,6 +12,10 @@ class ExamTopicModel extends Model {
 
     protected $table='exam_topic';
 
+    public function examtopicquestionbank() {
+        return $this->hasOne('ExamPaperModel', 'id', 'question_bank_id');
+    }
+
     public static function instance() {
         return new ExamTopicModel();
     }
@@ -20,8 +24,18 @@ class ExamTopicModel extends Model {
         return $this->save($data);
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/6 上午12:04
+     * @param $condition
+     * @return array|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function getList($condition) {
-        return $this->where($condition)->select();
+        return $this->where($condition)->paginate(20);
     }
 
     public function up($condition, $data) {
