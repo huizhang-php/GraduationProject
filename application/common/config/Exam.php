@@ -42,5 +42,8 @@ return [
         'normal' => 1, // 正常
         'disable' => 2, // 禁用
         'being_imported' => 3 // 正在导入
-    ]
+    ],
+
+    // 报名链接秘钥
+    'sign_up_key' => 'tuzisir'
 ];

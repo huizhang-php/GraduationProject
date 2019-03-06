@@ -7,9 +7,11 @@
 
 namespace app\admin\service;
 use app\common\base\ServiceInter;
+use app\common\config\SelfConfig;
 use app\common\model\ExamPaperModel;
 use app\common\model\ExamTopicModel;
 use app\common\tool\TimeTool;
+use app\common\tool\EncryptTool;
 
 class ExamTopicService implements ServiceInter {
 
@@ -40,6 +42,7 @@ class ExamTopicService implements ServiceInter {
             return false;
         }
         $data = [
+            'id' => EncryptTool::getUniqid(),
             'name' => $params['name'],
             'introduction' => $params['introduction'],
             'staff' => session('admin_name'),
@@ -72,7 +75,12 @@ class ExamTopicService implements ServiceInter {
     public function getList($params=[])
     {
         // TODO: Implement getList() method.
-        return ExamTopicModel::instance()->getList($params);
+        $sign = SelfConfig::getConfig('Exam.sign_up_key');
+        $res = ExamTopicModel::instance()->getList($params);
+        foreach ($res as $key => $value) {
+            $res[$key]['encrypt'] = EncryptTool::encry($value['id'], $sign);
+        }
+        return $res;
     }
 
     /**
