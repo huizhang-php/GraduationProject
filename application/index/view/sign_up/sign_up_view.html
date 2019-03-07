@@ -1,10 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{include file='/common/header' /}
+<style>
+    body{
+        background: #2C3E50;
+    }
+    .btn-danger:hover {
+        color: #fff;
+        background-color: #c9302c;
+        border-color: #ac2925;}
+    .btn-danger {
+        color: #fff;
+        background-color: #d9534}
+    .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #C9302C;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;}
+    .btn:hover{
+        text-decoration: none;
+    }
+    .font-bs {
+        color: #ffffff;
+    }
+</style>
+<div class="layui-container" >
+    <div class="my-header" style="height: 100px;padding-top: 5%;">
+        <div style="margin: 0 auto;" class="font-bs">
+            <h1 style="text-align: center;">{$title}</h1>
+        </div>
+        <!--<div style="text-align: left;padding-left: 40%;">-->
+            <!--试卷类型：{$exam_topic_info.test_paper_type}<br>-->
+            <!--考试时长：{$exam_topic_info.test_time_length}<br>-->
+            <!--考试时间：{$exam_topic_info.test_start_time}<br>-->
+        <!--</div>-->
+    </div>
+    <div class="layui-row" style="margin-top: 5%;">
+        <div class="layui-col-md4" style="">
+            &nbsp;
+        </div>
+        <div class="layui-col-md5" style="">
+            <div class="grid-demo grid-demo-bg1"  style="">
+                <form class="layui-form" action="">
+                    <input type="hidden" name="exam_topic_id" value="{$exam_topic_id}">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label font-bs">姓名</label>
+                        <div class="layui-input-block">
+                            <input style="width: 50%;display: inline-block;" type="text" name="name" lay-verify="title" autocomplete="off" placeholder="请输入姓名" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label font-bs">性别</label>
+                        <div class="layui-input-block font-bs">
+                            <input type="radio" name="sex" value="0" title="男" checked="">
+                            <input type="radio" name="sex" value="1" title="女">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label font-bs">邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="email" style="width: 95%;display: inline-block;" placeholder="请输入邮箱" lay-verify="required|email" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label font-bs">手机</label>
+                            <div class="layui-input-inline">
+                                <input type="tel" name="phone" style="width: 60%;display: inline-block;" placeholder="请输入手机号" lay-verify="required|phone" autocomplete="off" class="layui-input" >
+                                <input onclick="sendmessage(this,3);" type="button" value="发送" class="btn btn-danger"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="sign-up">立即报名</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="layui-col-md3" style="">
+            &nbsp;
+        </div>
+    </div>
+    <div style="margin-top: 10%;">
+        <p style="text-align: center;" class="font-bs">
+            {$exam_topic_info.introduction}<br>
+        </p>
+    </div>
+</div>
 
-</body>
-</html>
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+        //监听提交
+        form.on('submit(sign-up)', function(data){
+            console.log(data);
+            curlAjax("{:url('/index/sign_up/sign_up')}",data.field,'commonResult');
+            return false;
+        });
+    });
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+    function sendmessage(obj,second){
+        if(sendmessage){
+            countDown(obj,second)
+        }
+        else{
+            alert("错误，虽然永远走不到这里！");
+        }
+    }
+    function countDown(obj,second){
+        // 如果秒数还是大于0，则表示倒计时还没结束
+        if(second>=0){
+            // 获取默认按钮上的文字
+            if(typeof buttonDefaultValue === 'undefined' ){
+                buttonDefaultValue =  obj.defaultValue;
+            }
+            // 按钮置为不可点击状态
+            obj.disabled = true;
+            // 按钮里的内容呈现倒计时状态
+            obj.value = buttonDefaultValue+'('+second+')';
+            // 时间减一
+            second--;
+            // 一秒后重复执行
+            setTimeout(function(){countDown(obj,second);},1000);
+            // 否则，按钮重置为初始状态
+        }else{
+            // 按钮置未可点击状态
+            obj.disabled = false;
+            // 按钮里的内容恢复初始状态
+            obj.value = buttonDefaultValue;
+        }
+    }
+</script>

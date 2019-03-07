@@ -23,7 +23,7 @@
             <th>考试时长</th>
             <th>试卷类型</th>
             <th>题库名称</th>
-            <th>简介</th>
+            <!--<th>简介</th>-->
             <th>状态</th>
             <th>创建时间</th>
             <th>更新时间</th>
@@ -47,7 +47,7 @@
                         {/if}
                     </td>
                     <td>{$value.examtopicquestionbank.name}</td>
-                    <td>{$value.introduction}</td>
+                    <!--<td>{$value.introduction}</td>-->
                     <td class="layui-form">
                         <input type="checkbox" {if $value.status eq 1}checked="" {/if}
                         lay-skin="switch" value="{$value.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
@@ -57,7 +57,7 @@
                     <td>{$value.staff}</td>
                     <td>{$value.end_staff}</td>
                     <td>
-                        <a href="http://www.tuzisir.com:8082/index.php/index/sign_up/sign_up_view?id={$value.encrypt}" class="layui-btn layui-btn-xs">报名链接</a>
+                        <a href="http://www.tuzisir.com:8082/index.php/index/sign_up/sign_up_view?id={$value.encrypt}" target="_blank" class="layui-btn layui-btn-xs">报名链接</a>
                         <a href="{:url('exam_topic/up_view',array('id'=>$value.id))}" class="layui-btn layui-btn-xs">修改信息</a>
                     </td>
                 </tr>

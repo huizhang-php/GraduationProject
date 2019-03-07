@@ -23,10 +23,20 @@ class SignUpController extends BaseController {
     public function sign_up_view() {
         $examTopicInfo = SignUpService::instance()->signUpView($this->params['id']);
         $this->assign([
-                'exam_topic_info' => $examTopicInfo
+                'exam_topic_info' => $examTopicInfo,
+                'title' => "{$examTopicInfo['name']} - 在线报名！",
+                'exam_topic_id' => $this->params['id']
             ]
         );
         return $this->fetch();
+    }
+
+    public function sign_up() {
+        $res = SignUpService::instance()->signUp($this->params,$result);
+        if ($res) {
+            $this->returnAjax(200,$result);
+        }
+        $this->returnAjax(400,$result);
     }
 
 }

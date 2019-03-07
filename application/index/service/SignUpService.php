@@ -40,4 +40,15 @@ class SignUpService{
         }
         return $examTopicInfo[0];
     }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/8 上午1:08
+     * @param $data
+     * @param $result
+     * Description: 报名
+     */
+    public function signUp($data, &$result) {
+        
+    }
 }
