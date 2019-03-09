@@ -8,8 +8,8 @@
 namespace app\admin\service;
 use app\common\base\ServiceInter;
 use app\common\config\SelfConfig;
-use app\common\model\ExamPaperModel;
 use app\common\model\ExamTopicModel;
+use app\common\model\StudentExamTopicModel;
 use app\common\tool\TimeTool;
 use app\common\tool\EncryptTool;
 
@@ -144,5 +144,12 @@ class ExamTopicService implements ServiceInter {
         }
         $result = '状态修改失败';
         return false;
+    }
+
+    public function examTopicStudents($data) {
+        $res = StudentExamTopicModel::instance()->getList([
+            'exam_topic_id' => $data['exam_topic_id']
+        ]);
+        return $res;
     }
 }

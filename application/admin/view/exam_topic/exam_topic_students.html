@@ -1,0 +1,63 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">考试相关</a>
+        <a href="">已报名考生</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>考生编号</th>
+            <th>姓名</th>
+            <th>邮箱</th>
+            <th>手机号</th>
+            <th>考试状态</th>
+            <th>报名时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $students as $key => $value}
+        <tr>
+            <td>{$value.id}</td>
+            <td>{$value.examtopicstudent.name}</td>
+            <td>{$value.examtopicstudent.email}</td>
+            <td>{$value.examtopicstudent.phone}</td>
+            <td>
+                {if $value.status eq 0}
+                    待考试
+                {elseif $value.status eq 1 /}
+                    正在考试
+                {/if}
+            </td>
+            <td>{$value.ctime}</td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {$students|raw}
+</div>
+<script>
+    var form;
+    layui.use(['table','element','form'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        element.init();
+        form.render();
+    });
+
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+
+</script>
+

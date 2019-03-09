@@ -156,4 +156,12 @@ class ExamTopicController extends BaseController implements ControllerInter {
         }
         $this->returnAjax(400,$result);
     }
+
+    public function exam_topic_students() {
+        $students = ExamTopicService::instance()->examTopicStudents($this->params);
+        $this->assign([
+            'students' => $students
+        ]);
+        return $this->fetch();
+    }
 }

@@ -9,7 +9,7 @@ namespace app\index\service;
 
 use app\common\config\SelfConfig;
 use app\common\model\ExamTopicModel;
-use app\common\model\StudentExamTopicModel;
+use app\common\model\StudentsModel;
 use app\common\tool\EncryptTool;
 use app\common\model\StudentsModel;
 use app\common\tool\MailTool;
@@ -70,7 +70,7 @@ class SignUpService{
             }
         }
         // 查看是否已经报名
-        $res = StudentExamTopicModel::instance()->getList([
+        $res = StudentsModel::instance()->getList([
             'exam_topic_id' => $examTopicId,
             'student_id' => $res[0]['id']
         ])->toArray();
@@ -125,7 +125,7 @@ class SignUpService{
                 return false;
             }
             // 查看是否已经报名
-            $res = StudentExamTopicModel::instance()->getList([
+            $res = StudentsModel::instance()->getList([
                 'exam_topic_id' => $examTopicId,
                 'student_id' => $res[0]['id']
             ])->toArray();
@@ -148,7 +148,7 @@ class SignUpService{
                 return false;
             }
             // 入考生-考试专题中间表
-            $res = StudentExamTopicModel::instance()->addStudentExamTopic([
+            $res = StudentsModel::instance()->addStudentExamTopic([
                 'exam_topic_id' => $examTopicId,
                 'student_id' => $data['id']
             ]);
@@ -194,7 +194,7 @@ class SignUpService{
                 return false;
             }
             // 查看是否已经报名
-            $res = StudentExamTopicModel::instance()->getList([
+            $res = StudentsModel::instance()->getList([
                 'exam_topic_id' => $examTopicId,
                 'student_id' => $res[0]['id']
             ])->toArray();
@@ -203,7 +203,7 @@ class SignUpService{
                 return false;
             }
             // 入考生-考试专题中间表
-            $res = StudentExamTopicModel::instance()->addStudentExamTopic([
+            $res = StudentsModel::instance()->addStudentExamTopic([
                 'exam_topic_id' => $examTopicId,
                 'student_id' => $res[0]['id']
             ]);
