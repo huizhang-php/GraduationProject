@@ -25,4 +25,13 @@ class StudentExamTopicModel extends BaseModel {
             'exam_topic_id' => $condition['exam_topic_id']
         ]]);
     }
+
+    public function addStudentExamTopic($data) {
+        return $this->save($data);
+    }
+
+    public function up($condition, $data) {
+        return $this->where($condition)->update($data);
+    }
+
 }

@@ -7,9 +7,6 @@
 namespace app\index\controller;
 
 use app\common\base\BaseController;
-use app\common\config\SelfConfig;
-use app\common\tool\RedisTool;
-use app\common\tool\SmsTool;
 use app\index\service\SignUpService;
 
 class SignUpController extends BaseController {
@@ -70,6 +67,14 @@ class SignUpController extends BaseController {
             $this->returnAjax(400,$result);
         }
         $this->returnAjax(200,$result);
+    }
+
+    public function confirm_sign_up() {
+        SignUpService::instance()->confirmSignUp($this->params, $result);
+        $this->assign([
+            'result' => $result
+        ]);
+        return $this->fetch();
     }
 
 }
