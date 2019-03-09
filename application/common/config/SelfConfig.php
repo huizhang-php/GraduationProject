@@ -11,7 +11,7 @@ class SelfConfig {
 
     public static function getConfig($confName) {
         $confParams = explode('.', $confName);
-        $config = include_once $confParams[0] . '.php';
+        $config = include $confParams[0] . '.php';
         return $config[$confParams[1]];
     }
 

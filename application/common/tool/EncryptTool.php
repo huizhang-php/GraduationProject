@@ -87,4 +87,14 @@ class EncryptTool {
         $yCode = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J');
         return $yCode[intval(date('Y')) - 2019] . strtoupper(dechex(date('m'))) . date('d') . substr(time(), -5) . substr(microtime(), 2, 5) . sprintf('%02d', rand(0, 99));
     }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/9 下午4:45
+     * @return string
+     * Description: 生成考生考号
+     */
+    public static function getStdNumber() {
+        return date('Ymd').substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
+    }
 }

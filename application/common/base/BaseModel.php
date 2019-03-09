@@ -28,6 +28,7 @@ class BaseModel extends Model {
     protected function getCond($condition, $table) {
         $this->table = $table;
         $myself = $this;
+        $or = [];
         foreach ($condition as $key => $value) {
             if (is_array($value) && count($value)) {
                 switch ($value[0]) {
@@ -35,8 +36,15 @@ class BaseModel extends Model {
                         $myself = $this->whereNotIn($key, $value[1]);
                         unset($condition[$key]);
                         break;
+                    case 'or':
+                        $or[$key] = $value[1];
+                        unset($condition[$key]);
+                        break;
                 }
             }
+        }
+        if (!empty($or)) {
+           $myself = $myself->whereOr($or);
         }
         $myself = $myself->where($condition);
         return $myself;

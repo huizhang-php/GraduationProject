@@ -6,3 +6,4 @@ thinkphp
 /public/static/file
 .env
 .DS_Store
+application/common/config/
