@@ -64,4 +64,12 @@ class SignUpController extends BaseController {
         $this->returnAjax(200,$result);
     }
 
+    public function apply() {
+        $res = SignUpService::instance()->apply($this->params, $result);
+        if ($res === false) {
+            $this->returnAjax(400,$result);
+        }
+        $this->returnAjax(200,$result);
+    }
+
 }

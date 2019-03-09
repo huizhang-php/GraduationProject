@@ -19,4 +19,8 @@ class StudentExamTopicModel extends BaseModel {
     public function addStudentExamTopic($data) {
         return $this->save($data);
     }
+
+    public function getList($data) {
+        return $this->where($data)->select();
+    }
 }

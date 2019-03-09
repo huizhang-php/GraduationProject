@@ -48,7 +48,45 @@
             <!--考试时间：{$exam_topic_info.test_start_time}<br>-->
         <!--</div>-->
     </div>
-    <div class="layui-row" style="margin-top: 5%;">
+    <div class="layui-row" hidden id="apply" style="margin-top: 5%;">
+        <div class="layui-col-md4" style="">
+            &nbsp;
+        </div>
+        <div class="layui-col-md5" style="">
+            <div class="grid-demo grid-demo-bg1" style="">
+                <form class="layui-form" action="">
+                    <input type="hidden" name="exam_topic_id" value="{$exam_topic_id}">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label font-bs">手机登录</label>
+                            <div class="layui-input-inline">
+                                <input type="tel" name="phone" id="phone" style="width: 60%;display: inline-block;" placeholder="请输入手机号" lay-verify="required|phone" autocomplete="off" class="layui-input" >
+                                <input onclick="sendmessage(this,3, 2,'{$exam_topic_id}');" type="button" value="发送" class="btn btn-danger"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item code">
+                        <div class="layui-inline">
+                            <label class="layui-form-label font-bs"></label>
+                            <div class="layui-input-inline">
+                                <input type="tel" name="code" id="" style="width: 60%;display: inline-block;" placeholder="手机验证码" lay-verify="required" autocomplete="off" class="layui-input" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <span class="layui-btn" onclick="signUp();">注册</span>
+                            <button class="layui-btn" lay-submit="" lay-filter="apply">报名</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="layui-col-md3" style="">
+            &nbsp;
+        </div>
+    </div>
+    <div class="layui-row" id="sign-up" style="margin-top: 5%;">
         <div class="layui-col-md4" style="">
             &nbsp;
         </div>
@@ -82,22 +120,22 @@
                             <label class="layui-form-label font-bs">手机</label>
                             <div class="layui-input-inline">
                                 <input type="tel" name="phone" id="phone" style="width: 60%;display: inline-block;" placeholder="请输入手机号" lay-verify="required|phone" autocomplete="off" class="layui-input" >
-                                <input onclick="sendmessage(this,3, '{$exam_topic_id}');" type="button" value="发送" class="btn btn-danger"/>
+                                <input onclick="sendmessage(this,3, 1,{$exam_topic_id});" type="button" value="发送" class="btn btn-danger"/>
                             </div>
                         </div>
                     </div>
-                    <div class="layui-form-item code" hidden>
+                    <div class="layui-form-item code">
                         <div class="layui-inline">
                             <label class="layui-form-label font-bs"></label>
                             <div class="layui-input-inline">
-                                <input type="tel" name="phone" id="phone" style="width: 60%;display: inline-block;" placeholder="手机验证码" lay-verify="required" autocomplete="off" class="layui-input" >
+                                <input type="tel" name="code" id="" style="width: 60%;display: inline-block;" placeholder="手机验证码" lay-verify="required" autocomplete="off" class="layui-input" >
                             </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-input-block">
                             <button class="layui-btn" lay-submit="" lay-filter="sign-up">注册</button>
-                            <button class="layui-btn" lay-submit="" lay-filter="sign-up">已有账号</button>
+                            <span class="layui-btn" onclick="haveAccount();">已有账号</span>
                         </div>
                     </div>
                 </form>
@@ -120,23 +158,36 @@
             ,layer = layui.layer
             ,layedit = layui.layedit
             ,laydate = layui.laydate;
-        //监听提交
+        // 监听提交
         form.on('submit(sign-up)', function(data){
             curlAjax("{:url('/index/sign_up/sign_up')}",data.field,'commonResult');
             return false;
         });
+        // 监听提交
+        form.on('submit(apply)', function(data){
+            curlAjax("{:url('/index/sign_up/apply')}",data.field,'commonResult');
+            return false;
+        });
     });
+    function haveAccount() {
+        $("#sign-up").hide();
+        $("#apply").show();
+    }
+    function signUp() {
+        $("#sign-up").show();
+        $("#apply").hide();
+    }
     function commonResult(data) {
         tipMsg(data.code,data.msg);
     }
-    function sendmessage(obj,second,exam_topic_id){
+    function sendmessage(obj,second,type,id){
         var phone = $("#phone").val();
         if (phone == "") {
             tipMsg(400,"手机号不能为空",0,false,false,false);
             return false;
         }
         // 请求发送短信接口
-        var res = curlAjax("{:url('/index/sign_up/send_sms')}",{phone:phone},null,"POST",false);
+        var res = curlAjax("{:url('/index/sign_up/send_sms')}",{phone:phone,type:type,exam_topic_id:id},null,"POST",false);
         tipMsg(res.code, res.msg, 0, false, false, false);
         if (res.code == 200) {
             if(sendmessage){

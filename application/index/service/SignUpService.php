@@ -16,7 +16,6 @@ use app\common\tool\MailTool;
 use app\common\tool\RedisTool;
 use app\common\tool\SmsTool;
 use think\Db;
-use think\Exception;
 
 class SignUpService{
 
@@ -55,18 +54,35 @@ class SignUpService{
      */
     public function sendSms($data, &$result) {
         // 查询手机号是否已经被注册
+        $examTopicId = EncryptTool::decry($data['exam_topic_id'],SelfConfig::getConfig('Exam.sign_up_key'));
         $res = StudentsModel::instance()->getList([
             'phone' => $data['phone']
-        ]);
-        if (!empty($res->toArray())) {
-            $result = '手机号已经被注册';
+        ])->toArray();
+        if ($data['type'] == 1) {
+            if (!empty($res)) {
+                $result = '手机号已经被注册';
+                return false;
+            }
+        } else if ($data['type'] == 2) {
+            if (empty($res)) {
+                $result = '此手机号还没有被注册';
+                return false;
+            }
+        }
+        // 查看是否已经报名
+        $res = StudentExamTopicModel::instance()->getList([
+            'exam_topic_id' => $examTopicId,
+            'student_id' => $res[0]['id']
+        ])->toArray();
+        if (!empty($res)) {
+            $result = '您已经报名';
             return false;
         }
         $config = SelfConfig::getConfig('ExtendApi.sms');
         // 发送信息
         $res = SmsTool::sendSms(4688,$data['phone'], $config['tpls'][4688]['content']);
         if ($res===false || $res['error_code'] != 0) {
-            $result = '返送短信失败';
+            $result = '发送短信失败';
             return false;
         }
         // 存入redis 5分钟
@@ -98,13 +114,23 @@ class SignUpService{
                 'email' => ['or', $data['email']],
                 'phone' => ['or', $data['phone']]
             ]);
-            if (!empty($res->toArray())) {
+            $res = $res->toArray();
+            if (!empty($res)) {
                 if ($res[0]['email'] == $data['email']) {
                     $result = '邮箱已经被注册';
                 }
                 if ($res[0]['phone'] == $data['phone']) {
                     $result = '手机号已经被注册';
                 }
+                return false;
+            }
+            // 查看是否已经报名
+            $res = StudentExamTopicModel::instance()->getList([
+                'exam_topic_id' => $examTopicId,
+                'student_id' => $res[0]['id']
+            ])->toArray();
+            if (!empty($res)) {
+                $result = '您已经报名';
                 return false;
             }
             // 验证手机号+验证码是否跟缓存中一致
@@ -139,6 +165,52 @@ class SignUpService{
             }
             $result = '发送邮件失败';
             return false;
+        });
+        return $res;
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/9 下午9:34
+     * @param $data
+     * @param $result
+     * Description:
+     */
+    public function apply($data, &$result) {
+        $res = Db::transaction(function () use ($data, &$result) {
+            $examTopicId = EncryptTool::decry($data['exam_topic_id'],SelfConfig::getConfig('Exam.sign_up_key'));
+            // 查看手机号或者邮箱是否已经注册，并返回相应信息
+            $res = StudentsModel::instance()->getList([
+                'phone' => $data['phone']
+            ])->toArray();
+            if (empty($res)) {
+                $result = '此手机号还没有被注册';
+                return false;
+            }
+            // 验证手机号+验证码是否跟缓存中一致
+            $phoneInfo = RedisTool::instance()->getStr($data['phone']);
+            if ($phoneInfo===false || !is_string($phoneInfo) || $phoneInfo != $data['code']) {
+                $result = '手机验证码错误';
+                return false;
+            }
+            // 查看是否已经报名
+            $res = StudentExamTopicModel::instance()->getList([
+                'exam_topic_id' => $examTopicId,
+                'student_id' => $res[0]['id']
+            ])->toArray();
+            if (!empty($res)) {
+                $result = '您已经报名';
+                return false;
+            }
+            // 入考生-考试专题中间表
+            $res = StudentExamTopicModel::instance()->addStudentExamTopic([
+                'exam_topic_id' => $examTopicId,
+                'student_id' => $res[0]['id']
+            ]);
+            if (!$res) {
+                $result = '入中间表失败';
+                return false;
+            }
         });
         return $res;
     }
