@@ -35,7 +35,7 @@ class ExamTopicModel extends BaseModel {
      * Description:
      */
     public function getList($condition) {
-        return $this->getCond($condition, $this->table)->paginate(20);
+        return $this->getCond($condition, $this->table)->order('ctime', 'desc')->paginate(20);
     }
 
     public function up($condition, $data) {

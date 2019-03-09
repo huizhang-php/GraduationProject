@@ -21,7 +21,7 @@ class StudentExamTopicModel extends BaseModel {
     }
 
     public function getList($condition) {
-        return $this->where($condition)->paginate(20, false ,['query' => [
+        return $this->where($condition)->order('ctime', 'desc')->paginate(20, false ,['query' => [
             'exam_topic_id' => $condition['exam_topic_id']
         ]]);
     }

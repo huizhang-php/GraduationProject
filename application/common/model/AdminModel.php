@@ -55,7 +55,7 @@ class AdminModel extends Model {
      * Description: 获取列表
      */
     public function getList() {
-        return $this->select();
+        return $this->order('ctime', 'desc')->select();
     }
 
     /**

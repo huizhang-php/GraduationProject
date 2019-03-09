@@ -46,7 +46,9 @@ class BaseModel extends Model {
         if (!empty($or)) {
            $myself = $myself->whereOr($or);
         }
-        $myself = $myself->where($condition);
+        if (!empty($condition)){
+            $myself = $myself->where($condition);
+        }
         return $myself;
     }
 }

@@ -29,9 +29,9 @@ class ExamPaperModel extends Model {
      */
     public function getList($condition=[]) {
         if (isset($condition['is_all']) && isset($condition['is_all']) == true) {
-            return $this->select();
+            return $this->order('ctime', 'desc')->select();
         }
-        return $this->where($condition)->paginate(20);
+        return $this->where($condition)->order('ctime', 'desc')->paginate(20);
     }
 
     public function add($data) {

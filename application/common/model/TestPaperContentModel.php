@@ -37,7 +37,7 @@ class TestPaperContentModel extends Model {
      * Description:
      */
     public function getList($condition) {
-        return $this->where($condition)->paginate(20,false,['query' => [
+        return $this->where($condition)->order('ctime', 'desc')->paginate(20,false,['query' => [
             'id' => $condition['exam_paper_id']
         ]]);
     }

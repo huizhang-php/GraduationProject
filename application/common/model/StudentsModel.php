@@ -16,13 +16,18 @@ class StudentsModel extends BaseModel {
         return new StudentsModel();
     }
 
-    public function getList($data) {
-        $res = $this->getCond($data, $this->table)->select();
+    public function getList($data=[]) {
+        $res = $this->getCond($data, $this->table)->order('ctime', 'desc')->paginate(20);
         return $res;
     }
 
     public function addStudent($data) {
         return $this->save($data);
+    }
+
+    public function upStudent($condition, $data) {
+        $res = $this->where($condition)->update($data);
+        return $res;
     }
 
 }

@@ -17,7 +17,7 @@ class RoleModel extends Model {
     }
 
     public function getList() {
-        return $this->select();
+        return $this->order('ctime', 'desc')->select();
     }
 
     public function up($condition, $data)
