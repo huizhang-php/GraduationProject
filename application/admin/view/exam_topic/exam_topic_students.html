@@ -21,6 +21,7 @@
             <th>邮箱</th>
             <th>手机号</th>
             <th>考试状态</th>
+            <th>登录状态</th>
             <th>报名时间</th>
         </tr>
         </thead>
@@ -36,6 +37,13 @@
                     待考试
                 {elseif $value.status eq 1 /}
                     正在考试
+                {/if}
+            </td>
+            <td>
+                {if $value.login_status eq 0}
+                    <span style="color: red;">未登录</span>
+                {elseif $value.login_status eq 1 /}
+                    <span style="color: green;">已登录</span>
                 {/if}
             </td>
             <td>{$value.ctime}</td>
