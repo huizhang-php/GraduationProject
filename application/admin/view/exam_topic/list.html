@@ -48,9 +48,10 @@
                     </td>
                     <td>{$value.examtopicquestionbank.name}</td>
                     <!--<td>{$value.introduction}</td>-->
-                    <td class="layui-form">
-                        <input type="checkbox" {if $value.status eq 1}checked="" {/if}
-                        lay-skin="switch" value="{$value.id}-1" lay-filter="status_on_off" lay-text="正常|禁用">
+                    <td>
+                        {if $value.status eq 0}
+                            待考
+                        {/if}
                     </td>
                     <td>{$value.ctime}</td>
                     <td>{$value.utime}</td>

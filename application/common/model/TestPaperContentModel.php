@@ -7,9 +7,10 @@
 
 namespace app\common\model;
 
-use think\Model;
 
-class TestPaperContentModel extends Model {
+use app\common\base\BaseModel;
+
+class TestPaperContentModel extends BaseModel {
     protected $table = 'test_paper_content';
 
     public static function instance() {
@@ -37,8 +38,28 @@ class TestPaperContentModel extends Model {
      * Description:
      */
     public function getList($condition) {
-        return $this->where($condition)->order('ctime', 'desc')->paginate(20,false,['query' => [
-            'id' => $condition['exam_paper_id']
-        ]]);
+        if (isset($condition['all'])) {
+            unset($condition['all']);
+            $res = $this->getCond($condition, $this->table)->select();
+        } else {
+            $res = $this->getCond($condition, $this->table)->order('ctime', 'desc')->paginate(20,false,['query' => [
+                'id' => $condition['exam_paper_id']
+            ]]);
+        }
+        return $res;
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/14 下午10:41
+     * @param $data
+     * @return mixed
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\exception\PDOException
+     * Description:
+     */
+    public function randSelect($data) {
+        $sql = "select * from test_paper_content where exam_paper_id={$data['question_bank_id']} and type={$data['type']} ORDER BY rand() limit 0,{$data['num']}";
+        return $this->query($sql);
     }
 }

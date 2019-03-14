@@ -41,4 +41,5 @@ class ExamPaperModel extends Model {
     public function up($condition, $data) {
         return $this->where($condition)->update($data);
     }
+
 }

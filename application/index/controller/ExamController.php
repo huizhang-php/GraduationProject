@@ -21,7 +21,29 @@ class ExamController extends BaseController {
      * Description: 考试验证页面
      */
     public function exam() {
-        $res = ExamService::instance()->exam($this->params);
+        $res = ExamService::instance()->exam($this->params, $msg);
+        if ($res === false) {
+            $this->assign(['msg'=>$msg]);
+        } else {
+            $this->assign($res);
+        }
+        return $this->fetch();
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/14 下午6:00
+     * @return mixed
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
+    public function test_view() {
+        $res = ExamService::instance()->testView($this->params, $msg);
+        if ($res === false) {
+            die($msg);
+        }
         $this->assign($res);
         return $this->fetch();
     }

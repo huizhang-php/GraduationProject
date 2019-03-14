@@ -42,7 +42,13 @@ class SignUpService{
         if (empty($examTopicInfo)) {
             die('无效访问');
         }
-        return $examTopicInfo[0];
+        $examTopicInfo = $examTopicInfo[0];
+        $testStartTime = strtotime($examTopicInfo['test_start_time']);
+        $nowTime = time();
+        if ($nowTime > $testStartTime) {
+            die('考试已经开始或结束，不能报名');
+        }
+        return $examTopicInfo;
     }
 
     /**
@@ -54,43 +60,43 @@ class SignUpService{
      */
     public function sendSms($data, &$result) {
         // 查询手机号是否已经被注册
-//        $examTopicId = EncryptTool::decry($data['exam_topic_id'],SelfConfig::getConfig('Exam.sign_up_key'));
-//        $res = StudentsModel::instance()->getList([
-//            'phone' => $data['phone']
-//        ])->toArray();
-//        if ($data['type'] == 1) {
-//            if (!empty($res)) {
-//                $result = '手机号已经被注册';
-//                return false;
-//            }
-//        } else if ($data['type'] == 2) {
-//            if (empty($res)) {
-//                $result = '此手机号还没有被注册';
-//                return false;
-//            }
-//        }
-//        // 查看是否已经报名
-//        $res = StudentsModel::instance()->getList([
-//            'exam_topic_id' => $examTopicId,
-//            'student_id' => $res[0]['id']
-//        ])->toArray();
-//        if (!empty($res)) {
-//            $result = '您已经报名';
-//            return false;
-//        }
-//        $config = SelfConfig::getConfig('ExtendApi.sms');
-//        // 发送信息
-//        $res = SmsTool::sendSms(4688,$data['phone'], $config['tpls'][4688]['content']);
-//        if ($res===false || $res['error_code'] != 0) {
-//            $result = '发送短信失败';
-//            return false;
-//        }
-//        // 存入redis 5分钟
-//        $res = RedisTool::instance()->setStr($data['phone'], $config['tpls'][4688]['code'], 300);
-//        if (!$res) {
-//            $result = '写入缓存失败';
-//            return false;
-//        }
+        $examTopicId = EncryptTool::decry($data['exam_topic_id'],SelfConfig::getConfig('Exam.sign_up_key'));
+        $res = StudentsModel::instance()->getList([
+            'phone' => $data['phone']
+        ])->toArray();
+        if ($data['type'] == 1) {
+            if (!empty($res)) {
+                $result = '手机号已经被注册';
+                return false;
+            }
+        } else if ($data['type'] == 2) {
+            if (empty($res)) {
+                $result = '此手机号还没有被注册';
+                return false;
+            }
+        }
+        // 查看是否已经报名
+        $res = StudentsModel::instance()->getList([
+            'exam_topic_id' => $examTopicId,
+            'student_id' => $res[0]['id']
+        ])->toArray();
+        if (!empty($res)) {
+            $result = '您已经报名';
+            return false;
+        }
+        $config = SelfConfig::getConfig('ExtendApi.sms');
+        // 发送信息
+        $res = SmsTool::sendSms(4688,$data['phone'], $config['tpls'][4688]['content']);
+        if ($res===false || $res['error_code'] != 0) {
+            $result = '发送短信失败';
+            return false;
+        }
+        // 存入redis 5分钟
+        $res = RedisTool::instance()->setStr($data['phone'], $config['tpls'][4688]['code'], 300);
+        if (!$res) {
+            $result = '写入缓存失败';
+            return false;
+        }
         $result = '发送短信成功';
         return true;
     }

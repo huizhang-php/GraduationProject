@@ -39,7 +39,8 @@ class ExamTopicModel extends BaseModel {
     }
 
     public function up($condition, $data) {
-        return $this->where($condition)->update($data);
+        $res = $this->where($condition)->update($data);
+        return $res;
     }
 
 }
