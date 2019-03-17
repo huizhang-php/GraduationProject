@@ -38,6 +38,7 @@ class ExamController extends BaseController {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      * Description:
+     * @throws \Exception
      */
     public function test_view() {
         $res = ExamService::instance()->testView($this->params, $msg);
@@ -47,4 +48,5 @@ class ExamController extends BaseController {
         $this->assign($res);
         return $this->fetch();
     }
+
 }

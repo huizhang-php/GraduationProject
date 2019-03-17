@@ -100,6 +100,7 @@ class ExamService extends BaseController{
      * @throws \Exception
      */
     public function testView($data, &$msg) {
+        $returnData = ['test_paper_info'=>array()];
         // 获取学生信息
         $studentInfo = StudentsModel::instance()->getList([
             'id' => $data['student_id']
@@ -181,27 +182,30 @@ class ExamService extends BaseController{
             }
         } else {
             // 固定试卷
-            $testPaperInfo = EveryStudentTopicModel::instance()->getList(['exam_topic_id'=>$data['exam_topic_id']]);
+            $testPaperInfo = EveryStudentTopicModel::instance()->getList(['exam_topic_id'=>$data['exam_topic_id']])->toArray()['data'];
             $testPaperContentIds = [];
             foreach ($testPaperInfo as $key => $value) {
                 $testPaperContentIds[] = $value['test_paper_content_id'];
             }
             $testPaperContentIds = array_unique($testPaperContentIds);
-            $allExamPaperData = TestPaperContentModel::instance()->getList(['id'=>$testPaperContentIds,'all'=>1]);
+            $allExamPaperData = TestPaperContentModel::instance()->getList(['id'=>$testPaperContentIds,'all'=>1])->toArray()['data'];
         }
-        $returnData = ['test_paper_info'=>array()];
         // 获取配置
         $examConfig = SelfConfig::getConfig('Exam.exam_type_base_conf');
         foreach ($allExamPaperData as $key => $value) {
             if (isset($returnData['test_paper_info'][$value['type']])) {
+                $returnData['test_paper_info'][$value['type']]['num'] = count($returnData['test_paper_info']);
                 $returnData['test_paper_info'][$value['type']]['big_title'] = $examConfig[$value['type']];
+                $returnData['test_paper_info'][$value['type']]['big_title']['num'] = count($returnData['test_paper_info']);
             } else {
                 $value['score'] = $questionBankConfig[$value['type']]['score'];
                 $returnData['test_paper_info'][$value['type']]['data'][] = $value;
             }
         }
+        $examTopicInfo['test_start_time_new'] = str_replace('-0','-',date('Y-m-d-h-i-s', strtotime($examTopicInfo['test_start_time'])+$examTopicInfo['test_time_length']*60));
         $returnData['student_info'] = $studentInfo;
         $returnData['exam_topic_info'] = $examTopicInfo;
+        $returnData['student_exam_topic_info'] = $studentExamTopicInfo;
         return $returnData;
     }
 

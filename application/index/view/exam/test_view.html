@@ -1,1 +1,156 @@
-123
+{include file='/common/header' /}
+<style type="text/css">
+    html{
+        height:100%
+    }
+    body {
+        height: 100%;
+    }
+</style>
+<div style="width: 95%;margin: 0 auto;">
+    <ul class="layui-nav layui-bg-green">
+        <li class="layui-nav-item">{$exam_topic_info.name}</li>
+    </ul>
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <div class="layui-col-sm3">
+                <div class="grid-demo">
+                    <div style="background: #ccc;">
+                        <div style="padding: 20px; background-color: #F2F2F2;">
+                            <div class="layui-row layui-col-space15">
+                                <div class="layui-col-md12">
+                                    <div class="layui-card">
+                                        <div class="layui-card-header">学生信息</div>
+                                        <div class="layui-card-body">
+                                            <div>姓名：{$student_info.name}</div>
+                                            <div>性别：
+                                                {if $student_info.sex eq 0}
+                                                    男
+                                                {else /}
+                                                    女
+                                                {/if}
+                                            </div>
+                                            <div>邮箱：{$student_info.email}</div>
+                                            <div>手机号：{$student_info.phone}</div>
+                                            <div>考生编号：{$student_info.id}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-row layui-col-space15">
+                                <div class="layui-col-md12">
+                                    <div class="layui-card">
+                                        <div class="layui-card-header">考试信息</div>
+                                        <div class="layui-card-body">
+                                            <div>考试时间：{$exam_topic_info.test_start_time}</div>
+                                            <div>考试时长：{$exam_topic_info.test_time_length}分钟</div>
+                                            <div>剩余时间：<span class="layui-word-aux" style="color: green;" id="countdown"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6">
+                <div class="grid-demo">
+                    <div style="margin: 3%">
+                        <form class="layui-form" action="">
+                            <input type="hidden" name="exam_topic_id" value="{$exam_topic_info.id}">
+                            <input type="hidden" name="student_exam_topic_id" value="{$student_exam_topic_info.id}">
+                            {foreach $test_paper_info as $key => $value}
+                                <div id="hide-{$value.big_title.num}" {if $value.big_title.num neq 1}hidden{/if} >
+                                    <h3>{$value.big_title.num}、{$value.big_title.name}</h3>
+                                    {foreach $value.data as $test_info_key => $test_info_value}
+                                        <div style="margin:1% 0 1% 1%;">
+                                            <h5 style="margin: 1%;">{$test_info_key+1}、{$test_info_value.title}</h5>
+                                            {if $key eq 0}
+
+                                            {elseif $key eq 1 /}
+
+                                            {elseif $key eq 2 /}
+
+                                            {elseif $key eq 3 /}
+                                                <div style="margin: 1%;" class="layui-form-item layui-form-text">
+                                                    <textarea name="answer[{$test_info_value.id}]" placeholder="请输入答案" class="layui-textarea"></textarea>
+                                                </div>
+                                            {else/}
+
+                                            {/if}
+                                        </div>
+                                    {/foreach}
+                                    {if $value.num neq 1}
+                                        {if $value.big_title.num eq 1}
+                                        <div style="float: right;">
+                                            <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num+1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                        </div>
+                                        {elseif $value.num eq $value.big_title.num}
+                                            <div style="float: left;">
+                                                <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                            </div>
+                                            <button style="margin-top: 7%;float: right;" class="layui-btn">确认交卷</button>
+                                        {else /}
+                                            <div style="float: left;">
+                                                <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                            </div>
+                                            <div style="float: right;">
+                                                <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num+1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                            </div>
+                                        {/if}
+                                    {else /}
+                                        <button style="margin-top: 7%;float: right;" class="layui-btn"  lay-submit="" lay-filter="apply">确认交卷</button>
+                                    {/if}
+                                </div>
+                            {/foreach}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm3">
+                <div class="grid-demo">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" class="test_start_time" value="{$exam_topic_info.test_start_time_new}">
+<script>
+    layui.use(['util', 'form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,util = layui.util
+            ,laydate = layui.laydate;
+        //倒计时
+        var thisTimer, setCountdown = function(y, M, d, H, m, s){
+            var endTime = new Date(y, M||0, d||1, H||0, m||0, s||0) //结束日期
+                ,serverTime = new Date(); //假设为当前服务器时间，这里采用的是本地时间，实际使用一般是取服务端的
+            clearTimeout(thisTimer);
+            util.countdown(endTime, serverTime, function(date, serverTime, timer){
+                var str = "<span style='color: green;'>"+ date[1] + '时' +  date[2] + '分' + date[3] + '秒'+"</span>";
+                lay('#countdown').html(str);
+                thisTimer = timer;
+            });
+        };
+        function countdown() {
+            var dateTime = $(".test_start_time").val().split('-');
+            setCountdown(dateTime[0],dateTime[1]-1,dateTime[2],dateTime[3],dateTime[4],dateTime[5]);
+        }
+        countdown();
+        // 监听提交
+        form.on('submit(apply)', function(data){
+            console.log(data.field);
+            // curlAjax("{:url('/index/sign_up/apply')}",data.field,'commonResult');
+            return false;
+        });
+    });
+
+    function jumpLast(nowNum, lastNum) {
+        if($("#hide-"+lastNum)){
+            $("#hide-"+lastNum.show());
+            $("#hide-"+nowNum.hide());
+        }
+    }
+
+</script>
