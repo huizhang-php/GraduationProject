@@ -36,4 +36,8 @@ class EveryStudentTopicModel extends BaseModel {
     public function del($condition) {
         return $this->delete($condition);
     }
+
+    public function up($condition,$data) {
+        return $this->where($condition)->update($data);
+    }
 }

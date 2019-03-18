@@ -15,6 +15,7 @@ use app\common\model\StudentExamTopicModel;
 use app\common\model\StudentsModel;
 use app\common\model\TestPaperContentModel;
 use app\common\tool\EncryptTool;
+use app\common\tool\TimeTool;
 
 class ExamService extends BaseController{
 
@@ -199,6 +200,7 @@ class ExamService extends BaseController{
                 $returnData['test_paper_info'][$value['type']]['big_title']['num'] = count($returnData['test_paper_info']);
             } else {
                 $value['score'] = $questionBankConfig[$value['type']]['score'];
+                $value['right_key'] = EncryptTool::encry($value['right_key']);
                 $returnData['test_paper_info'][$value['type']]['data'][] = $value;
             }
         }
@@ -207,6 +209,89 @@ class ExamService extends BaseController{
         $returnData['exam_topic_info'] = $examTopicInfo;
         $returnData['student_exam_topic_info'] = $studentExamTopicInfo;
         return $returnData;
+    }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/18 下午5:00
+     * @param $data
+     * @param $msg
+     * @return bool
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     * @throws \Exception
+     */
+    public function testApply($data, &$msg) {
+        // 获取专题信息
+        $examTopicInfo = ExamTopicModel::instance()->getList([
+            'id' => $data['exam_topic_id']
+        ])->toArray()['data'];
+        if (empty($examTopicInfo)) {
+            $msg = '获取考试信息失败';
+            return false;
+        }
+        $examTopicInfo = $examTopicInfo[0];
+        if ($examTopicInfo['test_paper_type']) {
+            foreach ($data['answer'] as $key => $value) {
+                $testInfo = explode('_', $key);
+                $score = 0;
+                if (in_array($testInfo[1], [1,2])) {
+                    if ($testInfo[2] == $testInfo[0]) {
+                        $score = $testInfo[3];
+                    }
+                }
+                $res = EveryStudentTopicModel::instance()->up([
+                    'test_paper_content_id' => $key,
+                    'student_exam_topic_id' => $data['student_exam_topic_id']
+                ],[
+                    'answer' => $value,
+                    'status' => 1,
+                    'score' => $score,
+                    'utime' => TimeTool::getTime()
+                ]);
+                if (!$res) {
+                    $msg = '更新库失败';
+                    return false;
+                }
+            }
+        } else {
+            $addData = [];
+            foreach ($data['answer'] as $key => $value) {
+                $testInfo = explode('_', $key);
+                $score = 0;
+                if (in_array($testInfo[1], [1,2])) {
+                    if ($testInfo[2] == $testInfo[0]) {
+                        $score = $testInfo[3];
+                    }
+                }
+                $addData[] = [
+                    'answer' => $value,
+                    'score' => $score,
+                    'test_paper_content_id' => $testInfo[0],
+                    'test_paper_type' => 0,
+                    'student_exam_topic_id' => $data['student_exam_topic_id'],
+                    'status' => 1,
+                    'exam_topic_id' => $data['exam_topic_id']
+                ];
+            }
+            $res = EveryStudentTopicModel::instance()->addTopic($addData);
+            if (!$res) {
+                $msg = '更新库失败';
+                return false;
+            }
+        }
+        $res = StudentExamTopicModel::instance()->up([
+            'student_id' => $data['student_id'],
+            'exam_topic_id' => $data['exam_topic_id'],
+        ],['status'=>1]);
+        if (!$res) {
+            $msg = '更新考试状态失败';
+            return false;
+        }
+        $msg = '提交试卷成功';
+        return true;
     }
 
 }

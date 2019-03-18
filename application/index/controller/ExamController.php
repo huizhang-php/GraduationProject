@@ -49,4 +49,16 @@ class ExamController extends BaseController {
         return $this->fetch();
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/18 下午5:02
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
+    public function test_apply() {
+        ExamService::instance()->testApply($this->params, $msg);
+    }
+
 }

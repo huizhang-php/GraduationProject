@@ -15,7 +15,7 @@ class EncryptTool {
      * @return bool|mixed|string
      * Description: 解密
      */
-    public static function decry($data, $key) {
+    public static function decry($data, $key='') {
         $key = md5($key);
         $x = 0;
         $data = base64_decode($data);
@@ -54,7 +54,7 @@ class EncryptTool {
      * @return bool|mixed|string
      * Description: 加密
      */
-    public static function encry($data, $key) {
+    public static function encry($data, $key='') {
         $key	=	md5($key);
         $x		=	0;
         $char = '';
