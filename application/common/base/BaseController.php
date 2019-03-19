@@ -21,6 +21,7 @@ class BaseController extends Controller {
     {
         parent::__construct();
         $this->getParams();
+        $this->assign(['title' => '在线考试系统']);
     }
 
 }

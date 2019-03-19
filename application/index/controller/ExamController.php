@@ -23,10 +23,10 @@ class ExamController extends BaseController {
     public function exam() {
         $res = ExamService::instance()->exam($this->params, $msg);
         if ($res === false) {
-            $this->assign(['msg'=>$msg]);
-        } else {
-            $this->assign($res);
+            $this->assign(['msg' => $msg]);
+            return $this->fetch('index@common/error');
         }
+        $this->assign($res);
         return $this->fetch();
     }
 
@@ -43,7 +43,8 @@ class ExamController extends BaseController {
     public function test_view() {
         $res = ExamService::instance()->testView($this->params, $msg);
         if ($res === false) {
-            die($msg);
+            $this->assign(['msg' => $msg]);
+            return $this->fetch('index@common/error');
         }
         $this->assign($res);
         return $this->fetch();
@@ -56,9 +57,14 @@ class ExamController extends BaseController {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      * Description:
+     * @throws \Exception
      */
     public function test_apply() {
-        ExamService::instance()->testApply($this->params, $msg);
+        $res = ExamService::instance()->testApply($this->params, $msg);
+        if ($res === false) {
+            $this->returnAjax(400,$msg);
+        }
+        $this->returnAjax(200,$msg);
     }
 
 }

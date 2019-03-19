@@ -32,7 +32,7 @@ class SignUpService{
      * @throws \think\exception\DbException
      * Description:
      */
-    public function signUpView($id) {
+    public function signUpView($id, &$msg) {
         // 解密id
         $key = SelfConfig::getConfig('Exam.sign_up_key');
         $id = EncryptTool::decry($id, $key);
@@ -40,13 +40,15 @@ class SignUpService{
         $examTopicInfo = ExamTopicModel::instance()->getList(['id'=>$id]);
         $examTopicInfo = $examTopicInfo->toArray()['data'];
         if (empty($examTopicInfo)) {
-            die('无效访问');
+            $msg = '无效访问';
+            return false;
         }
         $examTopicInfo = $examTopicInfo[0];
         $testStartTime = strtotime($examTopicInfo['test_start_time']);
         $nowTime = time();
         if ($nowTime > $testStartTime) {
-            die('考试已经开始或结束，不能报名');
+            $msg = '考试已经开始或结束，不能报名';
+            return false;
         }
         return $examTopicInfo;
     }
@@ -207,7 +209,7 @@ class SignUpService{
             $phoneInfo = RedisTool::instance()->getStr($data['phone']);
             if ($phoneInfo===false || !is_string($phoneInfo) || $phoneInfo != $data['code']) {
                 $result = '手机验证码错误';
-//                return false;
+                return false;
             }
             // 查看是否已经报名
             $res = StudentExamTopicModel::instance()->getList([

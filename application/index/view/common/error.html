@@ -1,0 +1,24 @@
+{include file='/common/header' /}
+
+
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+        layer.msg("{$msg}", {
+            icon: 16
+            ,shade: 0.01
+            ,time: 999999999
+        });
+    });
+
+    $(function () {
+        //防止页面后退
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+        });
+    });
+</script>

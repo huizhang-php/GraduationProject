@@ -21,7 +21,11 @@ class SignUpController extends BaseController {
      * Description: 报名页面
      */
     public function sign_up_view() {
-        $examTopicInfo = SignUpService::instance()->signUpView($this->params['id']);
+        $examTopicInfo = SignUpService::instance()->signUpView($this->params['id'],$msg);
+        if ($examTopicInfo === false) {
+            $this->assign(['msg' => $msg]);
+            return $this->fetch('index@common/error');
+        }
         $this->assign([
                 'exam_topic_info' => $examTopicInfo,
                 'title' => $examTopicInfo['name'].'-在线报名！',

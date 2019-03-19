@@ -11,7 +11,7 @@
     <ul class="layui-nav layui-bg-green">
         <li class="layui-nav-item">{$exam_topic_info.name}</li>
     </ul>
-    <div class="layui-fluid">
+    <div class="layui-fluid test_paper_body">
         <div class="layui-row">
             <div class="layui-col-sm3">
                 <div class="grid-demo">
@@ -144,10 +144,17 @@
         countdown();
         // 监听提交
         form.on('submit(apply)', function(data){
-            curlAjax("{:url('/index/sign_up/apply')}",data.field,'commonResult');
+            curlAjax("{:url('/index/exam/test_apply')}",data.field,'commonResult');
             return false;
         });
     });
+
+    function commonResult(data) {
+        tipMsg(data.code,data.msg,0,false,false);
+        if (data.code == 200) {
+            $('.test_paper_body').hide();
+        }
+    }
 
     function jumpLast(nowNum, lastNum) {
         if($("#hide-"+lastNum)){

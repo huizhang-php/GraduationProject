@@ -14,54 +14,49 @@
         font-size: 1.5rem;
     }
 </style>
-<div class="layui-container" >
+<div class="layui-container">
 
     <div class="layui-row" id="sign-up" style="margin-top: 7%;">
         <div class="layui-col-md2" style="">
             &nbsp;
         </div>
         <div class="layui-col-md8" style="">
-            {if !isset($msg)}
-                <input type="hidden" class="test_start_time" value="{$exam_topic_info.test_start_time_new}">
-                <input type="hidden" class="student_id" value="{$student_info.id}">
-                <input type="hidden" class="exam_topic_id" value="{$exam_topic_info.id}">
+            <input type="hidden" class="test_start_time" value="{$exam_topic_info.test_start_time_new}">
+            <input type="hidden" class="student_id" value="{$student_info.id}">
+            <input type="hidden" class="exam_topic_id" value="{$exam_topic_info.id}">
 
-                <div class="my-header" style="height: 100px;padding-top: 5%;">
-                    <div style="margin: 0 auto;" class="font-bs">
-                        <h1 style="text-align: center;">{$exam_topic_info.name}</h1>
-                    </div>
-                    <div class="font-bs" style="display: inline-block;margin: 0 auto; padding-left: 35%;margin-top:7%;">
-                        距离考试开始还有:
-                        <span class="layui-word-aux" style="color: green;" id="countdown"></span>
-                    </div>
+            <div class="my-header" style="height: 100px;padding-top: 5%;">
+                <div style="margin: 0 auto;" class="font-bs">
+                    <h1 style="text-align: center;">{$exam_topic_info.name}</h1>
                 </div>
-                <div class="student-info font-bs" style="margin-top: 10%;">
-                    <div class="std-info">姓名：{$student_info.name}</div>
-                    <div class="std-info">性别：{if $student_info.sex eq 0}男{else/}女{/if}</div>
-                    <div class="std-info">考号：{$student_info.id}</div>
+                <div class="font-bs" style="display: inline-block;margin: 0 auto; padding-left: 35%;margin-top:7%;">
+                    距离考试开始还有:
+                    <span class="layui-word-aux" style="color: green;" id="countdown"></span>
                 </div>
-                <div class="student-info font-bs" style="margin-top: 2%;">
-                    <div class="std-info">时长：{$exam_topic_info.test_time_length}分钟</div>
-                    <div class="std-info">开始时间：{$exam_topic_info.test_start_time}</div>
+            </div>
+            <div class="student-info font-bs" style="margin-top: 10%;">
+                <div class="std-info">姓名：{$student_info.name}</div>
+                <div class="std-info">性别：{if $student_info.sex eq 0}男{else/}女{/if}</div>
+                <div class="std-info">考号：{$student_info.id}</div>
+            </div>
+            <div class="student-info font-bs" style="margin-top: 2%;">
+                <div class="std-info">时长：{$exam_topic_info.test_time_length}分钟</div>
+                <div class="std-info">开始时间：{$exam_topic_info.test_start_time}</div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    {if $is_start eq 0}
+                        <button class="layui-btn layui-btn-lg layui-btn-disabled" style="margin-top: 10%;margin-left: 35%">开始考试</button>
+                    {else /}
+                        <a class="layui-btn layui-btn-lg" style="margin-top: 10%;margin-left: 35%"  href="{:url('/index/exam/test_view',array('exam_topic_id'=>$exam_topic_info.id,'student_id'=>$student_info.id))}">开始考试</a>
+                    {/if}
                 </div>
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        {if $is_start eq 0}
-                            <button class="layui-btn layui-btn-lg layui-btn-disabled" style="margin-top: 10%;margin-left: 35%">开始考试</button>
-                        {else /}
-                            <a class="layui-btn layui-btn-lg" style="margin-top: 10%;margin-left: 35%"  href="{:url('/index/exam/test_view',array('exam_topic_id'=>$exam_topic_info.id,'student_id'=>$student_info.id))}">开始考试</a>
-                        {/if}
-                    </div>
-                </div>
-                <div style="margin-top: 20%;">
-                    <p style="text-align: center;" class="font-red">
-                        注:{$exam_topic_info.introduction}<br>
-                    </p>
-                </div>
-            {else /}
-                <span style="color: red;">{$msg}</span>
-            {/if}
-
+            </div>
+            <div style="margin-top: 20%;">
+                <p style="text-align: center;" class="font-red">
+                    注:{$exam_topic_info.introduction}<br>
+                </p>
+            </div>
         </div>
         <div class="layui-col-md2" style="">
             &nbsp;
