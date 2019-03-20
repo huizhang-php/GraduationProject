@@ -1,0 +1,77 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">考试相关</a>
+        <a href="">考试专题</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>开考时间</th>
+            <th>考试时长</th>
+            <th>试卷类型</th>
+            <th>题库名称</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th>创建人</th>
+            <th>最后操作人</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $list as $key => $value}
+        <tr>
+            <td>{$value.id}</td>
+            <td>{$value.name}</td>
+            <td>{$value.test_start_time}</td>
+            <td>{$value.test_time_length}分钟</td>
+            <td>
+                {if $value.test_paper_type eq 0}
+                统一试卷
+                {else /}
+                随机组卷
+                {/if}
+            </td>
+            <td>{$value.examtopicquestionbank.name}</td>
+            <td>{$value.status}</td>
+            <td>{$value.ctime}</td>
+            <td>{$value.utime}</td>
+            <td>{$value.staff}</td>
+            <td>{$value.end_staff}</td>
+            <td>
+                <a href="http://www.tuzisir.com:8082/index.php/admin/paper_inspection/paper_inspection?exam_topic_id={$value.id}" class="layui-btn layui-btn-xs layui-btn-warm">阅卷</a>
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {$list|raw}
+</div>
+<script>
+    var form;
+    layui.use(['table','element','form'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        element.init();
+        form.render();
+    });
+
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+
+</script>
+

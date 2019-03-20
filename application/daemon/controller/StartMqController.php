@@ -7,7 +7,9 @@
 
 namespace app\daemon\controller;
 use app\common\config\SelfConfig;
+use app\common\tool\ProcessTool;
 use app\common\tool\RabbitMQTool;
+use app\common\tool\ShellTool;
 
 class StartMqController {
 
@@ -45,10 +47,10 @@ class StartMqController {
         if (isset($argv[3])) {
             switch ($argv[3]) {
                 case '-d': // 守护进程启动
-                    $this->daemonStart();
+                    ProcessTool::daemonStart();
                 break;
                 case '-s': // 杀死进程
-                    $this->killEasyExport($argv[2]);die();
+                    ShellTool::kill($argv[1]);die();
                 break;
             }
         }
@@ -106,47 +108,6 @@ class StartMqController {
             $dealObj->deal($mqData);
             sleep(1);
         }
-    }
-
-    private function killEasyExport($startFile) {
-        exec("ps aux | grep $startFile | grep -v grep | awk '{print $2}'", $info);
-        if (count($info) <= 1) {
-            echo "not run\n";
-        } else {
-            echo "[$startFile] stop success";
-            exec("ps aux | grep $startFile | grep -v grep | awk '{print $2}' |xargs kill -SIGINT", $info);
-        }
-    }
-
-    /**
-     * User: yuzhao
-     * CreateTime: 2019/3/19 下午4:18
-     * Description: 守护进程模式启动
-     */
-    private function daemonStart() {
-        // 守护进程需要pcntl扩展支持
-        if (!function_exists('pcntl_fork'))
-        {
-            exit('Daemonize needs pcntl, the pcntl extension was not found');
-        }
-        umask( 0 );
-        $pid = pcntl_fork();
-        if( $pid < 0 ){
-            exit('fork error.');
-        } else if( $pid > 0 ) {
-            exit();
-        }
-        if( !posix_setsid() ){
-            exit('setsid error.');
-        }
-        $pid = pcntl_fork();
-        if( $pid  < 0 ){
-            exit('fork error');
-        } else if( $pid > 0 ) {
-            // 主进程退出
-            exit;
-        }
-        // 子进程继续，实现daemon化
     }
 
 }

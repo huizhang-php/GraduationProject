@@ -1,0 +1,78 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">考试相关</a>
+        <a href="">待阅卷</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>考生编号</th>
+            <th>姓名</th>
+            <th>邮箱</th>
+            <th>手机号</th>
+            <th>考试状态</th>
+            <th>登录状态</th>
+            <th>报名时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $students as $key => $value}
+        <tr>
+            <td>{$value.id}</td>
+            <td>{$value.examtopicstudent.name}</td>
+            <td>{$value.examtopicstudent.email}</td>
+            <td>{$value.examtopicstudent.phone}</td>
+            <td>
+                {if $value.status eq 0}
+                待考试
+                {elseif $value.status eq 1 /}
+                正在考试
+                {/if}
+            </td>
+            <td>
+                {if $value.login_status eq 0}
+                <span style="color: red;">未登录</span>
+                {elseif $value.login_status eq 1 /}
+                <span style="color: green;">已登录</span>
+                {/if}
+            </td>
+            <td>{$value.ctime}</td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                {foreach $value.student_paper_info as $studentPaperKey => $studentPaperValue}
+
+                {/foreach}
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {$count|raw}
+</div>
+<script>
+    var form;
+    layui.use(['table','element','form'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        element.init();
+        form.render();
+    });
+
+    function commonResult(data) {
+        tipMsg(data.code,data.msg);
+    }
+
+</script>
+

@@ -29,6 +29,8 @@ class BaseModel extends Model {
         $this->table = $table;
         $myself = $this;
         $or = [];
+        $order = [];
+        $group = null;
         foreach ($condition as $key => $value) {
             if (is_array($value) && count($value)) {
                 switch ($value[0]) {
@@ -42,12 +44,28 @@ class BaseModel extends Model {
                         break;
                 }
             }
+            switch ($key) {
+                case 'order':
+                    $order = [$value[0],$value[1]];
+                    unset($condition[$key]);
+                    break;
+                case 'group':
+                    $group = $value;
+                    unset($condition[$key]);
+                    break;
+            }
         }
         if (!empty($or)) {
            $myself = $myself->whereOr($or);
         }
         if (!empty($condition)){
             $myself = $myself->where($condition);
+        }
+        if (!empty($order)) {
+            $myself = $myself->order($order[0],$order[1]);
+        }
+        if (!is_null($group)) {
+            $myself = $myself->group($group);
         }
         return $myself;
     }

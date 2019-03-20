@@ -23,4 +23,22 @@ class ShellTool {
         }
         return false;
     }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/20 下午12:11
+     * @param $startFile
+     * Description: 杀死进程
+     */
+    public static function kill($startFile) {
+        exec("ps aux | grep $startFile | grep -v grep | awk '{print $2}'", $info);
+        if (count($info) <= 1) {
+            echo "not run\n";
+        } else {
+            echo "[$startFile] stop success";
+            exec("ps aux | grep $startFile | grep -v grep | awk '{print $2}' |xargs kill -SIGINT", $info);
+        }
+    }
+
+
 }

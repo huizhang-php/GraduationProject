@@ -118,7 +118,18 @@ class ExamTopicService implements ServiceInter {
         // TODO: Implement getList() method.
         $sign = SelfConfig::getConfig('Exam.sign_up_key');
         $res = ExamTopicModel::instance()->getList($params);
+        $nowTime = time();
         foreach ($res as $key => $value) {
+            $startTime = strtotime($value['test_start_time']);
+            $endTime = strtotime($value['test_start_time'])+$value['test_time_length'];
+            if ($nowTime<$startTime) {
+                $status = '待考';
+            } elseif ($nowTime>$endTime) {
+                $status = '结束';
+            } elseif ($nowTime>$startTime and $nowTime<$endTime) {
+                $status = '正在考试';
+            }
+            $res[$key]['status'] = $status;
             $res[$key]['encrypt'] = EncryptTool::encry($value['id'], $sign);
         }
         return $res;

@@ -16,6 +16,10 @@ class EveryStudentTopicModel extends BaseModel {
         return new EveryStudentTopicModel();
     }
 
+    public function testpaperinfo() {
+        return $this->hasOne('TestPaperContentModel','id', 'test_paper_content_id');
+    }
+
     /**
      * User: yuzhao
      * CreateTime: 2019/3/15 上午12:31
@@ -29,8 +33,18 @@ class EveryStudentTopicModel extends BaseModel {
         return $res;
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/19 下午11:03
+     * @param $condition
+     * @return array|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function getList($condition) {
-        return $this->where($condition)->select();
+        return $this->getCond($condition, $this->table)->select();
     }
 
     public function del($condition) {

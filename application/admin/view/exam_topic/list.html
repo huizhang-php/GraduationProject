@@ -23,7 +23,6 @@
             <th>考试时长</th>
             <th>试卷类型</th>
             <th>题库名称</th>
-            <!--<th>简介</th>-->
             <th>状态</th>
             <th>创建时间</th>
             <th>更新时间</th>
@@ -47,12 +46,7 @@
                         {/if}
                     </td>
                     <td>{$value.examtopicquestionbank.name}</td>
-                    <!--<td>{$value.introduction}</td>-->
-                    <td>
-                        {if $value.status eq 0}
-                            待考
-                        {/if}
-                    </td>
+                    <td>{$value.status}</td>
                     <td>{$value.ctime}</td>
                     <td>{$value.utime}</td>
                     <td>{$value.staff}</td>
