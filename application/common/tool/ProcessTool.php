@@ -38,4 +38,18 @@ class ProcessTool {
         }
         // 子进程继续，实现daemon化
     }
+
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/3/20 下午1:05
+     * @param $file
+     * Description: 不能重复启动
+     */
+    public static function noRepeatStart($file) {
+        $fhanlde = fopen($file,'r');
+        $r = flock($fhanlde,LOCK_EX|LOCK_NB);
+        if(!$r){
+            die('不能重复启动');
+        }
+    }
 }

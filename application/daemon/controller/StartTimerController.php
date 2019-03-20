@@ -22,23 +22,31 @@ class StartTimerController extends BaseController {
         if (isset($argv[2]) && $argv[2] == '-s') {
             ShellTool::kill($argv[1]);die();
         }
+        // 先干掉所有任务，防止重复启动
+        ShellTool::kill($argv[1]);;
         // 守护进程
         ProcessTool::daemonStart();
+        // 获取自定义配置
         $timerConf = SelfConfig::getConfig('Source.timer');
         $time = time();
+        // 时间统一管理
         foreach ($timerConf as $key => $value) {
-            self::$taskNextTime[$key] = $time+$value['time'];
+            if ($value['status'] == 1) {
+                self::$taskNextTime[$key] = $time+$value['time'];
+            }
         }
+        // 不断循环查看有没有到点的任务
         while (true) {
             $nowTime = time();
             foreach (self::$taskNextTime as $key => $value) {
                 $nowTimerConf = $timerConf[$key];
                 if ($nowTime >= $value) {
+                    // 初始化下次需要执行的时间
                     self::$taskNextTime[$key] = $value+$nowTimerConf['time'];
                     $pid = pcntl_fork();
                     if( $pid < 0 ){
                         exit();
-                    } else if( 0 == $pid ) {
+                    } else if( 0 == $pid ) { // 子进程负责执行任务
                         $classPath = str_replace('/','\\',"/app/daemon/timer/");
                         $classFunc = explode('@', $nowTimerConf['class_func']);
                         $class = $classPath.$classFunc[0];
@@ -49,6 +57,7 @@ class StartTimerController extends BaseController {
                     }
                 }
             }
+            sleep(1);
         }
     }
 }

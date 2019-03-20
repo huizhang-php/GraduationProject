@@ -33,7 +33,7 @@ class ShellTool {
     public static function kill($startFile) {
         exec("ps aux | grep $startFile | grep -v grep | awk '{print $2}'", $info);
         if (count($info) <= 1) {
-            echo "not run\n";
+
         } else {
             echo "[$startFile] stop success";
             exec("ps aux | grep $startFile | grep -v grep | awk '{print $2}' |xargs kill -SIGINT", $info);
