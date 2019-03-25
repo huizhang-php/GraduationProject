@@ -61,46 +61,49 @@ class SignUpService{
      * Description:
      */
     public function sendSms($data, &$result) {
-        // 查询手机号是否已经被注册
-        $examTopicId = EncryptTool::decry($data['exam_topic_id'],SelfConfig::getConfig('Exam.sign_up_key'));
-        $res = StudentsModel::instance()->getList([
-            'phone' => $data['phone']
-        ])->toArray();
-        if ($data['type'] == 1) {
-            if (!empty($res)) {
-                $result = '手机号已经被注册';
+        $res = Db::transaction(function () use ($data, &$result) {
+            // 查询手机号是否已经被注册
+            $examTopicId = EncryptTool::decry($data['exam_topic_id'], SelfConfig::getConfig('Exam.sign_up_key'));
+            $res = StudentsModel::instance()->getList([
+                'phone' => $data['phone']
+            ])->toArray()['data'];
+            if ($data['type'] == 1) {
+                if (!empty($res)) {
+                    $result = '手机号已经被注册';
+                    return false;
+                }
+            } else if ($data['type'] == 2) {
+                if (empty($res)) {
+                    $result = '此手机号还没有被注册';
+                    return false;
+                }
+                // 查看是否已经报名
+                $res = StudentExamTopicModel::instance()->getList([
+                    'exam_topic_id' => $examTopicId,
+                    'student_id' => $res[0]['id']
+                ])->toArray()['data'];
+                if (!empty($res)) {
+                    $result = '您已经报名';
+                    return false;
+                }
+            }
+            $config = SelfConfig::getConfig('ExtendApi.sms');
+            // 发送信息
+            $res = SmsTool::sendSms(4688, $data['phone'], $config['tpls'][4688]['content']);
+            if ($res === false || $res['error_code'] != 0) {
+                $result = '发送短信失败';
                 return false;
             }
-        } else if ($data['type'] == 2) {
-            if (empty($res)) {
-                $result = '此手机号还没有被注册';
+            // 存入redis 5分钟
+            $res = RedisTool::instance()->setStr($data['phone'], $config['tpls'][4688]['code'], 300);
+            if (!$res) {
+                $result = '写入缓存失败';
                 return false;
             }
-        }
-        // 查看是否已经报名
-        $res = StudentsModel::instance()->getList([
-            'exam_topic_id' => $examTopicId,
-            'student_id' => $res[0]['id']
-        ])->toArray();
-        if (!empty($res)) {
-            $result = '您已经报名';
-            return false;
-        }
-        $config = SelfConfig::getConfig('ExtendApi.sms');
-        // 发送信息
-        $res = SmsTool::sendSms(4688,$data['phone'], $config['tpls'][4688]['content']);
-        if ($res===false || $res['error_code'] != 0) {
-            $result = '发送短信失败';
-            return false;
-        }
-        // 存入redis 5分钟
-        $res = RedisTool::instance()->setStr($data['phone'], $config['tpls'][4688]['code'], 300);
-        if (!$res) {
-            $result = '写入缓存失败';
-            return false;
-        }
-        $result = '发送短信成功';
-        return true;
+            $result = '发送短信成功';
+            return true;
+        });
+        return $res;
     }
 
     /**
@@ -122,7 +125,7 @@ class SignUpService{
                 'email' => ['or', $data['email']],
                 'phone' => ['or', $data['phone']]
             ]);
-            $res = $res->toArray();
+            $res = $res->toArray()['data'];
             if (!empty($res)) {
                 if ($res[0]['email'] == $data['email']) {
                     $result = '邮箱已经被注册';
@@ -130,15 +133,6 @@ class SignUpService{
                 if ($res[0]['phone'] == $data['phone']) {
                     $result = '手机号已经被注册';
                 }
-                return false;
-            }
-            // 查看是否已经报名
-            $res = StudentExamTopicModel::instance()->getList([
-                'exam_topic_id' => $examTopicId,
-                'student_id' => $res[0]['id']
-            ])->toArray();
-            if (!empty($res)) {
-                $result = '您已经报名';
                 return false;
             }
             // 验证手机号+验证码是否跟缓存中一致
@@ -170,6 +164,7 @@ class SignUpService{
                 $result = '查询考试专题失败';
                 return false;
             }
+            $examTopicInfo = $examTopicInfo[0];
             $title = $examTopicInfo['name'].'是否确认报名?';
             $studentEncryNumber = EncryptTool::encry($data['id'], SelfConfig::getConfig('Exam.sign_up_key'));
             $body = "http://www.tuzisir.com:8082/index.php/index/sign_up/confirm_sign_up?exam_topic_id={$data['exam_topic_id']}&student_id=$studentEncryNumber";
@@ -253,6 +248,10 @@ class SignUpService{
      * @param $result
      * @return bool
      * Description: 确认报名
+     * @throws \PHPMailer\PHPMailer\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
     public function confirmSignUp($data, &$result) {
         // 解析考试专题id
@@ -276,12 +275,29 @@ class SignUpService{
             $result = '您已经报名';
             return false;
         }
+        $examTopicInfo = ExamTopicModel::instance()->getList(['id'=>$examTopicId]);
+        $examTopicInfo = $examTopicInfo->toArray()['data'];
+        if (!isset($examTopicInfo[0])) {
+            $result = '查询考试专题失败';
+            return false;
+        }
+        $studentInfo = StudentsModel::instance()->getList([
+            'id' => $studentId
+        ])->toArray()['data'];
+        if (empty($studentInfo)) {
+            $result = '此手机号还没有被注册';
+            return false;
+        }
         // 更改报名状态
         $res = StudentExamTopicModel::instance()->up([
             'exam_topic_id' => $examTopicId,
             'student_id' => $studentId
         ],['status'=>1]);
         if ($res) {
+            $title = $examTopicInfo[0]['name'].'，您的专属考试链接。';
+            $body = "http://www.tuzisir.com:8082/index.php/index/exam/exam?exam_topic_id={$data['exam_topic_id']}&student_id={$data['student_id']}";
+            // 发送确认邮件
+            $res = MailTool::instance()->sendMail($title,$body,$studentInfo[0]['email'],$studentInfo[0]['name']);
             $result = '报名成功';
             return true;
         }

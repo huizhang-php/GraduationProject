@@ -75,10 +75,8 @@ class SignUpController extends BaseController {
 
     public function confirm_sign_up() {
         SignUpService::instance()->confirmSignUp($this->params, $result);
-        $this->assign([
-            'result' => $result
-        ]);
-        return $this->fetch();
+        $this->assign(['msg' => $result]);
+        return $this->fetch('index@common/error');
     }
 
 }

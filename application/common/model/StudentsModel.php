@@ -16,6 +16,12 @@ class StudentsModel extends BaseModel {
         return new StudentsModel();
     }
 
+    /**
+     * @param array $data
+     * @return \think\Paginator
+     * @throws \think\exception\DbException
+     * Description:
+     */
     public function getList($data=[]) {
         $res = $this->getCond($data, $this->table)->order('ctime', 'desc')->paginate(20);
         return $res;

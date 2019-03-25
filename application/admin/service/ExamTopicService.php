@@ -14,6 +14,7 @@ use app\common\model\StudentExamTopicModel;
 use app\common\model\TestPaperContentModel;
 use app\common\tool\TimeTool;
 use app\common\tool\EncryptTool;
+use think\Db;
 
 class ExamTopicService implements ServiceInter {
 
@@ -150,75 +151,80 @@ class ExamTopicService implements ServiceInter {
     public function up($params=[], &$result)
     {
         // TODO: Implement up() method.
-        $condition['id'] = $params['id'];
-        $res = ExamTopicModel::instance()->getList(['name'=>$params['name'],'id'=>['<>',$params['id']]]);
-        $res = $res->toArray()['data'];
-        if (!empty($res)) {
-            $result = '专题名称重复';
-            return false;
-        }
-        $questionBank = str_replace("'",'',json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE));
-        $questionBank = json_decode($questionBank,true);
-        $data = [
-            'name' => $params['name'],
-            'introduction' => $params['introduction'],
-            'end_staff' => session('admin_name'),
-            'question_bank_config' => str_replace("'",'',json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE)),
-            'test_paper_type' => $params['test_paper_type'],
-            'test_start_time' => $params['test_start_time'],
-            'test_time_length' => $params['test_time_length'],
-            'question_bank_id' => $params['question_bank_id'],
-            'utime' => TimeTool::getTime()
-        ];
-        $res = ExamTopicModel::instance()->up($condition, $data);
-        if (!$res) {
-            $result = '修改失败';
-            return false;
+        $res = Db::transaction(function () use ($params, &$result) {
+            $condition['id'] = $params['id'];
+            $res = ExamTopicModel::instance()->getList(['name'=>$params['name'],'id'=>['<>',$params['id']]]);
+            $res = $res->toArray()['data'];
+            if (!empty($res)) {
+                $result = '专题名称重复';
+                return false;
+            }
+            $questionBank = str_replace("'",'',json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE));
+            $questionBank = json_decode($questionBank,true);
+            $data = [
+                'name' => $params['name'],
+                'introduction' => $params['introduction'],
+                'end_staff' => session('admin_name'),
+                'question_bank_config' => str_replace("'",'',json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE)),
+                'test_paper_type' => $params['test_paper_type'],
+                'test_start_time' => $params['test_start_time'],
+                'test_time_length' => $params['test_time_length'],
+                'question_bank_id' => $params['question_bank_id'],
+                'utime' => TimeTool::getTime()
+            ];
+            $res = ExamTopicModel::instance()->up($condition, $data);
+            if (!$res) {
+                $result = '修改失败';
+                return false;
 
-        }
-        // 删除信息
-        $res = EveryStudentTopicModel::instance()->del(['exam_topic_id'=>$params['id']]);
-        if (!$res) {
-            $result = '删除试题失败';
-            return false;
-        }
-        // 统一组卷
-        if ($params['test_paper_type'] == 0) {
-            // 随机将题抽出
-            foreach ($questionBank as $key => $value) {
-                if ($value['number'] == 0) {
-                    continue;
-                }
-                $examPaperData = TestPaperContentModel::instance()->randSelect([
-                    'question_bank_id' => $params['question_bank_id'],
-                    'type' => $key,
-                    'num' => $value['number']
-                ]);
-                if (empty($examPaperData)) {
-                    continue;
-                }
-                $allExamPaperData[$key] = $examPaperData;
-                foreach ($examPaperData as $examPaperDataKey => $examPaperDataValue) {
-                    $addEveryStudetnData[] = [
-                        'test_paper_content_id' => $examPaperDataValue['id'],
-                        'test_paper_type' => 0,
-                        'exam_topic_id' => $params['id']
-                    ];
+            }
+            // 删除信息
+            if ($params['test_paper_type'] == 0) {
+                $res = EveryStudentTopicModel::instance()->del(['exam_topic_id'=>$params['id']]);
+                if (!$res) {
+                    $result = '删除试题失败';
+                    return false;
                 }
             }
-            if (empty($addEveryStudetnData)) {
-                $result = '分配试卷有误';
-                return false;
+            // 统一组卷
+            if ($params['test_paper_type'] == 0) {
+                // 随机将题抽出
+                foreach ($questionBank as $key => $value) {
+                    if ($value['number'] == 0) {
+                        continue;
+                    }
+                    $examPaperData = TestPaperContentModel::instance()->randSelect([
+                        'question_bank_id' => $params['question_bank_id'],
+                        'type' => $key,
+                        'num' => $value['number']
+                    ]);
+                    if (empty($examPaperData)) {
+                        continue;
+                    }
+                    $allExamPaperData[$key] = $examPaperData;
+                    foreach ($examPaperData as $examPaperDataKey => $examPaperDataValue) {
+                        $addEveryStudetnData[] = [
+                            'test_paper_content_id' => $examPaperDataValue['id'],
+                            'test_paper_type' => 0,
+                            'exam_topic_id' => $params['id']
+                        ];
+                    }
+                }
+                if (empty($addEveryStudetnData)) {
+                    $result = '分配试卷有误';
+                    return false;
+                }
+                // 入库
+                $res = EveryStudentTopicModel::instance()->addTopic($addEveryStudetnData);
+                if (empty($res)) {
+                    $result = '生成试题失败';
+                    return false;
+                }
             }
-            // 入库
-            $res = EveryStudentTopicModel::instance()->addTopic($addEveryStudetnData);
-            if (empty($res)) {
-                $result = '生成试题失败';
-                return false;
-            }
-        }
-        $result = '修改成功';
-        return true;
+            $result = '修改成功';
+            return true;
+        });
+        return $res;
     }
 
     public function del($params=[], &$result)
