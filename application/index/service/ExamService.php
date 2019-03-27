@@ -68,7 +68,7 @@ class ExamService extends BaseController{
             $msg = '获取考试信息失败';
             return false;
         }
-        $examTopicInfo[0]['test_start_time_new'] = str_replace('-0','-',date('Y-m-d-h-i-s', strtotime($examTopicInfo[0]['test_start_time'])));
+        $examTopicInfo[0]['test_start_time_new'] = str_replace('-0','-',date('Y-m-d-H-i-s', strtotime($examTopicInfo[0]['test_start_time'])));
         $examTopicInfo = $examTopicInfo[0];
         // 判断时间
         $testStartTime = strtotime($examTopicInfo['test_start_time']);
@@ -181,7 +181,7 @@ class ExamService extends BaseController{
                         $testPaperContentIds[] = $value['test_paper_content_id'];
                     }
                     $testPaperContentIds = array_unique($testPaperContentIds);
-                    $allExamPaperData = TestPaperContentModel::instance()->getList(['id'=>$testPaperContentIds,'all'=>1]);
+                    $allExamPaperData = TestPaperContentModel::instance()->getList(['id'=>$testPaperContentIds,'all'=>1])->toArray();
                 }
             } else {
                 // 固定试卷
@@ -195,21 +195,28 @@ class ExamService extends BaseController{
             }
             // 获取配置
             $examConfig = SelfConfig::getConfig('Exam.exam_type_base_conf');
+            $bigNum = 0;
             foreach ($allExamPaperData as $key => $value) {
+                $value['option'] = json_decode($value['option'], true);
+                if (!$value['option']) {
+                    $value['option'] = array();
+                }
+                $value['empty_num'] = substr_count($value['title'],'_')+1;
                 if (isset($returnData['test_paper_info'][$value['type']])) {
+                    $bigNum = count($returnData['test_paper_info']);
                     $returnData['test_paper_info'][$value['type']]['num'] = count($returnData['test_paper_info']);
                     $returnData['test_paper_info'][$value['type']]['big_title'] = $examConfig[$value['type']];
                     $returnData['test_paper_info'][$value['type']]['big_title']['num'] = count($returnData['test_paper_info']);
-                } else {
-                    $value['score'] = $questionBankConfig[$value['type']]['score'];
-                    $value['right_key'] = EncryptTool::encry($value['right_key']);
-                    $returnData['test_paper_info'][$value['type']]['data'][] = $value;
                 }
+                $value['score'] = $questionBankConfig[$value['type']]['score'];
+                $value['right_key'] = EncryptTool::encry($value['right_key']);
+                $returnData['test_paper_info'][$value['type']]['data'][] = $value;
             }
             $examTopicInfo['test_start_time_new'] = str_replace('-0','-',date('Y-m-d-h-i-s', strtotime($examTopicInfo['test_start_time'])+$examTopicInfo['test_time_length']*60));
             $returnData['student_info'] = $studentInfo;
             $returnData['exam_topic_info'] = $examTopicInfo;
             $returnData['student_exam_topic_info'] = $studentExamTopicInfo;
+            $returnData['big_num'] = $bigNum;
             return $returnData;
         });
         return $res;

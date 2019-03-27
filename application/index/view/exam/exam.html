@@ -71,6 +71,12 @@
         layer = layui.layer;
         //倒计时
         var thisTimer, setCountdown = function(y, M, d, H, m, s){
+            console.log(y);
+            console.log(M);
+            console.log(d);
+            console.log(H);
+            console.log(m);
+            console.log(s);
             var endTime = new Date(y, M||0, d||1, H||0, m||0, s||0) //结束日期
                 ,serverTime = new Date(); //假设为当前服务器时间，这里采用的是本地时间，实际使用一般是取服务端的
             clearTimeout(thisTimer);
@@ -149,7 +155,6 @@
             switch (data.Curl_type) {
                 case "exam_login":
                     if (data.Code == 200) {
-                        console.log(data);
                         tipMsg(data.Code, data.Msg, 0, false, false, false);
                     } else {
                         tipMsg(data.Code, data.Msg, 0, false, false, false);

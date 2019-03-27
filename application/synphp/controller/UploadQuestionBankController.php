@@ -37,9 +37,23 @@ class UploadQuestionBankController extends SynPhpBase {
                 if ($value[0] == NULL) {
                     break;
                 }
+                $option = explode(',',$value[1]);
+                $optionJson = [];
+                foreach ($option as $opKey => $opValue) {
+                    $opValue = explode('=', $opValue);
+                    if (count($opValue) != 2) {
+                        continue;
+                    }
+                    $optionJson[$opValue[0]] = $opValue[1];
+                }
+                if (!empty($optionJson)) {
+                    $optionJson = json_encode($optionJson, JSON_UNESCAPED_UNICODE);
+                } else {
+                    $optionJson = '';
+                }
                 $saveData[] = [
                     'title' => $value[0],
-                    'option' => $value[1],
+                    'option' => $optionJson,
                     'right_key' => $value[2],
                     'type' => $value[3],
                     'exam_paper_id' => $this->params[1]
