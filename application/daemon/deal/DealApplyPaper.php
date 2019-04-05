@@ -2,17 +2,13 @@
 /**
  * User: yuzhao
  * CreateTime: 2019/3/19 下午4:22
- * Description:
+ * Description: 提交试卷处理
  */
 namespace app\daemon\deal;
 
-class DealTest {
-
-    public function __construct()
-    {
-    }
+class DealApplyPaper {
 
     public function deal($data) {
-        var_dump($data);
+        var_dump($data);die;
     }
 }

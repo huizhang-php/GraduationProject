@@ -24,7 +24,7 @@ class SignUpController extends BaseController {
         $examTopicInfo = SignUpService::instance()->signUpView($this->params['id'],$msg);
         if ($examTopicInfo === false) {
             $this->assign(['msg' => $msg]);
-            return $this->fetch('index@common/error');
+            return $this->fetch('index@error/error');
         }
         $this->assign([
                 'exam_topic_info' => $examTopicInfo,
@@ -86,7 +86,7 @@ class SignUpController extends BaseController {
     public function confirm_sign_up() {
         SignUpService::instance()->confirmSignUp($this->params, $result);
         $this->assign(['msg' => $result]);
-        return $this->fetch('index@common/error');
+        return $this->fetch('index@error/error');
     }
 
 }

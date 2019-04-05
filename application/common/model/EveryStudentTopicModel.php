@@ -47,8 +47,16 @@ class EveryStudentTopicModel extends BaseModel {
         return $this->getCond($condition, $this->table)->select();
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/4/5 下午5:35
+     * @param $condition
+     * @return bool
+     * @throws \Exception
+     * Description:
+     */
     public function del($condition) {
-        return $this->delete($condition);
+        return $this->where($condition)->delete();
     }
 
     public function up($condition,$data) {

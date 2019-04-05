@@ -72,7 +72,7 @@
                                                     <div class="layui-form-item">
                                                         <label class="layui-form-label" style="text-align: left;width: 10px;">{$optionKey}</label>
                                                         <div class="layui-input-block" style="margin-left: 0;">
-                                                            <input type="radio" lay-filter="type"  value="{$optionKey}" name="type" title="{$optionValue}" >
+                                                            <input type="radio" lay-filter="type"  value="{$optionKey}" name="answer[{$test_info_value.id}]" title="{$optionValue}" >
                                                         </div>
                                                     </div>
                                                 {/foreach}
@@ -81,20 +81,20 @@
                                                     <div class="layui-form-item">
                                                         <label class="layui-form-label" style="text-align: left;width: 30px;">空{$i}</label>
                                                         <div class="layui-input-block" style="margin-left: 0;">
-                                                            <input type="text" style="width: 50%;" class="layui-input" lay-filter="type"  value="" name="answer[{$test_info_value.id}_{$test_info_value.type}_{$test_info_value.right_key}_{$test_info_value.score}]" >
+                                                            <input type="text" style="width: 50%;" class="layui-input" lay-filter="type"  value="" name="answer[{$test_info_value.id}]" >
                                                         </div>
                                                     </div>
                                                 {/for}
                                             {elseif $key eq 2 /}
                                                 <div class="layui-form-item">
                                                     <div class="layui-input-block">
-                                                        <input type="radio" name="answer[{$test_info_value.id}_{$test_info_value.type}_{$test_info_value.right_key}_{$test_info_value.score}]" value="1" title="✔️">
-                                                        <input type="radio" name="answer[{$test_info_value.id}_{$test_info_value.type}_{$test_info_value.right_key}_{$test_info_value.score}]" value="0" title="❌">
+                                                        <input type="radio" name="answer[{$test_info_value.id}]" value="1" title="✔️">
+                                                        <input type="radio" name="answer[{$test_info_value.id}]" value="0" title="❌">
                                                     </div>
                                                 </div>
                                             {elseif $key eq 3 /}
                                                 <div style="margin: 1%;" class="layui-form-item layui-form-text">
-                                                    <textarea name="answer[{$test_info_value.id}_{$test_info_value.type}_{$test_info_value.right_key}_{$test_info_value.score}]" placeholder="请输入答案" class="layui-textarea"></textarea>
+                                                    <textarea name="answer[{$test_info_value.id}]" placeholder="请输入答案" class="layui-textarea"></textarea>
                                                 </div>
                                             {else/}
 
@@ -110,7 +110,7 @@
                                             <div style="float: left;">
                                                 <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
                                             </div>
-                                            <button style="margin-top: 7%;float: right;" class="layui-btn">确认交卷</button>
+                                            <button style="margin-top: 7%;float: right;" class="layui-btn" id="apply" lay-submit="" lay-filter="apply">确认交卷</button>
                                         {else /}
                                             <div style="float: left;">
                                                 <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
@@ -169,10 +169,8 @@
     });
 
     function commonResult(data) {
-        tipMsg(data.code,data.msg,0,false,false);
-        if (data.code == 200) {
-            $('.test_paper_body').hide();
-        }
+        tipMsg(data.code,data.msg,0,true,false,false);
+        $(location).attr('href', "{:url('index/error/error_view',array('msg'=>'提交试卷成功'))}")
     }
 
     function jumpLast(nowNum, lastNum) {

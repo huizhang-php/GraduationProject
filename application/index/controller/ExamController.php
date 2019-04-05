@@ -24,7 +24,7 @@ class ExamController extends BaseController {
         $res = ExamService::instance()->exam($this->params, $msg);
         if ($res === false) {
             $this->assign(['msg' => $msg]);
-            return $this->fetch('index@common/error');
+            return $this->fetch('index@error/error');
         }
         $this->assign($res);
         return $this->fetch();
@@ -44,7 +44,7 @@ class ExamController extends BaseController {
         $res = ExamService::instance()->testView($this->params, $msg);
         if ($res === false) {
             $this->assign(['msg' => $msg]);
-            return $this->fetch('index@common/error');
+            return $this->fetch('index@error/error');
         }
         $this->assign($res);
         return $this->fetch();

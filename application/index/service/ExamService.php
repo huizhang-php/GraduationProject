@@ -15,6 +15,7 @@ use app\common\model\StudentExamTopicModel;
 use app\common\model\StudentsModel;
 use app\common\model\TestPaperContentModel;
 use app\common\tool\EncryptTool;
+use app\common\tool\RabbitMQTool;
 use app\common\tool\TimeTool;
 use think\Db;
 
@@ -185,13 +186,13 @@ class ExamService extends BaseController{
                 }
             } else {
                 // 固定试卷
-                $testPaperInfo = EveryStudentTopicModel::instance()->getList(['exam_topic_id'=>$data['exam_topic_id']])->toArray()['data'];
+                $testPaperInfo = EveryStudentTopicModel::instance()->getList(['exam_topic_id'=>$data['exam_topic_id']])->toArray();
                 $testPaperContentIds = [];
                 foreach ($testPaperInfo as $key => $value) {
                     $testPaperContentIds[] = $value['test_paper_content_id'];
                 }
                 $testPaperContentIds = array_unique($testPaperContentIds);
-                $allExamPaperData = TestPaperContentModel::instance()->getList(['id'=>$testPaperContentIds,'all'=>1])->toArray()['data'];
+                $allExamPaperData = TestPaperContentModel::instance()->getList(['id'=>$testPaperContentIds,'all'=>1])->toArray();
             }
             // 获取配置
             $examConfig = SelfConfig::getConfig('Exam.exam_type_base_conf');
@@ -209,7 +210,6 @@ class ExamService extends BaseController{
                     $returnData['test_paper_info'][$value['type']]['big_title']['num'] = count($returnData['test_paper_info']);
                 }
                 $value['score'] = $questionBankConfig[$value['type']]['score'];
-                $value['right_key'] = EncryptTool::encry($value['right_key']);
                 $returnData['test_paper_info'][$value['type']]['data'][] = $value;
             }
             $examTopicInfo['test_start_time_new'] = str_replace('-0','-',date('Y-m-d-h-i-s', strtotime($examTopicInfo['test_start_time'])+$examTopicInfo['test_time_length']*60));
@@ -235,76 +235,9 @@ class ExamService extends BaseController{
      * @throws \Exception
      */
     public function testApply($data, &$msg) {
-        $res = Db::transaction(function () use ($data, &$msg) {
-            // 获取专题信息
-            $examTopicInfo = ExamTopicModel::instance()->getList([
-                'id' => $data['exam_topic_id']
-            ])->toArray()['data'];
-            if (empty($examTopicInfo)) {
-                $msg = '获取考试信息失败';
-                return false;
-            }
-            $examTopicInfo = $examTopicInfo[0];
-            if ($examTopicInfo['test_paper_type']) {
-                foreach ($data['answer'] as $key => $value) {
-                    $testInfo = explode('_', $key);
-                    $score = 0;
-                    if (in_array($testInfo[1], [1,2])) {
-                        if ($testInfo[2] == $testInfo[0]) {
-                            $score = $testInfo[3];
-                        }
-                    }
-                    $res = EveryStudentTopicModel::instance()->up([
-                        'test_paper_content_id' => $key,
-                        'student_exam_topic_id' => $data['student_exam_topic_id']
-                    ],[
-                        'answer' => $value,
-                        'status' => 1,
-                        'score' => $score,
-                        'utime' => TimeTool::getTime()
-                    ]);
-                    if (!$res) {
-                        $msg = '更新库失败';
-                        return false;
-                    }
-                }
-            } else {
-                $addData = [];
-                foreach ($data['answer'] as $key => $value) {
-                    $testInfo = explode('_', $key);
-                    $score = 0;
-                    if (in_array($testInfo[1], [1,2])) {
-                        if ($testInfo[2] == $testInfo[0]) {
-                            $score = $testInfo[3];
-                        }
-                    }
-                    $addData[] = [
-                        'answer' => $value,
-                        'score' => $score,
-                        'test_paper_content_id' => $testInfo[0],
-                        'test_paper_type' => 0,
-                        'student_exam_topic_id' => $data['student_exam_topic_id'],
-                        'status' => 1,
-                        'exam_topic_id' => $data['exam_topic_id']
-                    ];
-                }
-                $res = EveryStudentTopicModel::instance()->addTopic($addData);
-                if (!$res) {
-                    $msg = '更新库失败';
-                    return false;
-                }
-            }
-            $res = StudentExamTopicModel::instance()->up([
-                'student_id' => $data['student_id'],
-                'exam_topic_id' => $data['exam_topic_id'],
-            ],['status'=>1]);
-            if ($res == 0) {
-                $msg = '更新考试状态失败';
-                return false;
-            }
-            $msg = '提交试卷成功';
-            return true;
-        });
+        // 投入mcq
+        $res = RabbitMQTool::instance('apply_paper')->wMq(json_encode($data));
+        $msg = '提交试卷成功';
         return $res;
     }
 
