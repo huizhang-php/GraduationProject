@@ -8,10 +8,11 @@
 namespace app\admin\controller;
 use app\common\base\MyRequest;
 use app\common\base\MyResponse;
+use think\Controller;
 use think\facade\Request;
 use app\admin\service\LoginService;
-use app\common\base\BaseController;
-class LoginController extends BaseController {
+
+class LoginController extends Controller {
 
     use MyRequest;
     use MyResponse;
@@ -41,7 +42,6 @@ class LoginController extends BaseController {
     /**
      * User: yuzhao
      * CreateTime: 2019/1/6 下午9:00
-
      * Description: 退出系统
      */
     public function unlogin() {

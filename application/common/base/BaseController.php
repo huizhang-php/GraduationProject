@@ -8,6 +8,7 @@ namespace app\common\base;
 use think\Controller;
 use app\common\base\MyRequest;
 use app\common\base\MyResponse;
+use think\facade\Session;
 
 class BaseController extends Controller {
 
@@ -20,8 +21,16 @@ class BaseController extends Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->isSession();
         $this->getParams();
         $this->assign(['title' => '在线考试系统']);
+    }
+
+    public function isSession() {
+        if (!Session::has('admin_name')) {
+            session(null);
+            $this->redirect('admin/login/login');
+        }
     }
 
 }

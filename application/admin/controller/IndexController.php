@@ -7,9 +7,9 @@
  */
 
 namespace app\admin\controller;
-use think\Controller;
+use app\common\base\BaseController;
 
-class IndexController extends Controller {
+class IndexController extends BaseController {
 
     public function index() {
         return view();
