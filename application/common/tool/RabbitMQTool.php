@@ -94,7 +94,7 @@ class RabbitMQTool {
     public function rMq($num=1) {
         $rData = [];
         $callBack = function ($msg) use (&$rData){
-            $rData[] = json_decode($msg->body, true);
+            $rData[] = json_decode(json_decode($msg->body, true), true);
         };
         for ($i=0;$i<$num;$i++) {
             $this->channel->basic_consume($this->mqConf['queue_name'], '', false, true, false, false, $callBack);
