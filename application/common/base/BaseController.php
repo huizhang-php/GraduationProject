@@ -15,6 +15,8 @@ class BaseController extends Controller {
     use MyRequest;
     use MyResponse;
 
+    protected $funcs = [];
+
     /**
      * BaseController constructor.
      */
@@ -23,7 +25,11 @@ class BaseController extends Controller {
         parent::__construct();
         $this->isSession();
         $this->getParams();
-        $this->assign(['title' => '在线考试系统']);
+        $this->funcs = json_decode(session('funcs'), true);
+        $this->assign([
+            'title' => '在线考试系统',
+            'funcs' => $this->funcs
+        ]);
     }
 
     public function isSession() {

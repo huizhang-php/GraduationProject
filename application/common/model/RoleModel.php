@@ -12,12 +12,26 @@ class RoleModel extends Model {
 
     protected $table='role';
 
+    public static function instance() {
+        return new RoleModel();
+    }
+
     public function add($data) {
         return $this->save($data);
     }
 
-    public function getList() {
-        return $this->order('ctime', 'desc')->select();
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/4/9 下午9:56
+     * @param $condition
+     * @return array|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * Description:
+     */
+    public function getList($condition=[]) {
+        return $this->where($condition)->order('ctime', 'desc')->select();
     }
 
     public function up($condition, $data)

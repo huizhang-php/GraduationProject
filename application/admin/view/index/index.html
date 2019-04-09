@@ -2,14 +2,12 @@
 <div class="layui-layout-admin">
     <!--头部-->
     <div class="layui-header">
-        <div class="layui-logo">在线考试系统</div>
+        <div class="layui-logo">{$title}</div>
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item">
                 <a href="javascript:;">其他系统</a>
                 <dl class="layui-nav-child">
-                    <dd><a href="javascript:;">邮件管理</a></dd>
-                    <dd><a href="javascript:;">消息管理</a></dd>
-                    <dd><a href="javascript:;">授权管理</a></dd>
+                    <dd><a href="{:url('admin/login/login')}">权限管理系统</a></dd>
                 </dl>
             </li>
         </ul>
@@ -27,18 +25,28 @@
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <ul class="layui-nav layui-nav-tree" lay-filter="left-nav">
-                <li class="layui-nav-item">
-                    <a href="javascript:;">权限管理</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="#" class="location" data-url="{:url('/admin/jurisdiction/list')}">功能列表</a></dd>
-                    </dl>
-                    <dl class="layui-nav-child">
-                        <dd><a href="#" class="location" data-url="{:url('/admin/role/list')}">角色列表</a></dd>
-                    </dl>
-                    <dl class="layui-nav-child">
-                        <dd><a href="#" class="location" data-url="{:url('/admin/admin/list')}">管理员列表</a></dd>
-                    </dl>
-                </li>
+                {foreach $funcs as $key => $value}
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">{$value.func_name}</a>
+                        {foreach $value.two as $key1 => $value1}
+                            <dl class="layui-nav-child">
+                                <dd><a href="#" class="location" data-url="{:url($value1.func_url)}">{$value1.func_name}</a></dd>
+                            </dl>
+                        {/foreach}
+                    </li>
+                {/foreach}
+                <!--<li class="layui-nav-item">-->
+                    <!--<a href="javascript:;">权限管理</a>-->
+                    <!--<dl class="layui-nav-child">-->
+                        <!--<dd><a href="#" class="location" data-url="{:url('/admin/jurisdiction/list')}">功能列表</a></dd>-->
+                    <!--</dl>-->
+                    <!--<dl class="layui-nav-child">-->
+                        <!--<dd><a href="#" class="location" data-url="{:url('/admin/role/list')}">角色列表</a></dd>-->
+                    <!--</dl>-->
+                    <!--<dl class="layui-nav-child">-->
+                        <!--<dd><a href="#" class="location" data-url="{:url('/admin/admin/list')}">管理员列表</a></dd>-->
+                    <!--</dl>-->
+                <!--</li>-->
                 <li class="layui-nav-item">
                     <a href="javascript:;">考试相关</a>
                     <dl class="layui-nav-child">

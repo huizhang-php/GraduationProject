@@ -8,10 +8,14 @@
 
 namespace app\common\model;
 
-use think\Model;
+use app\common\base\BaseModel;
 
-class FuncModel extends Model {
+class FuncModel extends BaseModel {
     protected $table = 'func';
+
+    public static function instance() {
+        return new FuncModel();
+    }
 
     public function findFunc($condition) {
         return $this->where($condition)->find();
@@ -21,8 +25,8 @@ class FuncModel extends Model {
         return $this->save($data);
     }
 
-    public function getFunc() {
-        return $this->order('ctime', 'desc')->select();
+    public function getFunc($condition=[]) {
+        return $this->getCond($condition, $this->table)->select();
     }
 
     public function upFunc($condition,$data) {

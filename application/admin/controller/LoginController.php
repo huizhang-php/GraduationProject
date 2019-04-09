@@ -21,13 +21,16 @@ class LoginController extends Controller {
      * User: yuzhao
      * CreateTime: 2019/1/5 下午7:05
      * @return \think\response\View
-
      * Description: 登录
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
     public function login() {
         if (Request::isPost()) {
+            $this->getParams();
             if(!captcha_check($this->params['captcha'])){
-                $this->returnAjax(400,'验证码错误');
+//                $this->returnAjax(400,'验证码错误');
             };
             $loginResult = LoginService::getObj()->LoginService($this->params);
             if ($loginResult) {
