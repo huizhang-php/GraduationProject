@@ -62,4 +62,8 @@ class EveryStudentTopicModel extends BaseModel {
     public function up($condition,$data) {
         return $this->where($condition)->update($data);
     }
+
+    public function upAll($data) {
+        return $this->saveAll($data);
+    }
 }
