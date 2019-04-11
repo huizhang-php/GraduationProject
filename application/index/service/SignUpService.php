@@ -8,6 +8,7 @@
 namespace app\index\service;
 
 use app\common\config\SelfConfig;
+use app\common\model\EveryStudentTopicModel;
 use app\common\model\ExamTopicModel;
 use app\common\model\StudentExamTopicModel;
 use app\common\model\StudentsModel;
@@ -252,6 +253,7 @@ class SignUpService{
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
+     * @throws \Exception
      */
     public function confirmSignUp($data, &$result) {
         // 解析考试专题id
@@ -287,6 +289,31 @@ class SignUpService{
         if (empty($studentInfo)) {
             $result = '此手机号还没有被注册';
             return false;
+        }
+        if ($examTopicInfo[0]['test_paper_type'] == 0) {
+            $res = StudentExamTopicModel::instance()->getList([
+                'exam_topic_id' => $examTopicId,
+                'student_id' => $studentId,
+                'status'=>0
+            ])->toArray()['data'];
+            // 查找题
+            $everyStudentTopics = EveryStudentTopicModel::instance()->getList([
+                'exam_topic_id' => $examTopicId
+            ]);
+            $addData = [];
+            foreach ($everyStudentTopics as $key => $value) {
+                $addData[] = [
+                    'test_paper_content_id' => $value['test_paper_content_id'],
+                    'test_paper_type' => $value['test_paper_type'],
+                    'student_exam_topic_id' => $res[0]['id'],
+                    'exam_topic_id' => $value['exam_topic_id']
+                ];
+            }
+            $res = EveryStudentTopicModel::instance()->addTopic($addData);
+            if (!$res) {
+                $result = '出题失败';
+                return false;
+            }
         }
         // 更改报名状态
         $res = StudentExamTopicModel::instance()->up([

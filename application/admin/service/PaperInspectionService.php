@@ -10,6 +10,7 @@ use app\common\base\ServiceInter;
 use app\common\model\EveryStudentTopicModel;
 use app\common\model\ExamTopicModel;
 use app\common\model\StudentExamTopicModel;
+use app\common\model\TestPaperContentModel;
 
 class PaperInspectionService implements ServiceInter {
 
@@ -81,18 +82,25 @@ class PaperInspectionService implements ServiceInter {
         }
         // 获取考生试卷
         $studentExamTopicIds = array_column($studentInfo->toArray()['data'],'id');
+        // 获取中间表信息
         $everyTopicInfo = EveryStudentTopicModel::instance()->getList([
             'student_exam_topic_id' => $studentExamTopicIds
-        ]);
+        ])->toArray();
+        // 获取试卷原始信息
+        $testPaperContentIds = array_column($everyTopicInfo, 'test_paper_content_id');
+        $testPaperContents = TestPaperContentModel::instance()->getList(['all'=>true, 'id'=>$testPaperContentIds])->toArray();
         $newEveryTopicInfo = [];
         foreach ($everyTopicInfo as $key => $value) {
-            $valueArr = $value->toArray();
-            $newEveryTopicInfo[$valueArr['student_exam_topic_id']][] = $value;
+            foreach ($testPaperContents as $key1 => $value1) {
+                if ($value1['id'] == $value['test_paper_content_id']) {
+                    $value1['option'] = json_decode($value1['option'], true);
+                    $value = array_merge($value, $value1);
+                }
+            }
+            $newEveryTopicInfo[$value['student_exam_topic_id']][] = $value;
         }
         foreach ($newEveryTopicInfo as $key => $value) {
-            if (array_key_exists($valueArr['student_exam_topic_id'], $newStudentInfo['students'])) {
-                $newStudentInfo['students'][$valueArr['student_exam_topic_id']]['student_paper_info'] = $value;
-            }
+            $newStudentInfo['students'][$key]['student_paper_info'] = $value;
         }
         return $newStudentInfo;
     }

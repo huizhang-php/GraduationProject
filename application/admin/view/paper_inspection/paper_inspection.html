@@ -37,6 +37,8 @@
                 待考试
                 {elseif $value.status eq 1 /}
                 正在考试
+                {elseif $value.status eq 2 /}
+                考试完成
                 {/if}
             </td>
             <td>
@@ -51,7 +53,18 @@
         <tr>
             <td colspan="7">
                 {foreach $value.student_paper_info as $studentPaperKey => $studentPaperValue}
+                    <div style="margin:1% 0 1% 1%;">
+                        {if $studentPaperValue.type eq 0}
 
+                        {elseif $studentPaperValue.type eq 3 /}
+                            <h5 style="margin: 1%;">{$studentPaperValue.title}</h5>
+                            <div style="margin: 1%;" class="layui-form-item layui-form-text">
+                                <textarea disabled name="answer[{$studentPaperValue.id}]" placeholder="请输入答案" class="layui-textarea">{$studentPaperValue.answer}</textarea>
+                            </div>
+                        {else/}
+
+                        {/if}
+                    </div>
                 {/foreach}
             </td>
         </tr>

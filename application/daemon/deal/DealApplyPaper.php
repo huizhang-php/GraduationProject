@@ -28,14 +28,14 @@ class DealApplyPaper {
             $examTopicInfo = ExamTopicModel::instance()->getList(['id' => $value['exam_topic_id']]);
             $examTopicInfo = $examTopicInfo->toArray();
             $examTopicInfo = $examTopicInfo['data'][0];
-            $everyStudentTopicCond = ['exam_topic_id'=>$value['exam_topic_id']];
+            $everyStudentTopicCond = ['student_exam_topic_id'=>$value['student_exam_topic_id']];
             $topics = EveryStudentTopicModel::instance()->getList($everyStudentTopicCond)->toArray();
             $newTopics = [];
             $answer = [];
             foreach ($topics as $newTopicsKey => $newTopicsValue) {
                 $newTopics[$newTopicsValue['test_paper_content_id']] = $newTopicsValue;
                 foreach ($value['answer'] as $answerKey => $answerVal) {
-                    if ($answerKey === $newTopicsValue['test_paper_content_id']) {
+                    if ($answerKey == $newTopicsValue['test_paper_content_id']) {
                         $answer[$newTopicsValue['id']] = $answerVal;
                     }
                 }
@@ -55,17 +55,24 @@ class DealApplyPaper {
                     if (is_array($answerVal)) {
                         $saveAnswer = join(',', $answerVal);
                     }
-                    $upData[$newValue['id']] = [
-                        'answer' => $saveAnswer,
-                        'id' => $newValue['id']
-                    ];
+
                     if ($answerKey === $newValue['id'] && !in_array($newValue['content_info']['type'], [3])) {
+                        $upData[$newValue['id']] = [
+                            'answer' => $saveAnswer,
+                            'id' => $newValue['id']
+                        ];
                         if ((string)$saveAnswer === (string)$newValue['content_info']['right_key']) {
                             $upData[$newValue['id']]['score'] = $questionBankConfig[$newValue['content_info']['type']]['score'];
                         } else {
                             $upData[$newValue['id']]['score']  = 0;
                         }
                         $upData[$newValue['id']]['is_deal']  = 1;
+                    }
+                    if ($answerKey === $newValue['id'] && !in_array($newValue['content_info']['type'], [0,1,2])) {
+                        $upData[$newValue['id']] = [
+                            'answer' => $saveAnswer,
+                            'id' => $newValue['id']
+                        ];
                     }
                 }
             }
@@ -76,6 +83,7 @@ class DealApplyPaper {
                 'exam_topic_id'=> $value['exam_topic_id'],
                 'student_id' => $value['student_id']
             ],['status'=>2]);
+            var_dump('success');
         }
     }
 }

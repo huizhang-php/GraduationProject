@@ -183,7 +183,7 @@ class ExamTopicService implements ServiceInter {
                 $res = EveryStudentTopicModel::instance()->del(['exam_topic_id'=>$params['id']]);
                 if (!$res) {
                     $result = '删除试题失败';
-                    return false;
+//                    return false;
                 }
             }
             // 统一组卷
