@@ -63,4 +63,12 @@ class PaperInspectionController extends BaseController implements ControllerInte
         return $this->fetch();
     }
 
+    public function apply() {
+        $res = PaperInspectionService::instance()->lookTestPaper($this->params, $msg);
+        if ($res) {
+            $this->returnAjax(200,$msg);
+        }
+        $this->returnAjax(400,$msg);
+    }
+
 }

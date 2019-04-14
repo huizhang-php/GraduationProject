@@ -13,7 +13,8 @@
 
 <!-- 主体内容 -->
 <div class="bodyer" style="width: 95%;padding-left: 2.5%;">
-    <table class="layui-table">
+    <form class="layui-form" action="">
+        <table class="layui-table">
         <thead>
         <tr>
             <th>考生编号</th>
@@ -54,15 +55,18 @@
             <td colspan="7">
                 {foreach $value.student_paper_info as $studentPaperKey => $studentPaperValue}
                     <div style="margin:1% 0 1% 1%;">
-                        {if $studentPaperValue.type eq 0}
-
-                        {elseif $studentPaperValue.type eq 3 /}
-                            <h5 style="margin: 1%;">{$studentPaperValue.title}</h5>
-                            <div style="margin: 1%;" class="layui-form-item layui-form-text">
-                                <textarea disabled name="answer[{$studentPaperValue.id}]" placeholder="请输入答案" class="layui-textarea">{$studentPaperValue.answer}</textarea>
-                            </div>
+                        {if $studentPaperValue.content.type eq 0}
+                            {elseif $studentPaperValue.content.type eq 3 /}
+                                <h5 style="margin: 1%;">
+                                    {$studentPaperValue.content.title}({$studentPaperValue.content.score}分)
+                                    <div class="layui-form-item" style="display:inline-block;width: 100px;float: right;">
+                                        <input oninput="score({$studentPaperValue.content.score},this);" type="text" name="score[{$studentPaperValue.id}]" lay-verify="title" autocomplete="off" {if $studentPaperValue.is_deal eq 1}checked value="{$studentPaperValue.score}" {else /} {/if}placeholder="分数" class="layui-input">
+                                    </div>
+                                </h5>
+                                <div style="margin: 1%;" class="layui-form-item layui-form-text">
+                                    <textarea disabled placeholder="请输入答案" class="layui-textarea">{$studentPaperValue.answer}</textarea>
+                                </div>
                         {else/}
-
                         {/if}
                     </div>
                 {/foreach}
@@ -71,6 +75,10 @@
         {/foreach}
         </tbody>
     </table>
+        {if !empty($students)}
+            <button lay-submit="" lay-filter="apply" class="layui-btn layui-btn-warm" style="float: right;margin-right: 2%;">提交</button>
+        {/if}
+    </form>
     {$count|raw}
 </div>
 <script>
@@ -81,11 +89,27 @@
         form = layui.form;
         element.init();
         form.render();
+        //监听提交
+        form.on('submit(apply)', function(data){
+            console.log(data.field);
+            curlAjax("{:url('paper_inspection/apply')}",data.field,'commonResult');
+            return false;
+        });
     });
 
     function commonResult(data) {
         tipMsg(data.code,data.msg);
     }
+
+    var score = function (score,myself) {
+        var inputScore = $(myself).val();
+        var patrn = /^\+?[1-9][0-9]*$/;　　//判断是否为正整数
+        if (!patrn.test(inputScore)) {
+            $(this).val(1);
+            inputValue = 0;
+            $(myself).val(0);
+        }
+    };
 
 </script>
 
