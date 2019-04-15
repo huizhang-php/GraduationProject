@@ -43,4 +43,24 @@ class ExamTopicModel extends BaseModel {
         return $res;
     }
 
+    /**
+     * User: yuzhao
+     * CreateTime: 2019/4/15 下午11:57
+     * @param $year
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\exception\PDOException
+     * Description:
+     */
+    public function monthCount($year=0) {
+        $sql = "select DATE_FORMAT(test_start_time,'%Y%m') as name,count(*) as total from {$this->table}";
+        if ($year != 0) {
+            $startTime = date('Y-01-01',strtotime($year . ' year'));
+            $endTime = date('Y-12-31',strtotime('-' . $year . ' year'));
+            $sql .= " where test_start_time>={$startTime} and test_start_time<={$endTime} ";
+        }
+        $sql .= " group by test_start_time";
+        $res = $this->query($sql);
+        return $res;
+    }
+
 }
