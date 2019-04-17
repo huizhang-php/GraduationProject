@@ -1,0 +1,53 @@
+{include file='/common/header' /}
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">数据统计</a>
+        <a href="">专题详细统计</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>考试专题</th>
+            <th>报名人数</th>
+            <th>参考人数</th>
+            <th>参考率</th>
+            <th>及格率</th>
+        </tr>
+        </thead>
+        <tbody>
+            {foreach $list as $key => $value}
+                <tr>
+                    <td>{$key}</td>
+                    <td>{$value.name}</td>
+                    <td>{$value.total}</td>
+                    <td>{$value.participate_people}</td>
+                    <td>{$value.participate}</td>
+                    <td>{$value.pass}</td>
+                </tr>
+            {/foreach}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var form;
+    layui.use(['table','element','form','upload'], function() {
+        var table = layui.table;
+        var element = layui.element;
+        form = layui.form;
+        var upload = layui.upload;
+        element.init();
+    });
+</script>
+

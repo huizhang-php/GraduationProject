@@ -49,4 +49,11 @@ class CountController extends BaseController implements ControllerInter {
        $res = CountService::instance()->getExamTopicCountInfo();
        $this->returnAjax(200, '获取数据成功', $res);
     }
+
+    public function exam_topic_count_view() {
+        $res = CountService::instance()->examTopicCount();
+        $this->assign(['list' => $res]);
+        return $this->fetch();
+    }
+
 }

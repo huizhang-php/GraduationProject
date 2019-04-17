@@ -34,8 +34,12 @@ class ExamTopicModel extends BaseModel {
      * @throws \think\exception\DbException
      * Description:
      */
-    public function getList($condition) {
-        return $this->getCond($condition, $this->table)->order('ctime', 'desc')->paginate(20);
+    public function getList($condition, bool $isPage=true) {
+        $myself = $this->getCond($condition, $this->table)->order('ctime', 'desc');
+        if ($isPage) {
+            return $myself->paginate(20);
+        }
+        return $myself->select();
     }
 
     public function up($condition, $data) {

@@ -66,4 +66,5 @@ class EveryStudentTopicModel extends BaseModel {
     public function upAll($data) {
         return $this->saveAll($data);
     }
+
 }

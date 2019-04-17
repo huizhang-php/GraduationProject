@@ -34,4 +34,14 @@ class StudentExamTopicModel extends BaseModel {
         return $this->where($condition)->update($data);
     }
 
+    public function countDeal() {
+        $sql = "select exam_topic_id, status, count(*) as total from {$this->table} GROUP BY exam_topic_id,status";
+        return $this->query($sql);
+    }
+
+    public function countPass() {
+        $sql = "select exam_topic_id, count(*) as total from {$this->table} WHERE total_score>=60 GROUP BY exam_topic_id";
+        return $this->query($sql);
+    }
+
 }

@@ -8,7 +8,9 @@
 namespace app\admin\service;
 
 use app\common\base\ServiceInter;
+use app\common\model\EveryStudentTopicModel;
 use app\common\model\ExamTopicModel;
+use app\common\model\StudentExamTopicModel;
 
 class CountService implements ServiceInter {
 
@@ -56,6 +58,60 @@ class CountService implements ServiceInter {
             'now_value' => array_values($returnNowY),
             'last_value' => array_values($returnLastY),
         ];
+    }
+
+    public function examTopicCount() {
+        $countData = [];
+        $res = StudentExamTopicModel::instance()->countDeal();
+        foreach ($res as $key => $value) {
+            switch ($value['status']) {
+                case 0:
+                    $countData[$value['exam_topic_id']]['no_participate'] = $value['total'];
+                    break;
+                case 1:
+
+                case 2:
+                    $countData[$value['exam_topic_id']]['participate_people'] = $value['total'];
+                    break;
+            }
+            if (isset($countData[$value['exam_topic_id']]['total'])) {
+                $countData[$value['exam_topic_id']]['total'] += $value['total'];
+            } else {
+                $countData[$value['exam_topic_id']]['total'] = $value['total'];
+            }
+        }
+        $res = StudentExamTopicModel::instance()->countPass();
+        foreach ($res as $key => $value) {
+            $countData[$value['exam_topic_id']]['pass_people'] = round($value['total']/$value['exam_topic_id']['total']*100,2)."％";
+        }
+        $res = ExamTopicModel::instance()->getList(['id'=>array_keys($countData)], false);
+        foreach ($res as $key => $value) {
+            $countData[$value['id']]['name'] = $value['name'];
+        }
+        foreach ($countData as $key => $value) {
+            if (!isset($value['no_participate'])) {
+                $countData[$key]['no_participate'] = 0;
+            }
+            if (!isset($value['name'])) {
+                $countData[$key]['name'] = '';
+            }
+            if (!isset($value['total'])) {
+                $countData[$key]['total'] = 0;
+            }
+            if (!isset($value['participate_people'])) {
+                $countData[$key]['participate_people'] = 0;
+                $countData[$key]['participate'] = round($countData[$key]['participate_people']/$countData[$key]['total']*100,2)."％";
+            } else {
+                $countData[$key]['participate'] = round($countData[$key]['participate_people']/$countData[$key]['total']*100,2)."％";
+            }
+            if (!isset($value['pass_people'])) {
+                $countData[$key]['pass_people'] = 0;
+                $countData[$key]['pass'] = "0%";
+            } else {
+                $countData[$key]['people'] = round($countData[$key]['people']/$countData[$key]['total']*100,2)."％";
+            }
+        }
+        return $countData;
     }
 
     public function getList($params = [])
