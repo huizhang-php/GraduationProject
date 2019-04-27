@@ -1,84 +1,128 @@
 <?php
 /**
- * User: yuzhao
- * CreateTime: 2019/1/6 下午4:52
-
- * Description:
+ * @CreateTime:   2019/4/27 下午10:42
+ * @Author:       yuzhao  <tuzisir@163.com>
+ * @Copyright:    copyright(2019) Hebei normal university all rights reserved
+ * @Description:  管理员model层
  */
 namespace app\common\model;
+use app\common\config\SelfConfig;
+use app\common\tool\EsLog;
 use think\Model;
 class AdminModel extends Model {
 
     protected $table = 'admin';
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/23 下午11:46
-     * Description: 一对多关联
+     * 角色和管理员一对一关联
+     *
+     * @return \think\model\relation\HasOne
+     * CreateTime: 2019/4/27 下午11:00
      */
     public function adminrole() {
         return $this->hasOne('RoleModel', 'id', 'role_id');
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/23 下午11:35
+     * 查找管理员
+     *
      * @param $condition
-     * @return array|null|\PDOStatement|string|Model
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description: 查找
+     * @return array|bool|null|\PDOStatement|string|Model
+     * CreateTime: 2019/4/27 下午11:00
      */
     public function findAdmin($condition) {
-        return $this->where($condition)->find();
+        try {
+            $res = $this->where($condition)->find();
+            return $res;
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.admin'),
+                $e->getMessage(),
+                $condition
+            );
+        }
+        return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/23 下午11:35
+     * 添加管理员
+     *
      * @param $data
-     * @return bool|false|int
-     * Description: 添加
+     * @return bool
+     * CreateTime: 2019/4/27 下午11:00
      */
     public function add($data) {
-        return $this->save($data);
+        try {
+            return $this->save($data);
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.admin'),
+                $e->getMessage(),
+                $data
+            );
+        }
+        return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/23 下午11:35
-     * @return array|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description: 获取列表
+     * 获取管理员列表
+     *
+     * @return array|bool|\PDOStatement|string|\think\Collection
+     * CreateTime: 2019/4/27 下午11:01
      */
     public function getList() {
-        return $this->order('ctime', 'desc')->select();
+        try {
+            return $this->order('ctime', 'desc')->select();
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.admin'),
+                $e->getMessage()
+            );
+        }
+        return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/23 下午11:35
+     * 删除管理员
+     *
      * @param $condition
-     * @return bool|int
-     * @throws \Exception
-     * Description:
+     * @return bool
+     * CreateTime: 2019/4/27 下午11:01
      */
     public function del($condition) {
-        return $this->where($condition)->delete();
+        try {
+            return $this->where($condition)->delete();
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.admin'),
+                $e->getMessage(),
+                $condition
+            );
+        }
+        return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/23 下午11:40
+     * 更新管理员信息
+     *
      * @param $condition
      * @param $data
-     * @return static
-     * Description: 更新
+     * @return bool|static
+     * CreateTime: 2019/4/27 下午11:01
      */
     public function up($condition, $data) {
-        return $this->where($condition)->update($data);
+        try {
+            return $this->where($condition)->update($data);
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.admin'),
+                $e->getMessage(),
+                [
+                    'condition' => $condition,
+                    'data' => $data
+                ]
+            );
+        }
+        return false;
     }
 }

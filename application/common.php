@@ -11,7 +11,6 @@
 
 // 应用公共文件
 
-
 function console ($data) {
     echo "<pre>";
     var_dump($data);
