@@ -1,65 +1,103 @@
 <?php
 /**
- * User: yuzhao
- * CreateTime: 2019/2/15 上午12:53
- * Description:
+ * @CreateTime:   2019/4/27 下午10:42
+ * @Author:       yuzhao  <tuzisir@163.com>
+ * @Copyright:    copyright(2019) Hebei normal university all rights reserved
+ * @Description:  题库内容model层
  */
 
 namespace app\common\model;
 
-
 use app\common\base\BaseModel;
+use app\common\config\SelfConfig;
+use app\common\tool\EsLog;
 
 class TestPaperContentModel extends BaseModel {
+
+    /**
+     * 表名
+     *
+     * @var string
+     * CreateTime: 2019/4/28 下午11:11
+     */
     protected $table = 'test_paper_content';
 
+    /**
+     * 返回当前实例
+     *
+     * @return TestPaperContentModel
+     * CreateTime: 2019/4/28 下午11:11
+     */
     public static function instance() {
         return new TestPaperContentModel();
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/5 下午10:05
+     * 批量添加
+     *
      * @param $data
-     * @return \think\Collection
-     * @throws \Exception
-     * Description:
+     * @return bool|\think\Collection
+     * CreateTime: 2019/4/28 下午11:11
      */
     public function adds($data) {
-        return $this->saveAll($data);
+        try {
+            return $this->saveAll($data);
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.student'),
+                $e->getMessage(),
+                $data
+            );
+        }
+        return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/5 下午10:05
+     * 查找
+     *
      * @param $condition
-     * @return \think\Paginator
-     * @throws \think\exception\DbException
-     * Description:
+     * @return array|bool|mixed|\PDOStatement|string|\think\Collection|\think\Paginator
+     * CreateTime: 2019/4/28 下午11:13
      */
     public function getList($condition) {
-        if (isset($condition['all'])) {
-            unset($condition['all']);
-            $res = $this->getCond($condition, $this->table)->select();
-        } else {
-            $res = $this->getCond($condition, $this->table)->order('ctime', 'desc')->paginate(20,false,['query' => [
-                'id' => $condition['exam_paper_id']
-            ]]);
+        try {
+            if (isset($condition['all'])) {
+                unset($condition['all']);
+                $res = $this->getCond($condition, $this->table)->select();
+            } else {
+                $res = $this->getCond($condition, $this->table)->order('ctime', 'desc')->paginate(20,false,['query' => [
+                    'id' => $condition['exam_paper_id']
+                ]]);
+            }
+            return $res;
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.student'),
+                $e->getMessage(),
+                $condition
+            );
         }
-        return $res;
+        return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/14 下午10:41
+     * 随机查询
+     *
      * @param $data
-     * @return mixed
-     * @throws \think\db\exception\BindParamException
-     * @throws \think\exception\PDOException
-     * Description:
+     * @return bool|mixed
+     * CreateTime: 2019/4/28 下午11:13
      */
     public function randSelect($data) {
-        $sql = "select * from test_paper_content where exam_paper_id={$data['question_bank_id']} and type={$data['type']} ORDER BY rand() limit 0,{$data['num']}";
-        return $this->query($sql);
+        try {
+            $sql = "select * from test_paper_content where exam_paper_id={$data['question_bank_id']} and type={$data['type']} ORDER BY rand() limit 0,{$data['num']}";
+            return $this->query($sql);
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.student'),
+                $e->getMessage(),
+                $data
+            );
+        }
+        return false;
     }
 }
