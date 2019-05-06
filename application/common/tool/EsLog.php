@@ -11,11 +11,11 @@ use app\common\tool\Es;
 class EsLog {
 
     // 错误
-    const ERROR = 'ERROR';
+    const ERROR = ERROR;
     // 调试
-    const DEBUG = 'DEBUG';
+    const DEBUG = DEBUG;
     // 业务
-    const BUSINESS = 'BUSINESS';
+    const BUSINESS = BUSINESS;
 
     /**
      * 记录es日志
@@ -26,7 +26,7 @@ class EsLog {
      * @param $msg
      * @param $data
      */
-    public static function wLog(string $type=self::ERROR, string $action = 'error', string $msg='', array $data=[]) {
+    public static function wLog(string $type=self::ERROR, string $action = ERROR, string $msg='', array $data=[]) {
         $body = [
             'type' => $type,
             'action' => $action,
@@ -36,7 +36,7 @@ class EsLog {
         ];
         $params = [
             'index' => 'es_log_'.date('Ymd'),
-            'type' => '123',
+            'type' => 'doc',
             'id' => time(),
             'body' => $body
         ];

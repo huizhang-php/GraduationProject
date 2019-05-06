@@ -6,10 +6,10 @@
  */
 namespace app\index\controller;
 
-use app\common\base\BaseController;
+use app\common\base\BaseIndexController;
 use app\index\service\ExamService;
 
-class ExamController extends BaseController {
+class ExamController extends BaseIndexController {
 
     /**
      * User: yuzhao

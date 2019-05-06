@@ -1,26 +1,31 @@
 <?php
 /**
- * User: yuzhao
- * CreateTime: 2019/1/6 下午4:48
-
- * Description:
+ * @CreateTime:   2019/4/27 下午10:42
+ * @Author:       yuzhao  <tuzisir@163.com>
+ * @Copyright:    copyright(2019) Hebei normal university all rights reserved
+ * @Description:  登录service层
  */
 namespace app\admin\service;
+use app\common\base\BaseService;
 use app\common\model\AdminModel;
 use app\common\model\FuncModel;
 use app\common\model\RoleModel;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
-use think\exception\DbException;
 
-class LoginService {
+class LoginService extends BaseService {
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/6 下午4:51
-     * @var
+     * 模块名称
+     *
+     * @var string
+     * CreateTime: 2019/4/29 下午2:37
+     */
+    protected $modelName = 'login';
 
-     * Description:
+    /**
+     * 管理员model层
+     *
+     * @var AdminModel
+     * CreateTime: 2019/4/29 下午2:37
      */
     private $adminModel;
 
@@ -32,19 +37,22 @@ class LoginService {
         $this->adminModel = new AdminModel();
     }
 
+    /**
+     * 获取当前对象
+     *
+     * @return LoginService
+     * CreateTime: 2019/4/29 下午2:37
+     */
     public static function getObj() {
         return new LoginService();
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/6 下午5:02
+     * 登录
+     *
      * @param $data
-     * @return string
-     * Description: 登录
-     * @throws DataNotFoundException
-     * @throws ModelNotFoundException
-     * @throws DbException
+     * @return bool
+     * CreateTime: 2019/4/29 下午2:37
      */
     public function LoginService($data) {
         // 查看是否有此用户

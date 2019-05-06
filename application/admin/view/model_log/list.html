@@ -1,0 +1,99 @@
+{include file='/common/header' /}
+
+<!-- 导航条 -->
+<div style="padding: 1rem 0rem 0.5rem 1rem;">
+    <span class="layui-breadcrumb" lay-separator="—">
+        <a href="">运维管理</a>
+        <a href="">日志查询</a>
+    </span>
+</div>
+
+<!-- 分割线 -->
+<hr class="layui-bg-orange">
+
+<!-- 主体内容 -->
+<div class="bodyer" style="width: 95%;padding-left: 2.5%;">
+    <blockquote class="layui-elem-quote layui-quote-nm">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">时间范围</label>
+                <div class="layui-input-inline">
+                    <input style="width: 300px;"  autocomplete="off" type="text" name="time" class="layui-input" id="date" placeholder=" - ">
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: inline-block; width:250px;">
+                <label class="layui-form-label">模块名称</label>
+                <div class="layui-input-block">
+                    <select name="model_name" lay-filter="aihao">
+                        <option value="0" selected="">全部</option>
+                        {foreach $model_names as $key => $val}
+                            <option value="{$key}">{$val}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: inline-block;width:250px;">
+                <label class="layui-form-label">日志类型</label>
+                <div class="layui-input-block">
+                    <select name="log_type" lay-filter="aihao">
+                        <option value="0" selected="">全部</option>
+                        {foreach $log_type as $key => $val}
+                            <option value="{$key}">{$val}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <button class="layui-btn" lay-submit="" id="search" lay-filter="search" style="margin-left: 40px;">搜索</button>
+        </form>
+    </blockquote>
+    <div class="layui-tab-content">
+        <div>
+            <table class="layui-hide" id="log-list" lay-filter="log-list"></table>
+        </div>
+    </div>
+    </table>
+</div>
+
+
+<script>
+    var form;
+    var table;
+    layui.use(['table','element','form','laydate'], function() {
+        table = layui.table;
+        var element = layui.element;
+        var laydate = layui.laydate;
+        form = layui.form;
+        upload();
+        element.init();
+        laydate.render({
+            elem: '#date'
+            ,type: 'datetime'
+            ,range: true
+        });
+        form.on('submit(search)', function(obj){
+            upload(obj.field);
+            return false;
+        });
+        form.render();
+    });
+
+    // 数据重载
+    var upload = function (data) {
+        table.render({
+            elem: '#log-list'
+            ,url: "{:url('admin/model_log/get_log_data')}"
+            ,where: data
+            ,toolbar: '#tool-bar'
+            ,method: 'post'
+            ,cols: [[
+                {field:'action', title: '模块名称',width:200},
+                {field:'type', title: '日志类型',width:200},
+                {field:'msg', title: '信息',width:200},
+                {field:'data', title: '数据',width:200},
+                {field:'ctime', title: '写入时间',width:200}
+            ]]
+            ,page: true
+        });
+    };
+
+</script>

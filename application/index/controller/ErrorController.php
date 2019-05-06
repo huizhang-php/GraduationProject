@@ -8,9 +8,9 @@
 
 namespace app\index\controller;
 
-use app\common\base\BaseController;
+use app\common\base\BaseIndexController;
 
-class ErrorController extends BaseController {
+class ErrorController extends BaseIndexController {
 
     public function error_view() {
         $msg = $this->params['msg'];

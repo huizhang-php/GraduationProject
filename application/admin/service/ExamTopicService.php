@@ -6,6 +6,7 @@
  */
 
 namespace app\admin\service;
+use app\common\base\BaseService;
 use app\common\base\ServiceInter;
 use app\common\config\SelfConfig;
 use app\common\model\EveryStudentTopicModel;
@@ -16,8 +17,22 @@ use app\common\tool\TimeTool;
 use app\common\tool\EncryptTool;
 use think\Db;
 
-class ExamTopicService implements ServiceInter {
+class ExamTopicService extends BaseService implements ServiceInter {
 
+    /**
+     * 模块名称
+     *
+     * @var string
+     * CreateTime: 2019/4/29 下午2:28
+     */
+    protected $modelName = 'exam_topic';
+
+    /**
+     * 返回当前实例
+     *
+     * @return ExamTopicService
+     * CreateTime: 2019/4/29 下午2:27
+     */
     public static function instance()
     {
         // TODO: Implement instance() method.
@@ -25,16 +40,12 @@ class ExamTopicService implements ServiceInter {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/6 上午12:04
+     * 添加考试专题
+     *
      * @param array $params
      * @param $result
      * @return bool
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description:
-     * @throws \Exception
+     * CreateTime: 2019/4/29 下午2:28
      */
     public function add($params=[], &$result)
     {
@@ -43,6 +54,7 @@ class ExamTopicService implements ServiceInter {
         $res = ExamTopicModel::instance()->getList(['name'=>$params['name']]);
         if (!empty($res->toArray()['data'])) {
             $result = '专题名称重复';
+            $this->wEsLog($result, $params);
             return false;
         }
         $questionBank = str_replace("'",'',json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE));
@@ -63,6 +75,7 @@ class ExamTopicService implements ServiceInter {
         $res = ExamTopicModel::instance()->save($data);
         if (!$res) {
             $result = '添加专题失败';
+            $this->wEsLog($result, $data);
             return false;
         }
         // 统一组卷
@@ -91,12 +104,14 @@ class ExamTopicService implements ServiceInter {
             }
             if (empty($addEveryStudetnData)) {
                 $result = '分配试卷有误';
+                $this->wEsLog($result, $params);
                 return false;
             }
             // 入库
             $res = EveryStudentTopicModel::instance()->addTopic($addEveryStudetnData);
             if (empty($res)) {
                 $result = '生成试题失败';
+                $this->wEsLog($result, $addEveryStudetnData);
                 return false;
             }
         }
@@ -105,14 +120,11 @@ class ExamTopicService implements ServiceInter {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/6 上午12:45
+     * 查找
+     *
      * @param array $params
-     * @return array|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description:
+     * @return array|bool|mixed|\PDOStatement|string|\think\Collection|\think\Paginator
+     * CreateTime: 2019/4/29 下午2:29
      */
     public function getList($params=[])
     {
@@ -137,16 +149,12 @@ class ExamTopicService implements ServiceInter {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/6 下午5:02
+     * 更新
+     *
      * @param array $params
      * @param $result
-     * @return bool
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description:
-     * @throws \Exception
+     * @return mixed
+     * CreateTime: 2019/4/29 下午2:30
      */
     public function up($params=[], &$result)
     {
@@ -157,6 +165,7 @@ class ExamTopicService implements ServiceInter {
             $res = $res->toArray()['data'];
             if (!empty($res)) {
                 $result = '专题名称重复';
+                $this->wEsLog($result, $params);
                 return false;
             }
             $questionBank = str_replace("'",'',json_encode($params['question_bank'], JSON_UNESCAPED_UNICODE));
@@ -175,6 +184,10 @@ class ExamTopicService implements ServiceInter {
             $res = ExamTopicModel::instance()->up($condition, $data);
             if (!$res) {
                 $result = '修改失败';
+                $this->wEsLog($result, [
+                    'condition' => $condition,
+                    'data' => $data
+                ]);
                 return false;
 
             }
@@ -183,7 +196,8 @@ class ExamTopicService implements ServiceInter {
                 $res = EveryStudentTopicModel::instance()->del(['exam_topic_id'=>$params['id']]);
                 if (!$res) {
                     $result = '删除试题失败';
-//                    return false;
+                    $this->wEsLog($result, $params);
+                    return false;
                 }
             }
             // 统一组卷
@@ -212,12 +226,14 @@ class ExamTopicService implements ServiceInter {
                 }
                 if (empty($addEveryStudetnData)) {
                     $result = '分配试卷有误';
+                    $this->wEsLog($result, $params);
                     return false;
                 }
                 // 入库
                 $res = EveryStudentTopicModel::instance()->addTopic($addEveryStudetnData);
                 if (empty($res)) {
                     $result = '生成试题失败';
+                    $this->wEsLog($result, $addEveryStudetnData);
                     return false;
                 }
             }
@@ -232,6 +248,14 @@ class ExamTopicService implements ServiceInter {
         // TODO: Implement del() method.
     }
 
+    /**
+     * 更新考试专题状态
+     *
+     * @param array $params
+     * @param $result
+     * @return bool
+     * CreateTime: 2019/4/29 下午2:31
+     */
     public function up_status($params=[], &$result)
     {
         // TODO: Implement up_status() method.
@@ -245,9 +269,17 @@ class ExamTopicService implements ServiceInter {
             return true;
         }
         $result = '状态修改失败';
+        $this->wEsLog($result, $params);
         return false;
     }
 
+    /**
+     * 获取考试专题学生信息
+     *
+     * @param $data
+     * @return bool|\think\Paginator
+     * CreateTime: 2019/4/29 下午2:31
+     */
     public function examTopicStudents($data) {
         $res = StudentExamTopicModel::instance()->getList([
             'exam_topic_id' => $data['exam_topic_id']

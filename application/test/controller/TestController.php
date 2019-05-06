@@ -17,6 +17,6 @@ class TestController extends Controller {
     }
 
     public function es() {
-        EsLog::wLog([]);
+        EsLog::wLog();
     }
 }

@@ -1,39 +1,57 @@
 <?php
 /**
- * User: yuzhao
- * CreateTime: 2019/1/6 下午11:28
-
- * Description:
+ * @CreateTime:   2019/4/27 下午10:42
+ * @Author:       yuzhao  <tuzisir@163.com>
+ * @Copyright:    copyright(2019) Hebei normal university all rights reserved
+ * @Description:  系统功能service层
  */
-
 namespace app\admin\service;
 
+use app\common\base\BaseService;
 use app\common\model\FuncModel;
 use app\common\tool\TimeTool;
 
-class JurisdictionService {
+class JurisdictionService extends BaseService {
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/8 下午10:49
-     * @var FuncModel $funcModel
-     * Description:
+     * 模块名称
+     *
+     * @var string
+     * CreateTime: 2019/4/29 下午2:33
+     */
+    protected $modelName = 'func';
+
+    /**
+     * 功能模型层
+     *
+     * @var $funcModel FuncModel
+     * CreateTime: 2019/4/29 下午2:33
      */
     private $funcModel;
 
+    /**
+     * JurisdictionService constructor.
+     */
     public function __construct()
     {
         $this->funcModel = new FuncModel();
     }
 
+    /**
+     * 获取当前对象
+     *
+     * @return JurisdictionService
+     * CreateTime: 2019/4/29 下午2:33
+     */
     public static function getObj() {
         return new JurisdictionService();
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/8 下午10:47
-     * Description: 功能列表
+     * 功能列表
+     *
+     * @return array
+     * CreateTime: 2019/4/29 下午2:34
      */
     public function funcList() {
         $funcList = $this->funcModel->getFunc();
@@ -54,21 +72,19 @@ class JurisdictionService {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/11 下午5:54
+     * 添加功能
+     *
      * @param $data
      * @param $result
      * @return bool
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description: 添加功能
+     * CreateTime: 2019/4/29 下午2:34
      */
     public function addFunc($data,&$result) {
         $condition['func_name'] = $data['func_name'];
         // 判断重复
         if (!empty($this->funcModel->find($condition))) {
             $result =  '功能名称重复';
+            $this->wEsLog($result, $condition);
             return false;
         }
         $time = TimeTool::getTime();
@@ -91,16 +107,17 @@ class JurisdictionService {
             return true;
         }
         $result = '添加功能失败';
+        $this->wEsLog($result, $addData);
         return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/11 下午5:54
+     * 更新状态
+     *
      * @param $params
      * @param $result
      * @return bool
-     * Description: 更新状态
+     * CreateTime: 2019/4/29 下午2:34
      */
     public function upStatus($params, &$result) {
         $idType = explode('-',$params['id_type']);
@@ -116,19 +133,20 @@ class JurisdictionService {
             return true;
         }
         $result = '状态修改失败';
+        $this->wEsLog($result, [
+            'condition' => $condition,
+            'data' => $data
+        ]);
         return false;
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/11 下午5:54
+     * 是否存在二级功能
+     *
      * @param $params
      * @param $result
      * @return bool
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description: 是否存在二级功能
+     * CreateTime: 2019/4/29 下午2:34
      */
     public function isHaveTwoFunc($params, &$result) {
         $condition['pid'] = $params['id'];
@@ -143,12 +161,12 @@ class JurisdictionService {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/11 下午5:54
+     * 删除功能
+     *
      * @param $params
      * @param $result
      * @return bool
-     * Description: 删除功能
+     * CreateTime: 2019/4/29 下午2:34
      */
     public function delFunc($params, &$result) {
         $condition['id'] = $params['id'];
@@ -158,17 +176,18 @@ class JurisdictionService {
             return true;
         } else {
             $result = '删除功能失败';
+            $this->wEsLog($result, $params);
             return false;
         }
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/1/11 下午5:55
+     * 更新功能
+     *
      * @param $params
      * @param $result
      * @return bool
-     * Description: 更新功能
+     * CreateTime: 2019/4/29 下午2:34
      */
     public function upFunc($params, &$result) {
         $condition['id'] = $params['id'];
@@ -180,6 +199,7 @@ class JurisdictionService {
             return true;
         }
         $result = '修改失败';
+        $this->wEsLog($result, $params);
         return false;
     }
 

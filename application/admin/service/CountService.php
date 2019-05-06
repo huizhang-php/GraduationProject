@@ -7,13 +7,27 @@
  */
 namespace app\admin\service;
 
+use app\common\base\BaseService;
 use app\common\base\ServiceInter;
-use app\common\model\EveryStudentTopicModel;
 use app\common\model\ExamTopicModel;
 use app\common\model\StudentExamTopicModel;
 
-class CountService implements ServiceInter {
+class CountService extends BaseService implements ServiceInter {
 
+    /**
+     * 模块名称
+     *
+     * @var string
+     * CreateTime: 2019/4/29 下午1:39
+     */
+    protected $modelName = 'count';
+
+    /**
+     * 返回当前对象
+     *
+     * @return CountService
+     * CreateTime: 2019/4/29 下午1:39
+     */
     public static function instance()
     {
         // TODO: Implement instance() method.
@@ -21,11 +35,12 @@ class CountService implements ServiceInter {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/4/15 下午11:58
+     * 获取考试专题统计信息
+     *
+     * @return array
      * @throws \think\db\exception\BindParamException
      * @throws \think\exception\PDOException
-     * Description: 获取考试专题统计信息
+     * CreateTime: 2019/4/29 下午1:39
      */
     public function getExamTopicCountInfo() {
         // 获取今年和去年的数据格式
@@ -60,6 +75,12 @@ class CountService implements ServiceInter {
         ];
     }
 
+    /**
+     * 考试专题统计
+     *
+     * @return array
+     * CreateTime: 2019/4/29 下午1:39
+     */
     public function examTopicCount() {
         $countData = [];
         $res = StudentExamTopicModel::instance()->countDeal();

@@ -1,19 +1,34 @@
 <?php
 /**
- * User: yuzhao
- * CreateTime: 2019/3/9 下午10:59
- * Description:
+ * @CreateTime:   2019/4/27 下午10:42
+ * @Author:       yuzhao  <tuzisir@163.com>
+ * @Copyright:    copyright(2019) Hebei normal university all rights reserved
+ * @Description:  考生service层
  */
 namespace app\admin\service;
 
 use app\common\base\BaseModel;
+use app\common\base\BaseService;
 use app\common\base\ServiceInter;
 use app\common\model\StudentsModel;
 use app\common\tool\TimeTool;
 
-class StudentsService extends BaseModel implements ServiceInter {
+class StudentsService extends BaseService implements ServiceInter {
 
+    /**
+     * 模块名称
+     *
+     * @var string
+     * CreateTime: 2019/4/29 下午2:45
+     */
+    protected $modelName = 'student';
 
+    /**
+     * 返回当前实例
+     *
+     * @return StudentsService
+     * CreateTime: 2019/4/29 下午2:45
+     */
     public static function instance()
     {
         // TODO: Implement instance() method.
@@ -41,6 +56,14 @@ class StudentsService extends BaseModel implements ServiceInter {
         // TODO: Implement del() method.
     }
 
+    /**
+     * 更新考生状态
+     *
+     * @param array $params
+     * @param $result
+     * @return bool
+     * CreateTime: 2019/4/29 下午2:44
+     */
     public function up_status($params = [], &$result)
     {
         // TODO: Implement up_status() method.
@@ -54,6 +77,7 @@ class StudentsService extends BaseModel implements ServiceInter {
             return true;
         }
         $result = '更改状态失败';
+        $this->wEsLog($result, $params);
         return false;
     }
 }

@@ -6,10 +6,10 @@
  */
 namespace app\index\controller;
 
-use app\common\base\BaseController;
+use app\common\base\BaseIndexController;
 use app\index\service\SignUpService;
 
-class SignUpController extends BaseController {
+class SignUpController extends BaseIndexController {
 
     /**
      * User: yuzhao

@@ -77,16 +77,7 @@
                 <li class="layui-nav-item">
                     <a href="javascript:;">运维管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="#" class="location" data-url="{:url('/admin/students/list')}">系统Bug</a></dd>
-                    </dl>
-                    <dl class="layui-nav-child">
-                        <dd><a href="#" class="location" data-url="{:url('/admin/exam/list')}">执行流程</a></dd>
-                    </dl>
-                    <dl class="layui-nav-child">
-                        <dd><a class="location" href="http://188.131.239.112:5601/app/kibana#/dev_tools/console?_g=()">Kibana</a></dd>
-                    </dl>
-                    <dl class="layui-nav-child">
-                        <dd><a class="location" href="88.131.239.112:15672">RabbitMq</a></dd>
+                        <dd><a href="#" class="location" data-url="{:url('/admin/model_log/list')}">日志查询</a></dd>
                     </dl>
                 </li>
             </ul>
@@ -99,6 +90,9 @@
 </div>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script>
+    $(function () {
+        $('#container-iframe').attr('src', "{:url('/admin/count/list')}");
+    });
     layui.use('element', function(){
         var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
         //监听导航点击

@@ -8,6 +8,6 @@ namespace app\daemon\timer;
 
 class TimerTest {
     public function test() {
-        var_dump(123);
+
     }
 }

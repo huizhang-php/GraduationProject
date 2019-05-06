@@ -1,11 +1,13 @@
 <?php
 /**
- * User: yuzhao
- * CreateTime: 2019/3/19 下午10:19
- * Description:
+ * @CreateTime:   2019/4/27 下午10:42
+ * @Author:       yuzhao  <tuzisir@163.com>
+ * @Copyright:    copyright(2019) Hebei normal university all rights reserved
+ * @Description:  手动判断service层
  */
 namespace app\admin\service;
 
+use app\common\base\BaseService;
 use app\common\base\ServiceInter;
 use app\common\config\SelfConfig;
 use app\common\model\EveryStudentTopicModel;
@@ -14,8 +16,22 @@ use app\common\model\StudentExamTopicModel;
 use app\common\model\TestPaperContentModel;
 use app\common\tool\TimeTool;
 
-class PaperInspectionService implements ServiceInter {
+class PaperInspectionService extends BaseService implements ServiceInter {
 
+    /**
+     * 模块名称
+     *
+     * @var string
+     * CreateTime: 2019/4/29 下午2:40
+     */
+    protected $modelName = 'paper_inspection';
+
+    /**
+     * 获取当前实例
+     *
+     * @return PaperInspectionService
+     * CreateTime: 2019/4/29 下午2:40
+     */
     public static function instance()
     {
         // TODO: Implement instance() method.
@@ -23,13 +39,11 @@ class PaperInspectionService implements ServiceInter {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/19 下午10:34
+     * 查找
+     *
      * @param array $params
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description:
+     * @return array|bool|mixed|\PDOStatement|string|\think\Collection|\think\Paginator
+     * CreateTime: 2019/4/29 下午2:41
      */
     public function getList($params = [])
     {
@@ -62,14 +76,11 @@ class PaperInspectionService implements ServiceInter {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/3/19 下午11:10
+     * 获取考卷信息
+     *
      * @param array $params
-     * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * Description:
+     * @return mixed
+     * CreateTime: 2019/4/29 下午2:41
      */
     public function paperInspection($params=[]) {
         // 获取所有考生
@@ -118,12 +129,12 @@ class PaperInspectionService implements ServiceInter {
     }
 
     /**
-     * User: yuzhao
-     * CreateTime: 2019/4/14 下午10:04
+     * 阅卷
+     *
      * @param $data
      * @param $msg
-     * Description: 阅卷
      * @return bool
+     * CreateTime: 2019/4/29 下午2:42
      */
     public function lookTestPaper($data, &$msg) {
         $upData = [];
@@ -141,6 +152,7 @@ class PaperInspectionService implements ServiceInter {
             return true;
         }
         $msg = '提交失败';
+        $this->wEsLog($msg, $data);
         return false;
     }
 }

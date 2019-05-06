@@ -65,7 +65,21 @@ class Es {
         return false;
     }
 
-    public function readEs() {
+    /**
+     * 查找数据
+     *
+     * @param array $params
+     * CreateTime: 2019/5/6 上午10:46
+     */
+    public function readEs(array $params = []) {
+        $res = self::$esConn->search($params);
+        if (isset($res['hits']['hits'])) {
+            return [
+                'data' => $res['hits']['hits'],
+                'total' => $res['hits']['total']
+            ];
+        }
+        return false;
     }
 }
 
