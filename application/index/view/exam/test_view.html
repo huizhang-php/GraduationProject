@@ -104,19 +104,19 @@
                                     {if $value.num neq 0 && $big_num neq 1}
                                         {if $value.big_title.num < $big_num and $value.big_title.num eq 1}
                                         <div style="float: right;">
-                                            <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num+1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                            <a href="javascript:void(0);" onclick="jumpLast({$value.big_title.num},{$value.big_title.num+1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
                                         </div>
                                         {elseif $value.big_title.num > 1 and $value.big_title.num eq $big_num}
                                             <div style="float: left;">
-                                                <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                                <a href="javascript:void(0);" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
                                             </div>
                                             <button style="margin-top: 7%;float: right;" class="layui-btn" id="apply" lay-submit="" lay-filter="apply">确认交卷</button>
                                         {else /}
                                             <div style="float: left;">
-                                                <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                                <a href="javascript:void(0);" onclick="jumpLast({$value.big_title.num},{$value.big_title.num-1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
                                             </div>
                                             <div style="float: right;">
-                                                <a href="#" onclick="jumpLast({$value.big_title.num},{$value.big_title.num+1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
+                                                <a href="javascript:void(0);" onclick="jumpLast({$value.big_title.num},{$value.big_title.num+1})" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>
                                             </div>
                                         {/if}
                                     {else /}
@@ -136,6 +136,16 @@
 </div>
 <input type="hidden" class="test_start_time" value="{$exam_topic_info.test_start_time_new}">
 <script>
+    function jumpLast(nowNum, lastNum) {
+        if($("#hide-"+lastNum)){
+            $("#hide-"+lastNum).show();
+            $("#hide-"+nowNum).hide();
+        }
+    }
+    function commonResult(data) {
+        // tipMsg(data.code,data.msg,0,true,false,false);
+        // $(location).attr('href', "{:url('index/error/error_view',array('msg'=>'提交试卷成功'))}")
+    }
     layui.use(['util', 'form', 'layedit', 'laydate'], function(){
         var form = layui.form
             ,layer = layui.layer
@@ -166,18 +176,74 @@
             curlAjax("{:url('/index/exam/test_apply')}",data.field,'commonResult');
             return false;
         });
-    });
 
-    function commonResult(data) {
-        // tipMsg(data.code,data.msg,0,true,false,false);
-        // $(location).attr('href', "{:url('index/error/error_view',array('msg'=>'提交试卷成功'))}")
+    // 获取id进行登录
+    var wsUri ="ws://127.0.0.1:7777/ws";
+
+    $(function () {
+        init();
+    });
+    function init() {
+        testWebSocket(); // 连接wbs服务器
+    }
+    function testWebSocket() {
+        websocket = new WebSocket(wsUri);
+        websocket.onopen = function(evt) {
+            onOpen(evt)
+        };
+        websocket.onclose = function(evt) {
+            onClose(evt)
+        };
+        websocket.onmessage = function(evt) {
+            onMessage(evt)
+        };
+        websocket.onerror = function(evt) {
+            onError(evt)
+        };
     }
 
-    function jumpLast(nowNum, lastNum) {
-        if($("#hide-"+lastNum)){
-            $("#hide-"+lastNum).show();
-            $("#hide-"+nowNum).hide();
+    function onOpen(evt) {
+        // 将用户id发送过去
+        var studentId = "{$student_info.id}";
+        var examTopicId = "{$exam_topic_info.id}";
+        doSend({Student_id:studentId,Exam_topic_id:examTopicId,Curl_type:'exam_login'});
+    }
+
+    function onClose(evt) {
+    }
+
+    function onMessage(evt) {
+        if (evt.data == "heartbeat") {
+            return;
+        }
+        var data = JSON.parse(evt.data);
+        switch (data.Curl_type) {
+            case "exam_login":
+                if (data.Code == 200) {
+                    // tipMsg(data.Code, data.Msg, 0, false, false, false);
+                } else {
+                    tipMsg(data.Code, data.Msg, 0, false, false, false);
+                }
+                break
         }
     }
+
+    function onError(evt) {
+        alert('连接失败');
+    }
+
+    function doSend(message) {
+        websocket.send(JSON.stringify(message));
+    }
+
+    function sendBtnClick(){
+        var msg = document.getElementById("input").value;
+        doSend(msg);
+        document.getElementById("input").value = '';
+    }
+    function closeBtnClick(){
+        websocket.close();
+    }
+    });
 
 </script>

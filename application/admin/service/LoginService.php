@@ -64,12 +64,16 @@ class LoginService extends BaseService {
         ];
         $adminInfo = $this->adminModel->findAdmin($condition);
         if (!$adminInfo) {
-            EsLog::wLog(ERROR, '没有此用户', $condition);
+            EsLog::wLog(EsLog::ERROR, $this->modelName, '没有此用户', $data);
             return false;
         }
         // 查询角色
-        $roleInfo = RoleModel::instance()->getList(['id'=>$adminInfo['role_id']]);
-        if ($roleInfo[0]['jurisdiction_id'] != 0) {
+        $roleInfo = RoleModel::instance()->getList(['id'=>$adminInfo['role_id']])->toArray();
+        if (!$adminInfo) {
+            EsLog::wLog(EsLog::ERROR, $this->modelName, '角色查询失败', $data);
+            return false;
+        }
+        if (strlen($roleInfo[0]['jurisdiction_id']) > 2) {
             $funcs = json_decode($roleInfo[0]['jurisdiction_id'], true);
             $funcIds = array_keys($funcs);
             foreach ($funcs as $key => $value) {
@@ -99,14 +103,10 @@ class LoginService extends BaseService {
                 $newFuncs[$value['pid']]['two'][] = $value;
             }
         }
-        if (empty($adminInfo)) {
-            return false;
-        } else {
-            // 存session
-            session('admin_name',$data['admin_name']);
-            session('admin_id',$data['admin_password']);
-            session('funcs',json_encode($newFuncs, JSON_UNESCAPED_UNICODE));
-        }
+        // 存session
+        session('admin_name',$data['admin_name']);
+        session('admin_id',$data['admin_password']);
+        session('funcs',json_encode($newFuncs, JSON_UNESCAPED_UNICODE));
         return true;
     }
 }

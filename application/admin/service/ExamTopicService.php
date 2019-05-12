@@ -189,11 +189,10 @@ class ExamTopicService extends BaseService implements ServiceInter {
                     'data' => $data
                 ]);
                 return false;
-
             }
             // 删除信息
             if ($params['test_paper_type'] == 0) {
-                $res = EveryStudentTopicModel::instance()->del(['exam_topic_id'=>$params['id']]);
+                $res = EveryStudentTopicModel::instance()->del(['exam_topic_id'=>$params['id'],'student_exam_topic_id'=>0]);
                 if (!$res) {
                     $result = '删除试题失败';
                     $this->wEsLog($result, $params);

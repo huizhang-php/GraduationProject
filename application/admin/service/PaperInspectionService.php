@@ -107,6 +107,10 @@ class PaperInspectionService extends BaseService implements ServiceInter {
         ])->toArray();
         if (empty($everyTopicInfo)) {
             $newStudentInfo['students'] = [];
+            $this->wEsLog('获取中间表信息失败', [
+                'student_exam_topic_id' => $studentExamTopicIds,
+                'is_deal' => 0
+            ]);
         }
         // 获取试卷原始信息
         $testPaperContentIds = array_column($everyTopicInfo, 'test_paper_content_id');
@@ -123,7 +127,16 @@ class PaperInspectionService extends BaseService implements ServiceInter {
             $newEveryTopicInfo[$value['student_exam_topic_id']][] = $value;
         }
         foreach ($newEveryTopicInfo as $key => $value) {
-            $newStudentInfo['students'][$key]['student_paper_info'] = $value;
+            foreach ($newStudentInfo['students'] as $key1 => $value1) {
+                if ($key === $key1) {
+                    $newStudentInfo['students'][$key]['student_paper_info'] = $value;
+                }
+            }
+        }
+        foreach ($newStudentInfo['students'] as $key => $value) {
+            if (!isset($value['student_paper_info'])) {
+                unset($newStudentInfo['students'][$key]);
+            }
         }
         return $newStudentInfo;
     }

@@ -186,7 +186,10 @@ class ExamService extends BaseController{
                 }
             } else {
                 // 固定试卷
-                $testPaperInfo = EveryStudentTopicModel::instance()->getList(['exam_topic_id'=>$data['exam_topic_id']])->toArray();
+                $testPaperInfo = EveryStudentTopicModel::instance()->getList([
+                    'exam_topic_id'=>$data['exam_topic_id'],
+                    'student_exam_topic_id' => ['<>',0]
+                ])->toArray();
                 $testPaperContentIds = [];
                 foreach ($testPaperInfo as $key => $value) {
                     $testPaperContentIds[] = $value['test_paper_content_id'];
