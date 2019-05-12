@@ -102,14 +102,14 @@
         <label class="layui-form-label">分配功能:</label>
         <div class="layui-input-block">
             {foreach $func_list as $key => $value}
-            <div>
-                <input type="checkbox" lay-filter="isAllUpChecked" value="{$value.data.id}" lay-skin="primary" title="全选({$value.data.func_name})">
-            </div>
-            {if isset($value.twoData)}
-            {foreach $value.twoData as $twoKey=>$twoValue }
-                <input type="checkbox" class="edit_two_func_{$twoValue.id} edit_two_func" name="jurisdiction_id[{$value.data.id}][]" value="{$twoValue.id}" lay-skin="primary" title="{$twoValue.func_name}">
-            {/foreach}
-            {/if}
+                <div>
+                    <input type="checkbox" lay-filter="isAllUpChecked" value="{$value.data.id}" lay-skin="primary" title="全选({$value.data.func_name})">
+                </div>
+                {if isset($value.twoData)}
+                    {foreach $value.twoData as $twoKey=>$twoValue }
+                        <input type="checkbox" class="edit_two_func_{$twoValue.pid} edit_two_func" name="jurisdiction_id[{$value.data.id}][]" value="{$twoValue.id}" lay-skin="primary" title="{$twoValue.func_name}">
+                    {/foreach}
+                {/if}
             {/foreach}
         </div>
     </div>
@@ -144,16 +144,17 @@
             if (this.checked) {
                 $('.two_func_'+id).prop('checked',true);
             } else {
-                $('.two_func_'+id).removeAttr('checked');
+                $('.two_func_'+id).prop('checked',false);
             }
             form.render();
         });
         form.on('checkbox(isAllUpChecked)', function(obj){
             var id = obj.value;
+            console.log(id);
             if (this.checked) {
                 $('.edit_two_func_'+id).prop('checked',true);
             } else {
-                $('.edit_two_func_'+id).removeAttr('checked');
+                $('.edit_two_func_'+id).prop('checked',false);
             }
             form.render();
         });

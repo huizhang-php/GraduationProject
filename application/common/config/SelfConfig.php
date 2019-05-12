@@ -19,10 +19,12 @@ class SelfConfig {
     public static function getConfig($confName) {
         $confParams = explode('.', $confName);
         $config = include $confParams[0] . '.php';
-        if (count($confParams) === 1) {
-            return $config;
+        $confData = $config;
+        unset($confParams[0]);
+        foreach ($confParams as $key => $val) {
+            $confData = $confData[$val];
         }
-        return $config[$confParams[1]];
+        return $confData;
     }
 
 }

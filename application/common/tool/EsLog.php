@@ -26,7 +26,7 @@ class EsLog {
      * @param $msg
      * @param $data
      */
-    public static function wLog(string $type=self::ERROR, string $action = ERROR, string $msg='', array $data=[]) {
+    public static function wLog($type=self::ERROR, $action = ERROR, $msg='', array $data=[]) {
         $body = [
             'type' => $type,
             'action' => $action,
@@ -35,7 +35,7 @@ class EsLog {
             'data' => json_encode($data, JSON_UNESCAPED_UNICODE)
         ];
         $params = [
-            'index' => 'es_log_'.date('Ymd'),
+            'index' => 'es_log_'.date('Y'),
             'type' => 'doc',
             'id' => time(),
             'body' => $body

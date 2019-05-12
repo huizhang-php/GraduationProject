@@ -10,6 +10,7 @@ use app\common\base\BaseService;
 use app\common\model\AdminModel;
 use app\common\model\FuncModel;
 use app\common\model\RoleModel;
+use app\common\tool\EsLog;
 
 class LoginService extends BaseService {
 
@@ -62,23 +63,39 @@ class LoginService extends BaseService {
             'status'        => 1
         ];
         $adminInfo = $this->adminModel->findAdmin($condition);
+        if (!$adminInfo) {
+            EsLog::wLog(ERROR, '没有此用户', $condition);
+            return false;
+        }
         // 查询角色
         $roleInfo = RoleModel::instance()->getList(['id'=>$adminInfo['role_id']]);
-        $funcs = json_decode($roleInfo[0]['jurisdiction_id'], true);
-        $funcIds = array_keys($funcs);
-        foreach ($funcs as $key => $value) {
-            foreach ($value as $key1 => $value2) {
-                $funcIds[] = (int)$value2;
+        if ($roleInfo[0]['jurisdiction_id'] != 0) {
+            $funcs = json_decode($roleInfo[0]['jurisdiction_id'], true);
+            $funcIds = array_keys($funcs);
+            foreach ($funcs as $key => $value) {
+                foreach ($value as $key1 => $value2) {
+                    $funcIds[] = (int)$value2;
+                }
             }
+            $cond = ['id'=>$funcIds,'order'=>['pid', 'asc']];
+        } else {
+            $cond = ['order'=>['pid', 'asc']];
         }
         // 查找功能信息
-        $funcsInfo = FuncModel::instance()->getFunc(['id'=>$funcIds,'order'=>['id', 'asc']]);
+        $funcsInfo = FuncModel::instance()->getFunc($cond);
         $funcsInfo = $funcsInfo->toArray();
         $newFuncs = [];
+        $twoFuncs = [];
         foreach ($funcsInfo as $key => $value) {
             if ($value['pid'] === 0) {
+                $value['two'] = [];
                 $newFuncs[$value['id']] = $value;
             } else {
+                $twoFuncs[] = $value;
+            }
+        }
+        foreach ($twoFuncs as $key => $value) {
+            if (isset($newFuncs[$value['pid']])) {
                 $newFuncs[$value['pid']]['two'][] = $value;
             }
         }

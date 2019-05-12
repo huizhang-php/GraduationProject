@@ -37,7 +37,7 @@ class BaseService {
      */
     protected function wEsLog($msg, $data, $type=EsLog::ERROR) {
         EsLog::wLog($type,
-            SelfConfig::getConfig('log.modules.'.$this->modelName),
+            SelfConfig::getConfig('Log.modules.'.$this->modelName),
             $msg,
             $data
         );

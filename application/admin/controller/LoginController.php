@@ -30,7 +30,7 @@ class LoginController extends Controller {
         if (Request::isPost()) {
             $this->getParams();
             if(!captcha_check($this->params['captcha'])){
-//                $this->returnAjax(400,'验证码错误');
+                $this->returnAjax(400,'验证码错误');
             };
             $loginResult = LoginService::getObj()->LoginService($this->params);
             if ($loginResult) {
