@@ -96,13 +96,13 @@ class ModelLogService extends BaseService implements ServiceInter {
         foreach ($logData['data'] as $val) {
             $val = $val['_source'];
             $oneNewData = [];
-            if (isset($logModelName[$val['type']])) {
-                $oneNewData['type'] = $logModelName[$val['type']];
+            if (isset($logType[$val['type']])) {
+                $oneNewData['type'] = $logType[$val['type']];
             } else {
                 $oneNewData['type'] = $val['type'];
             }
-            if (isset($logType[$val['action']])) {
-                $oneNewData['action'] = $logType[$val['action']];
+            if (isset($logModelName[$val['action']])) {
+                $oneNewData['action'] = $logModelName[$val['action']];
             } else {
                 $oneNewData['action'] = $val['action'];
             }
