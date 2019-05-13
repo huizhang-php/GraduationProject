@@ -162,9 +162,9 @@ class PaperInspectionService extends BaseService implements ServiceInter {
         }
         $res = EveryStudentTopicModel::instance()->upAll($upData);
         if (!$res) {
-//            $msg = '提交失败';
-//            $this->wEsLog($msg, $data);
-//            return false;
+            $msg = '提交失败';
+            $this->wEsLog($msg, $data);
+            return false;
         }
         $upScoreData = [];
         // 统计总分

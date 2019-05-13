@@ -215,11 +215,15 @@ class ExamService extends BaseController{
                 $value['score'] = $questionBankConfig[$value['type']]['score'];
                 $returnData['test_paper_info'][$value['type']]['data'][] = $value;
             }
-            $examTopicInfo['test_start_time_new'] = str_replace('-0','-',date('Y-m-d-h-i-s', strtotime($examTopicInfo['test_start_time'])+$examTopicInfo['test_time_length']*60));
+            $examTopicInfo['test_start_time_new'] = str_replace('-0','-',date('Y-m-d-H-i-s', strtotime($examTopicInfo['test_start_time'])+$examTopicInfo['test_time_length']*60));
             $returnData['student_info'] = $studentInfo;
             $returnData['exam_topic_info'] = $examTopicInfo;
             $returnData['student_exam_topic_info'] = $studentExamTopicInfo;
-            $returnData['big_num'] = $bigNum;
+            if ($examTopicInfo['test_paper_type']) {
+                $returnData['big_num'] = $bigNum+1;
+            } else {
+                $returnData['big_num'] = $bigNum;
+            }
             return $returnData;
         });
         return $res;
