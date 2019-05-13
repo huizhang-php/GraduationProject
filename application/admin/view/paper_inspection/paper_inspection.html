@@ -52,6 +52,7 @@
             <td>{$value.ctime}</td>
         </tr>
         <tr>
+            <input type="hidden" name="student_exam_topic_id[]" value="{$value.student_exam_topic_id}">
             <td colspan="7">
                 {foreach $value.student_paper_info as $studentPaperKey => $studentPaperValue}
                     <div style="margin:1% 0 1% 1%;">

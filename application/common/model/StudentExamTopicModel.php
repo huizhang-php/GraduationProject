@@ -147,4 +147,23 @@ class StudentExamTopicModel extends BaseModel {
         return false;
     }
 
+    /**
+     * 批量更新
+     *
+     * @param $data
+     * @return bool|\think\Collection
+     * CreateTime: 2019/5/13 下午1:15
+     */
+    public function upAll($data) {
+        try {
+            return $this->saveAll($data);
+        } catch (\Throwable $e) {
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.student_examtopic'),
+                $e->getMessage()
+            );
+        }
+        return false;
+    }
+
 }

@@ -206,12 +206,12 @@ class ExamService extends BaseController{
                     $value['option'] = array();
                 }
                 $value['empty_num'] = substr_count($value['title'],'_')+1;
-                if (isset($returnData['test_paper_info'][$value['type']])) {
+//                if (isset($returnData['test_paper_info'][$value['type']])) {
                     $bigNum = count($returnData['test_paper_info']);
                     $returnData['test_paper_info'][$value['type']]['num'] = count($returnData['test_paper_info']);
                     $returnData['test_paper_info'][$value['type']]['big_title'] = $examConfig[$value['type']];
                     $returnData['test_paper_info'][$value['type']]['big_title']['num'] = count($returnData['test_paper_info']);
-                }
+//                }
                 $value['score'] = $questionBankConfig[$value['type']]['score'];
                 $returnData['test_paper_info'][$value['type']]['data'][] = $value;
             }

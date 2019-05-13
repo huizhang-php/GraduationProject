@@ -57,7 +57,7 @@ class CountService extends BaseService implements ServiceInter {
         $nowYear = ExamTopicModel::instance()->monthCount();
         foreach ($nowYear as $key => $value) {
             if (array_key_exists($value['name'], $returnNowY)) {
-                $returnNowY[$value['name']] = $value['total'];
+                $returnNowY[$value['name']] += $value['total'];
             }
         }
         // 去年考试专题各月份考试统计
@@ -103,7 +103,7 @@ class CountService extends BaseService implements ServiceInter {
         }
         $res = StudentExamTopicModel::instance()->countPass();
         foreach ($res as $key => $value) {
-            $countData[$value['exam_topic_id']]['pass_people'] = round($value['total']/$value['exam_topic_id']['total']*100,2)."％";
+            $countData[$value['exam_topic_id']]['pass_people'] = round($value['total']/$countData[$value['exam_topic_id']]['total']*100,2);
         }
         $res = ExamTopicModel::instance()->getList(['id'=>array_keys($countData)], false);
         foreach ($res as $key => $value) {
@@ -129,7 +129,7 @@ class CountService extends BaseService implements ServiceInter {
                 $countData[$key]['pass_people'] = 0;
                 $countData[$key]['pass'] = "0%";
             } else {
-                $countData[$key]['people'] = round($countData[$key]['people']/$countData[$key]['total']*100,2)."％";
+                $countData[$key]['pass'] = (string)(round($countData[$key]['pass_people']/$countData[$key]['total'],2))."％";
             }
         }
         return $countData;

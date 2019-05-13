@@ -145,4 +145,10 @@ class EveryStudentTopicModel extends BaseModel {
         return false;
     }
 
+    public function countScore($studentExamTopicIds) {
+        $ids = join(',', $studentExamTopicIds);
+        $sql = "select sum(score) as total,student_exam_topic_id from {$this->table} WHERE student_exam_topic_id in({$ids}) GROUP BY student_exam_topic_id";
+        return $this->query($sql);
+    }
+
 }

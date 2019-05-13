@@ -129,6 +129,7 @@ class PaperInspectionService extends BaseService implements ServiceInter {
         foreach ($newEveryTopicInfo as $key => $value) {
             foreach ($newStudentInfo['students'] as $key1 => $value1) {
                 if ($key === $key1) {
+                    $newStudentInfo['students'][$key]['student_exam_topic_id'] = $value[0]['student_exam_topic_id'];
                     $newStudentInfo['students'][$key]['student_paper_info'] = $value;
                 }
             }
@@ -160,12 +161,27 @@ class PaperInspectionService extends BaseService implements ServiceInter {
             ];
         }
         $res = EveryStudentTopicModel::instance()->upAll($upData);
-        if ($res) {
-            $msg = '提交成功';
-            return true;
+        if (!$res) {
+//            $msg = '提交失败';
+//            $this->wEsLog($msg, $data);
+//            return false;
         }
-        $msg = '提交失败';
-        $this->wEsLog($msg, $data);
-        return false;
+        $upScoreData = [];
+        // 统计总分
+        $res = EveryStudentTopicModel::instance()->countScore($data['student_exam_topic_id']);
+        foreach ($res as $key => $val) {
+            $upScoreData[] = [
+                'id' => $val['student_exam_topic_id'],
+                'total_score' => $val['total']
+            ];
+        }
+        $res = StudentExamTopicModel::instance()->upAll($upScoreData);
+        if (false === $res) {
+            $msg = '提交失败';
+            $this->wEsLog($msg, $data);
+            return false;
+        }
+        $msg = '提交成功';
+        return true;
     }
 }
