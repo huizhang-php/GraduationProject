@@ -50,10 +50,14 @@ class StudentExamTopicModel extends BaseModel {
      */
     public function getList($condition) {
         try {
+            if (!isset($condition['exam_topic_id'])) {
+                return $this->where($condition)->select()->toArray();
+            }
             return $this->where($condition)->order('ctime', 'desc')->paginate(20, false ,['query' => [
                 'exam_topic_id' => $condition['exam_topic_id']
             ]]);
         } catch (\Throwable $e) {
+            console($e->getMessage());
             EsLog::wLog(EsLog::ERROR,
                 SelfConfig::getConfig('log.modules.student_examtopic'),
                 $e->getMessage(),
@@ -61,7 +65,6 @@ class StudentExamTopicModel extends BaseModel {
             );
         }
         return false;
-
     }
 
     /**

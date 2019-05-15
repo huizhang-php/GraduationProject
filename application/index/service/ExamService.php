@@ -201,6 +201,9 @@ class ExamService extends BaseController{
             $examConfig = SelfConfig::getConfig('Exam.exam_type_base_conf');
             $bigNum = 0;
             foreach ($allExamPaperData as $key => $value) {
+                if ($examTopicInfo['test_paper_type']) {
+                    $value = $value[0];
+                }
                 $value['option'] = json_decode($value['option'], true);
                 if (!$value['option']) {
                     $value['option'] = array();
@@ -219,11 +222,7 @@ class ExamService extends BaseController{
             $returnData['student_info'] = $studentInfo;
             $returnData['exam_topic_info'] = $examTopicInfo;
             $returnData['student_exam_topic_info'] = $studentExamTopicInfo;
-            if ($examTopicInfo['test_paper_type']) {
-                $returnData['big_num'] = $bigNum+1;
-            } else {
-                $returnData['big_num'] = $bigNum;
-            }
+            $returnData['big_num'] = $bigNum+1;
             return $returnData;
         });
         return $res;

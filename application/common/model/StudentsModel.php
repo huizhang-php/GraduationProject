@@ -50,6 +50,31 @@ class StudentsModel extends BaseModel {
             );
         }
         return false;
+    }
+
+    /**
+     * 发现学生
+     *
+     * @param $condition
+     * @return array|bool|\PDOStatement|string|\think\Collection
+     * CreateTime: 2019/5/13 下午5:17
+     */
+    public function findStudent($condition) {
+        try {
+            $res = $this->where($condition)->select()->toArray();
+            if (empty($res)) {
+                return false;
+            }
+            return $res[0];
+        } catch (\Throwable $e) {
+            console($e->getMessage());
+            EsLog::wLog(EsLog::ERROR,
+                SelfConfig::getConfig('log.modules.student_examtopic'),
+                $e->getMessage(),
+                $condition
+            );
+        }
+        return false;
 
     }
 

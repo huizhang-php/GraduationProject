@@ -49,14 +49,15 @@ class DealApplyPaper {
             $upData = [];
             $questionBankConfig = json_decode($examTopicInfo['question_bank_config'], true);
             // 自动阅卷
+            $isMustManual = false;
             foreach ($newTopics as $newKey => $newValue) {
                 foreach ($answer as $answerKey => $answerVal) {
                     $saveAnswer = $answerVal;
                     if (is_array($answerVal)) {
                         $saveAnswer = join(',', $answerVal);
                     }
-
                     if ($answerKey === $newValue['id'] && !in_array($newValue['content_info']['type'], [3])) {
+                        $isMustManual = true;
                         $upData[$newValue['id']] = [
                             'answer' => $saveAnswer,
                             'id' => $newValue['id']
@@ -76,13 +77,19 @@ class DealApplyPaper {
                     }
                 }
             }
+            $totalScore = 0;
+            if (!$isMustManual) {
+                foreach ($upData as $key => $val) {
+                    $totalScore += $val['score'];
+                }
+            }
             // 更新考题信息
             EveryStudentTopicModel::instance()->upAll($upData);
             // 更新考试学生中间表信息
             StudentExamTopicModel::instance()->up([
                 'exam_topic_id'=> $value['exam_topic_id'],
                 'student_id' => $value['student_id']
-            ],['status'=>2]);
+            ],['status'=>2,'total_score'=>$totalScore]);
             var_dump('success');
         }
     }
