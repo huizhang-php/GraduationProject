@@ -72,7 +72,12 @@ class EncryptTool {
         }
         for ($i = 0; $i < $len; $i++)
         {
-            $str .= chr(ord($data{$i}) + (ord($char{$i})) % 256);
+            $chr = chr(ord($data{$i}) + (ord($char{$i})) % 256);
+            if (strlen(trim($chr)) === 0) {
+                $i--;
+                continue;
+            }
+            $str .= $chr;
         }
         return base64_encode($str);
     }

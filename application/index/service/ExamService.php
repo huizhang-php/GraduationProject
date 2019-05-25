@@ -7,6 +7,7 @@
 namespace app\index\service;
 
 use app\common\base\BaseController;
+use app\common\base\BaseService;
 use app\common\config\SelfConfig;
 use app\common\model\EveryStudentTopicModel;
 use app\common\model\ExamPaperModel;
@@ -19,7 +20,7 @@ use app\common\tool\RabbitMQTool;
 use app\common\tool\TimeTool;
 use think\Db;
 
-class ExamService extends BaseController{
+class ExamService extends BaseService {
 
     /**
      * User: yuzhao
@@ -201,8 +202,8 @@ class ExamService extends BaseController{
             $examConfig = SelfConfig::getConfig('Exam.exam_type_base_conf');
             $bigNum = 0;
             foreach ($allExamPaperData as $key => $value) {
-                if ($examTopicInfo['test_paper_type']) {
-                    $value = $value[0];
+                if ($examTopicInfo['test_paper_type'] === 0) {
+//                    $value = $value[0];
                 }
                 $value['option'] = json_decode($value['option'], true);
                 if (!$value['option']) {
@@ -222,7 +223,7 @@ class ExamService extends BaseController{
             $returnData['student_info'] = $studentInfo;
             $returnData['exam_topic_info'] = $examTopicInfo;
             $returnData['student_exam_topic_info'] = $studentExamTopicInfo;
-            $returnData['big_num'] = $bigNum+1;
+            $returnData['big_num'] = $bigNum;
             return $returnData;
         });
         return $res;

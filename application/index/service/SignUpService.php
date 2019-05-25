@@ -41,8 +41,12 @@ class SignUpService{
         $examTopicInfo = ExamTopicModel::instance()->getList(['id'=>$id]);
         $examTopicInfo = $examTopicInfo->toArray()['data'];
         if (empty($examTopicInfo)) {
-            $msg = '无效访问';
-            return false;
+            $examTopicInfo = ExamTopicModel::instance()->getList([]);
+            $examTopicInfo = $examTopicInfo->toArray()['data'];
+            if (empty($examTopicInfo)) {
+                $msg = '无效访问';
+                return false;
+            }
         }
         $examTopicInfo = $examTopicInfo[0];
         $testStartTime = strtotime($examTopicInfo['test_start_time']);

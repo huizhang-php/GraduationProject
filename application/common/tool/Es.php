@@ -70,6 +70,7 @@ class Es {
      *
      * @param array $params
      * CreateTime: 2019/5/6 上午10:46
+     * @return array|bool
      */
     public function readEs(array $params = []) {
         $res = self::$esConn->search($params);

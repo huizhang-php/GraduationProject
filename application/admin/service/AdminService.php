@@ -97,7 +97,9 @@ class AdminService extends BaseService implements ServiceInter {
         $adminModel = new AdminModel();
         $time = TimeTool::getTime();
         // 查找是否存在此账号
-        $adminInfo = $adminModel->findAdmin(['admin_name'=>$params['admin_name']]);
+        $adminInfo = $adminModel->findAdmin(['admin_name'=>$params['admin_name'],
+            'id' => ['<>',$params['id']]
+        ]);
         if (!empty($adminInfo)) {
             $result = '';
             $this->wEsLog('账号重复', $params);

@@ -6,10 +6,19 @@
  * @Description:  管理员model层
  */
 namespace app\common\model;
+use app\common\base\BaseModel;
 use app\common\config\SelfConfig;
 use app\common\tool\EsLog;
 use think\Model;
-class AdminModel extends Model {
+class AdminModel extends BaseModel {
+
+    /**
+     * 模块名称
+     *
+     * @var string
+     * CreateTime: 2019/5/15 下午3:27
+     */
+    protected $modelName = 'admin';
 
     protected $table = 'admin';
 
@@ -32,15 +41,11 @@ class AdminModel extends Model {
      */
     public function findAdmin($condition) {
         try {
-            $res = $this->where($condition)->find();
+            $res = $this->getCond($condition, $this->table)->find();
             return $res;
         } catch (\Throwable $e) {
-            EsLog::wLog(EsLog::ERROR,
-                SelfConfig::getConfig('log.modules.admin'),
-                $e->getMessage(),
-                $condition
-            );
-        }
+            $this->wEsLog('查找管理员失败', [$e->getMessage(),$condition]);
+;        }
         return false;
     }
 
@@ -112,16 +117,11 @@ class AdminModel extends Model {
      */
     public function up($condition, $data) {
         try {
-            return $this->where($condition)->update($data);
+            return $this->getCond($condition,$this->table)->update($data);
         } catch (\Throwable $e) {
-            EsLog::wLog(EsLog::ERROR,
-                SelfConfig::getConfig('log.modules.admin'),
-                $e->getMessage(),
-                [
-                    'condition' => $condition,
-                    'data' => $data
-                ]
-            );
+            $this->wEsLog('更新管理员信息失败', [
+                $data,$e->getMessage()
+            ]);
         }
         return false;
     }

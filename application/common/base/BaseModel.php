@@ -7,9 +7,19 @@
 
 namespace app\common\base;
 
+use app\common\config\SelfConfig;
+use app\common\tool\EsLog;
 use think\Model;
 
 class BaseModel extends Model {
+
+    /**
+     * 模块名称
+     *
+     * @var null
+     * CreateTime: 2019/4/29 下午1:32
+     */
+    protected $modelName=null;
 
     /**
      * User: yuzhao
@@ -24,6 +34,7 @@ class BaseModel extends Model {
      * CreateTime: 2019/3/6 下午5:36
      * @param $condition
      * Description: 拼装sql条件
+     * @return BaseModel|\think\db\Query
      */
     protected function getCond($condition, $table) {
         $this->table = $table;
@@ -68,5 +79,20 @@ class BaseModel extends Model {
             $myself = $myself->group($group);
         }
         return $myself;
+    }
+
+    /**
+     * 写es日志
+     *
+     * @param $msg
+     * @param $data
+     * CreateTime: 2019/4/29 下午1:35
+     */
+    protected function wEsLog($msg, $data, $type=EsLog::ERROR) {
+        EsLog::wLog($type,
+            SelfConfig::getConfig('Log.modules.'.$this->modelName),
+            $msg,
+            $data
+        );
     }
 }

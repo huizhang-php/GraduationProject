@@ -64,13 +64,13 @@ class LoginService extends BaseService {
         ];
         $adminInfo = $this->adminModel->findAdmin($condition);
         if (!$adminInfo) {
-            EsLog::wLog(EsLog::ERROR, $this->modelName, '没有此用户', $data);
+            $this->wEsLog('没有此用户', $condition);
             return false;
         }
         // 查询角色
         $roleInfo = RoleModel::instance()->getList(['id'=>$adminInfo['role_id']])->toArray();
         if (!$adminInfo) {
-            EsLog::wLog(EsLog::ERROR, $this->modelName, '角色查询失败', $data);
+            $this->wEsLog('角色查询失败', $data);
             return false;
         }
         if (strlen($roleInfo[0]['jurisdiction_id']) > 2) {
